@@ -11,7 +11,7 @@ export default function TopBar() {
         href="/loginAdmin"
         className="text-white border border-white px-4 py-1 rounded hover:bg-white hover:text-[#003087] transition"
       >
-        Login
+        Staff Portal
       </Link>
 
       {/* Right side */}
