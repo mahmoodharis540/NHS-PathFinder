@@ -1,21 +1,29 @@
 import MainDropdown from "@/components/MainDropdown";
 import TopBar from "@/components/TopBar";
+import AccessibilityToolbar from "@/components/AccessibilityToolbar";
 
 export default function HomePage() {
   return (
-  
-      <main className="min-h-screen  bg-[#003087] flex flex-col items-center justify-center text-center px-4">
-          <TopBar />
-        <h1 className="text-2xl font-bold mb-2">
-          Welcome to NHS PathFinder
-        </h1>
-      <p className="text-sm italic">"Find your way around NHS buildings the modern way."</p>
-      <p className="mt-6 ">What building do you want to go to?</p>
+    <main className="min-h-screen bg-[#003087] text-white relative">
+      {/* Top bar */}
+      <TopBar />
 
-      <div className="mt-6 flex justify-center">
+      {/* Language selector top-right */}
+      <div className="absolute bottom-4 left-4">
+        Language: EN
+      </div>
+
+      {/* Centered content */}
+      <div className="flex flex-col items-center justify-center text-center min-h-screen px-4">
+        <h1 className="text-3xl font-bold mb-2">Welcome to NHS Finder</h1>
+        <p className="text-sm italic mb-1">Your gateway to healthcare services.</p>
+        <p className="text-sm italic mb-6">What building do you want to go to?</p>
+
         <MainDropdown />
       </div>
-      
+
+      {/* Accessibility toolbar */}
+      <AccessibilityToolbar />
     </main>
   );
 }
