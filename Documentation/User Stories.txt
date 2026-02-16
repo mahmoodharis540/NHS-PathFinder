@@ -143,9 +143,12 @@ As a patient, I want to be informed how my data is used so that I understand my 
 • Story Points: 1
 
 
+US-10 - Staff Login
 
+As Staff I want to be able to login to add routes or faster routes 
 
-
+Priority: Must 
+Story Points: 5
 
 
 SHOULD HAVE 
@@ -160,7 +163,7 @@ Important but not required for MVP.
 
 
 
-US-10 – Appointment Lookup
+US-11 – Appointment Lookup
 
 
 
@@ -176,7 +179,7 @@ As a patient, I want to enter my appointment reference so that I can automatical
 
 
 
-US-11 – “Navigate to Appointment” Button
+US-12 – “Navigate to Appointment” Button
 
 
 
@@ -192,7 +195,7 @@ As a patient, I want one-click navigation to my appointment location.
 
 
 
-US-12 – Parking Information
+US-13 – Parking Information
 
 
 
@@ -207,7 +210,7 @@ As a visitor, I want to see nearby car parks so that I know where to park.
 
 
 
-US-13 – Nearest Entrance Suggestion
+US-14 – Nearest Entrance Suggestion
 
 
 
@@ -223,7 +226,7 @@ As a visitor, I want the app to suggest the closest entrance to my destination s
 
 
 
-US-14 – Lift Locations Displayed
+US-15 – Lift Locations Displayed
 
 
 
@@ -239,7 +242,7 @@ As a patient, I want lift locations shown on the map so that I can plan vertical
 
 
 
-US-15 – Save Recent Searches
+US-16 – Save Recent Searches
 
 
 
@@ -255,7 +258,7 @@ As a returning patient, I want my recent departments saved so that I can quickly
 
 
 
-US-16 – Large Text Mode
+US-17 – Large Text Mode
 
 
 
@@ -271,7 +274,7 @@ As an elderly patient, I want adjustable text size so that instructions are easi
 
 
 
-US-17 – Route Time Estimation
+US-18 – Route Time Estimation
 
 
 
@@ -299,7 +302,7 @@ Nice improvements but not critical.
 
 
 
-US-18 – Indoor GPS Tracking
+US-19 – Indoor GPS Tracking
 
 
 
@@ -317,7 +320,7 @@ As a patient, I want real-time indoor tracking so that I can see my position on 
 
 
 
-US-19 – Multi-Language Support
+US-20 – Multi-Language Support
 
 
 
@@ -333,7 +336,7 @@ As an international visitor, I want the app available in multiple languages.
 
 
 
-US-20 – Voice Navigation
+US-21 – Voice Navigation
 
 
 
@@ -349,7 +352,7 @@ As a visually impaired patient, I want spoken directions.
 
 
 
-US-21 – Dark Mode
+US-22 – Dark Mode
 
 
 
@@ -365,7 +368,7 @@ As a user, I want dark mode so that the app is easier to use in low light.
 
 
 
-US-22 – Feedback Submission
+US-23 – Feedback Submission
 
 
 
@@ -381,7 +384,7 @@ As a patient, I want to leave feedback about navigation accuracy.
 
 
 
-US-23 – Staff Login Portal
+US-24 – Staff Login Portal
 
 
 
@@ -393,7 +396,7 @@ As admin staff, I want to update department details.
 
 WONT DO
 
-US-24 – Full NHS Account Integration
+US-25 – Full NHS Account Integration
 
 • Priority: Won’t
 
