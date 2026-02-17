@@ -1,0 +1,15 @@
+{
+  "home": {
+    "welcome": "Bienvenue sur NHS Finder",
+    "subtitle": "Votre passerelle vers les services de santé." ,
+    "prompt": "Dans quel bâtiment souhaitez-vous vous rendre ? "
+  },
+  "login": {
+    "Welcome": "Page de connexion",
+    "Username" : "Nom d'utilisateur",
+    "Password" :" Mot de passe ",
+    "EnterUsername" : "Entrer le nom d'utilisateur",
+    "EnterPassword" : "Entrer le mot de passe" ,
+    "Login" : "Connexion" 
+  }
+}
