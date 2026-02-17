@@ -1,13 +1,13 @@
-import {getRequestConfig} from 'next-intl/server';
- 
+import { getRequestConfig } from "next-intl/server";
+
+const locales = ["en", "es", "fr", "pl"] as const;
+type Locale = (typeof locales)[number];
+
 export default getRequestConfig(async () => {
-  // Static for now, we'll change this later
-  const locale = 'es';
- 
+  const locale: Locale = "en"; // default for now
+
   return {
     locale,
-    messages: (await import(`../messages/${locale}.json`)).default
+    messages: (await import(`../messages/${locale}.json`)).default,
   };
 });
-
-//copied from https://next-intl.dev/docs/getting-started/app-router

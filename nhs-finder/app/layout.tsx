@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import AccessibilityProvider from "./providers/AccessibilityProvider.tsx";
 
 import { NextIntlClientProvider } from "next-intl";
-import { cookies } from "next/headers";
-import React from "react";
+import { getLocale, getMessages } from "next-intl/server";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,28 +15,35 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-//merged the [locale] folder layout and page into these. and started using cookies instead of directory.
+export const metadata: Metadata = {
+  title: "NHS Pathfinder",
+  description: "Navigate NHS buildings with ease.",
+};
+
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <html lang="en">
-      <body
-        className={`
-          ${geistSans.variable}
-          ${geistMono.variable}
-          min-h-screen
-          antialiased
-        `}
-        style={{ backgroundColor: "var(--nhs-blue)" }}
-      >
-        <AccessibilityProvider>
-          {children}
-        </AccessibilityProvider>
-      </body>
+  const locale = await getLocale();
+  const messages = await getMessages();
 
+  return (
+    <html lang={locale}>
+      <body
+        className={[
+          geistSans.variable,
+          geistMono.variable,
+          "min-h-screen",
+          "bg-gray-100",
+          "text-gray-900",
+          "antialiased",
+        ].join(" ")}
+      >
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
     </html>
   );
 }
