@@ -13,28 +13,7 @@ As a patient, I want to search for a department by name so that I can find where
 • Reason: Core functionality, moderate logic
 
 
-
-
-
-
-
-US-02 – View Department Details
-
-
-
-As a patient, I want to see floor, building and room number so that I know exactly where to go.
-
-• Priority: Must
-
-• Story Points: 2
-
-
-
-
-
-
-
-US-03 – Map View
+US-02 – Map View
 
 
 
@@ -47,12 +26,7 @@ As a patient, I want to see the department location on a map so that I can visua
 • Reason: Map integration
 
 
-
-
-
-
-
-US-04 – Step-by-Step Directions
+US-03 – Step-by-Step Directions
 
 
 
@@ -63,12 +37,7 @@ As a patient, I want written walking directions from the main entrance so that I
 • Story Points: 8
 
 
-
-
-
-
-
-US-05 – Accessible Route Toggle
+US-04 – Accessible Route Toggle
 
 
 
@@ -79,12 +48,7 @@ As a mobility-impaired patient, I want routes that avoid stairs so that I can re
 • Story Points: 5
 
 
-
-
-
-
-
-US-06 – Ward Search
+US-05 – Ward Search
 
 
 
@@ -95,12 +59,7 @@ As a visitor, I want to search for a ward number so that I can visit a patient.
 • Story Points: 3
 
 
-
-
-
-
-
-US-07 – View Visiting Hours
+US-06 – View Visiting Hours
 
 
 
@@ -111,12 +70,7 @@ As a visitor, I want to see visiting times so that I don’t arrive outside allo
 • Story Points: 2
 
 
-
-
-
-
-
-US-08 – Guest Mode
+US-07 – Guest Mode
 
 
 
@@ -127,12 +81,7 @@ As a user, I want to use the app without creating an account so that access is q
 • Story Points: 3
 
 
-
-
-
-
-
-US-09 – GDPR Consent Notice
+US-08 – GDPR Consent Notice
 
 
 
@@ -143,7 +92,7 @@ As a patient, I want to be informed how my data is used so that I understand my 
 • Story Points: 1
 
 
-US-10 - Staff Login
+US-09 - Staff Login
 
 As Staff I want to be able to login to add routes or faster routes 
 
@@ -158,12 +107,7 @@ SHOULD HAVE
 Important but not required for MVP.
 
 
-
-
-
-
-
-US-11 – Appointment Lookup
+US-10 – Appointment Lookup
 
 
 
@@ -174,12 +118,7 @@ As a patient, I want to enter my appointment reference so that I can automatical
 • Story Points: 5
 
 
-
-
-
-
-
-US-12 – “Navigate to Appointment” Button
+US-11 – “Navigate to Appointment” Button
 
 
 
@@ -190,12 +129,7 @@ As a patient, I want one-click navigation to my appointment location.
 • Story Points: 3
 
 
-
-
-
-
-
-US-13 – Parking Information
+US-12 – Parking Information
 
 
 
@@ -206,11 +140,7 @@ As a visitor, I want to see nearby car parks so that I know where to park.
 • Story Points: 5
 
 
-
-
-
-
-US-14 – Nearest Entrance Suggestion
+US-13 – Nearest Entrance Suggestion
 
 
 
@@ -221,88 +151,32 @@ As a visitor, I want the app to suggest the closest entrance to my destination s
 • Story Points: 8
 
 
+US-14 – Lift routes 
 
 
 
-
-
-US-15 – Lift Locations Displayed
-
-
-
-As a patient, I want lift locations shown on the map so that I can plan vertical movement.
+As a patient, I want lift routes to be an option to help me get around easier. 
 
 • Priority: Should
 
 • Story Points: 3
 
 
+US-15 – Large Text Mode
 
 
 
-
-
-US-16 – Save Recent Searches
-
-
-
-As a returning patient, I want my recent departments saved so that I can quickly access them again.
+As an elderly patient, I want an adjustable text size so that instructions are easier to read.
 
 • Priority: Should
 
 • Story Points: 3
-
-
-
-
-
-
-
-US-17 – Large Text Mode
-
-
-
-As an elderly patient, I want adjustable text size so that instructions are easier to read.
-
-• Priority: Should
-
-• Story Points: 3
-
-
-
-
-
-
-
-US-18 – Route Time Estimation
-
-
-
-As a patient, I want an estimated walking time so that I know if I’m running late.
-
-• Priority: Should
-
-• Story Points: 2
-
-
-
-
-
 
 
 COULD HAVE
 
 
-
-Nice improvements but not critical.
-
-
-
-
-
-
-
-US-19 – Indoor GPS Tracking
+US-16 – Indoor GPS Tracking
 
 
 
@@ -315,28 +189,18 @@ As a patient, I want real-time indoor tracking so that I can see my position on 
 • Reason: Technically complex
 
 
+US-17 – Multi-Language Support
 
 
 
-
-
-US-20 – Multi-Language Support
-
-
-
-As an international visitor, I want the app available in multiple languages.
+As an international visitor, I want the app to be available in multiple languages.
 
 • Priority: Could
 
 • Story Points: 8
 
 
-
-
-
-
-
-US-21 – Voice Navigation
+US-18 – Voice Navigation
 
 
 
@@ -347,12 +211,7 @@ As a visually impaired patient, I want spoken directions.
 • Story Points: 8
 
 
-
-
-
-
-
-US-22 – Dark Mode
+US-19 – Dark Mode
 
 
 
@@ -363,12 +222,7 @@ As a user, I want dark mode so that the app is easier to use in low light.
 • Story Points: 2
 
 
-
-
-
-
-
-US-23 – Feedback Submission
+US-20 – Feedback Submission
 
 
 
@@ -379,24 +233,20 @@ As a patient, I want to leave feedback about navigation accuracy.
 • Story Points: 3
 
 
+US-21 – Staff Login Portal
 
 
 
-
-
-US-24 – Staff Login Portal
-
-
-
-As admin staff, I want to update department details.
+As an admin staff, I want to update department details.
 
 • Priority: Could
 
 • Story Points: 8
 
+
 WONT DO
 
-US-25 – Full NHS Account Integration
+US-22 – Full NHS Account Integration
 
 • Priority: Won’t
 
@@ -404,3 +254,4 @@ US-25 – Full NHS Account Integration
 
 
 • Story Points: 13+
+
