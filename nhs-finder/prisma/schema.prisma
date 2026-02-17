@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Building {
+  BuildingID   Int           @id @unique(map: "sqlite_autoindex_Building_1") @default(autoincrement())
+  BuildingName String        @unique(map: "sqlite_autoindex_Building_2")
+  Destination  Destination[]
+  Path         Path[]
+}
+
+model Destination {
+  DestinationID                Int      @id @unique(map: "sqlite_autoindex_Destination_1") @default(autoincrement())
+  DestinationName              String   @unique(map: "sqlite_autoindex_Destination_2")
+  BuildingID                   Int
+  isEntrance                   Int
+  Building                     Building @relation(fields: [BuildingID], references: [BuildingID], onDelete: Cascade)
+  Path_Path_StartToDestination Path[]   @relation("Path_StartToDestination")
+  Path_Path_EndToDestination   Path[]   @relation("Path_EndToDestination")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model Login {
+  Code String @id
+}
+
+model Media {
+  MediaID                            Int         @id @unique(map: "sqlite_autoindex_Media_1") @default(autoincrement())
+  Media                              String
+  MediaDesc                          String
+  PSequence_PSequence_PrevToMedia    PSequence[] @relation("PSequence_PrevToMedia")
+  PSequence_PSequence_NextToMedia    PSequence[] @relation("PSequence_NextToMedia")
+  PSequence_PSequence_MediaIDToMedia PSequence[] @relation("PSequence_MediaIDToMedia")
+}
+
+model PSequence {
+  PSequenceID                    Int    @id @unique(map: "sqlite_autoindex_PSequence_1") @default(autoincrement())
+  MediaID                        Int
+  Next                           Int
+  Prev                           Int
+  Media_PSequence_PrevToMedia    Media  @relation("PSequence_PrevToMedia", fields: [Prev], references: [MediaID], onDelete: Cascade)
+  Media_PSequence_NextToMedia    Media  @relation("PSequence_NextToMedia", fields: [Next], references: [MediaID], onDelete: Cascade)
+  Media_PSequence_MediaIDToMedia Media  @relation("PSequence_MediaIDToMedia", fields: [MediaID], references: [MediaID], onDelete: Cascade)
+  Path                           Path[]
+}
+
+model Path {
+  PathID                              Int         @id @unique(map: "sqlite_autoindex_Path_1") @default(autoincrement())
+  PathName                            String
+  AccessToggle                        Int
+  Date                                String
+  Start                               Int
+  End                                 Int
+  PSequenceID                         Int
+  StatusID                            Int
+  BuildingID                          Int
+  Status                              Status      @relation(fields: [StatusID], references: [StatusID], onDelete: Cascade)
+  Destination_Path_StartToDestination Destination @relation("Path_StartToDestination", fields: [Start], references: [DestinationID], onDelete: Cascade)
+  PSequence                           PSequence   @relation(fields: [PSequenceID], references: [PSequenceID], onDelete: Cascade)
+  Destination_Path_EndToDestination   Destination @relation("Path_EndToDestination", fields: [End], references: [DestinationID], onDelete: Cascade)
+  Building                            Building    @relation(fields: [BuildingID], references: [BuildingID], onDelete: Cascade)
+}
+
+model Status {
+  StatusID   Int    @id @unique(map: "sqlite_autoindex_Status_1") @default(autoincrement())
+  StatusType String @unique(map: "sqlite_autoindex_Status_2")
+  Path       Path[]
+}
