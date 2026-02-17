@@ -18,12 +18,6 @@ function LoginPage() {
         <h1 className="text-2xl m-4">{t("Welcome")}</h1>
 
         <form className="border border-gray-300 p-4 rounded bg-white text-black">
-          <label htmlFor="uname">
-            <b>{t("Username")}</b>
-          </label>
-          <input className="border border-gray-300 m-2 p-1" type="text" placeholder={t("EnterUsername")} name="uname"required />
-          <br />
-          <br />
 
           <label htmlFor="pass">
             <b>{t("Password")}</b>
