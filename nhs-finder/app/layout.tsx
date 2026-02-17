@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import AccessibilityProvider from "./providers/AccessibilityProvider.tsx";
 
 import { NextIntlClientProvider } from "next-intl";
 import { cookies } from "next/headers";
@@ -22,28 +23,22 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-
-  const cookieStore = await cookies();
-  const locale = cookieStore.get("locale")?.value || "en";
-
-
-  let messages;
-  try {
-    messages = (await import(`@/messages/${locale}.json`)).default;
-  } catch {
-    console.warn(`No messages for "${locale}", falling back to English.`);
-    messages = (await import(`@/messages/en.json`)).default;
-  }
-
   return (
-    <html lang={locale}>
+    <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} bg-[#003087] text-white min-h-screen`}
+        className={`
+          ${geistSans.variable}
+          ${geistMono.variable}
+          min-h-screen
+          antialiased
+        `}
+        style={{ backgroundColor: "var(--nhs-blue)" }}
       >
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <AccessibilityProvider>
           {children}
-        </NextIntlClientProvider>
+        </AccessibilityProvider>
       </body>
+
     </html>
   );
 }
