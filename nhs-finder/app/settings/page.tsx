@@ -18,6 +18,8 @@ type AppSettings = {
 
 const STORAGE_KEY = "nhs_pathfinder_settings_v1";
 
+const NHS_BLUE = "#003087";
+
 const DEFAULT_SETTINGS: AppSettings = {
   language: "en",
   defaultBuilding: "northern-general",
@@ -51,7 +53,6 @@ export default function SettingsPage() {
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
   const [savedToast, setSavedToast] = useState(false);
 
-  // Load settings
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -64,11 +65,9 @@ export default function SettingsPage() {
     }
   }, []);
 
-  // Save settings (and notify provider via storage event)
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-      // Trigger storage listeners in same tab (manual event)
       window.dispatchEvent(new Event("nhs-settings-updated"));
     } catch {}
   }, [settings]);
@@ -81,7 +80,10 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900">
       {/* Header */}
-      <div className="bg-[var(--nhs-blue)] text-white px-6 md:px-8 py-6 flex items-center justify-between">
+      <div
+        className="text-white px-6 md:px-8 py-6 flex items-center justify-between"
+        style={{ backgroundColor: NHS_BLUE }}
+      >
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -112,7 +114,10 @@ export default function SettingsPage() {
             <select
               value={settings.language}
               onChange={(e) =>
-                setSettings((prev) => ({ ...prev, language: e.target.value as Language }))
+                setSettings((prev) => ({
+                  ...prev,
+                  language: e.target.value as Language,
+                }))
               }
               className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600/30"
             >
@@ -126,7 +131,8 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={showSaved}
-              className="mt-4 inline-flex items-center gap-2 bg-[var(--nhs-blue)] text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition"
+              className="mt-4 inline-flex items-center gap-2 text-white px-4 py-2 rounded-lg transition hover:opacity-90"
+              style={{ backgroundColor: NHS_BLUE }}
             >
               <Check className="h-4 w-4" />
               Save language
@@ -163,7 +169,8 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={showSaved}
-              className="mt-4 inline-flex items-center gap-2 bg-[var(--nhs-blue)] text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition"
+              className="mt-4 inline-flex items-center gap-2 text-white px-4 py-2 rounded-lg transition hover:opacity-90"
+              style={{ backgroundColor: NHS_BLUE }}
             >
               <Check className="h-4 w-4" />
               Save default building
@@ -179,7 +186,6 @@ export default function SettingsPage() {
           </p>
 
           <div className="mt-5 space-y-4">
-            {/* High contrast */}
             <ToggleRow
               title="High contrast mode"
               description="Stronger colours and clearer text for visual impairment."
@@ -187,7 +193,6 @@ export default function SettingsPage() {
               onChange={(v) => setSettings((p) => ({ ...p, highContrast: v }))}
             />
 
-            {/* Large text */}
             <ToggleRow
               title="Large text"
               description="Increase overall text size for easier reading."
@@ -195,7 +200,6 @@ export default function SettingsPage() {
               onChange={(v) => setSettings((p) => ({ ...p, largeText: v }))}
             />
 
-            {/* Reduced motion */}
             <ToggleRow
               title="Reduce motion"
               description="Minimise animations to reduce dizziness or discomfort."
@@ -215,15 +219,15 @@ export default function SettingsPage() {
             </button>
 
             <Link
-                href="/"
-                className="mt-4 block w-full md:w-auto text-center bg-[var(--nhs-blue)] text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition"
-                >
-                Done
+              href="/"
+              className="mt-4 block w-full md:w-auto text-center text-white px-4 py-2 rounded-lg transition hover:opacity-90"
+              style={{ backgroundColor: NHS_BLUE }}
+            >
+              Done
             </Link>
           </div>
         </section>
 
-        {/* Toast */}
         {savedToast && (
           <div className="fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-4 py-2 rounded-full text-sm shadow-lg">
             Saved
@@ -255,10 +259,8 @@ function ToggleRow({
       <button
         type="button"
         onClick={() => onChange(!checked)}
-        className={[
-          "relative inline-flex h-7 w-12 items-center rounded-full transition",
-          checked ? "bg-[var(--nhs-blue)]" : "bg-gray-300",
-        ].join(" ")}
+        className="relative inline-flex h-7 w-12 items-center rounded-full transition"
+        style={{ backgroundColor: checked ? "#003087" : "#d1d5db" }}
         aria-pressed={checked}
         aria-label={title}
       >
