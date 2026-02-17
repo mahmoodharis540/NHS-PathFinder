@@ -6,7 +6,9 @@ import AccessibilityToolbar from "@/components/AccessibilityToolbar";
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-[#003087] text-white relative">
-      <TopBar />
+        
+        
+        <TopBar />
 
       <div className="absolute bottom-4 left-4">
         <Languages />
