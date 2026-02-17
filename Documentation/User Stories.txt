@@ -34,7 +34,7 @@ As a patient, I want to see floor, building and room number so that I know exact
 
 
 
-US-03 – Interactive Map View
+US-03 – Map View
 
 
 
@@ -42,9 +42,9 @@ As a patient, I want to see the department location on a map so that I can visua
 
 • Priority: Must
 
-• Story Points: 8
+• Story Points: 3
 
-• Reason: Map integration + UI complexity
+• Reason: Map integration
 
 
 
@@ -401,5 +401,6 @@ US-25 – Full NHS Account Integration
 • Priority: Won’t
 
 • Reason: Too complex for Year 2 scope
+
 
 • Story Points: 13+
