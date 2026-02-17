@@ -100,14 +100,14 @@ Priority: Must
 Story Points: 5
 
 
-SHOULD HAVE 
+US-10 – QR Code at Entrances
+
+As a visitor, I want to scan a QR code at the entrance so that my starting location is set automatically.
+
+Points: 5
 
 
-
-Important but not required for MVP.
-
-
-US-10 – Appointment Lookup
+US-11 – Appointment Lookup
 
 
 
@@ -118,7 +118,7 @@ As a patient, I want to enter my appointment reference so that I can automatical
 • Story Points: 5
 
 
-US-11 – “Navigate to Appointment” Button
+US-12 – “Navigate to Appointment” Button
 
 
 
@@ -129,7 +129,7 @@ As a patient, I want one-click navigation to my appointment location.
 • Story Points: 3
 
 
-US-12 – Parking Information
+US-13 – Parking Information
 
 
 
@@ -140,7 +140,7 @@ As a visitor, I want to see nearby car parks so that I know where to park.
 • Story Points: 5
 
 
-US-13 – Nearest Entrance Suggestion
+US-14 – Nearest Entrance Suggestion
 
 
 
@@ -151,7 +151,7 @@ As a visitor, I want the app to suggest the closest entrance to my destination s
 • Story Points: 8
 
 
-US-14 – Lift routes 
+US-15 – Lift routes 
 
 
 
@@ -162,7 +162,7 @@ As a patient, I want lift routes to be an option to help me get around easier.
 • Story Points: 3
 
 
-US-15 – Large Text Mode
+US-16 – Large Text Mode
 
 
 
@@ -176,7 +176,7 @@ As an elderly patient, I want an adjustable text size so that instructions are e
 COULD HAVE
 
 
-US-16 – Indoor GPS Tracking
+US-17 – Indoor GPS Tracking
 
 
 
@@ -189,7 +189,7 @@ As a patient, I want real-time indoor tracking so that I can see my position on 
 • Reason: Technically complex
 
 
-US-17 – Multi-Language Support
+US-18 – Multi-Language Support
 
 
 
@@ -200,7 +200,7 @@ As an international visitor, I want the app to be available in multiple language
 • Story Points: 8
 
 
-US-18 – Voice Navigation
+US-19 – Voice Navigation
 
 
 
@@ -211,7 +211,7 @@ As a visually impaired patient, I want spoken directions.
 • Story Points: 8
 
 
-US-19 – Dark Mode
+US-20 – Dark Mode
 
 
 
@@ -222,7 +222,7 @@ As a user, I want dark mode so that the app is easier to use in low light.
 • Story Points: 2
 
 
-US-20 – Feedback Submission
+US-21 – Feedback Submission
 
 
 
@@ -233,7 +233,7 @@ As a patient, I want to leave feedback about navigation accuracy.
 • Story Points: 3
 
 
-US-21 – Staff Login Portal
+US-22 – Staff Login Portal
 
 
 
@@ -246,7 +246,7 @@ As an admin staff, I want to update department details.
 
 WONT DO
 
-US-22 – Full NHS Account Integration
+US-23 – Full NHS Account Integration
 
 • Priority: Won’t
 
@@ -254,4 +254,5 @@ US-22 – Full NHS Account Integration
 
 
 • Story Points: 13+
+
 
