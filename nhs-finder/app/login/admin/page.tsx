@@ -13,7 +13,7 @@ export default function StaffPortalPage() {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
-      <div className="bg-blue-700 text-white px-8 py-6 flex justify-between items-center">
+      <div className="bg-[#003087] text-white px-8 py-6 flex justify-between items-center">
         <div className="flex items-center gap-4">
           <button
             type="button"
@@ -32,7 +32,7 @@ export default function StaffPortalPage() {
 
         <Link
           href="/settings"
-          className="bg-white text-blue-700 p-2 rounded-full hover:bg-gray-100 transition"
+          className="bg-white text-[#003087] p-2 rounded-full hover:bg-gray-100 transition"
         >
           <Settings className="h-5 w-5" />
         </Link>
@@ -162,7 +162,7 @@ export default function StaffPortalPage() {
 
               {/* Buttons */}
               <div className="flex gap-4">
-                <button className="flex-1 bg-blue-700 text-white py-3 rounded-lg text-sm font-medium hover:bg-blue-800 transition">
+                <button className="flex-1 bg-[#003087] text-white py-3 rounded-lg text-sm font-medium hover:bg-blue-800 transition">
                   Upload Path
                 </button>
 

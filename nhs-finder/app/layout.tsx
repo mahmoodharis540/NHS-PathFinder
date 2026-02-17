@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import AccessibilityProvider from "./providers/AccessibilityProvider.tsx";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,13 +30,15 @@ export default function RootLayout({
           ${geistSans.variable}
           ${geistMono.variable}
           min-h-screen
-          bg-[#003087] 
-          text-gray-900
           antialiased
         `}
+        style={{ backgroundColor: "var(--nhs-blue)" }}
       >
-        {children}
+        <AccessibilityProvider>
+          {children}
+        </AccessibilityProvider>
       </body>
+
     </html>
   );
 }
