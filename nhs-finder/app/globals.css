@@ -48,6 +48,7 @@
 
 :root {
   --radius: 0.625rem;
+  --nhs-blue: #003087;
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
@@ -119,7 +120,48 @@
   * {
     @apply border-border outline-ring/50;
   }
+
+  /* ✅ IMPORTANT CHANGE:
+     Don't force body bg/text here — let layout/page control it.
+     This prevents theme tokens from overriding your Tailwind page styles. */
   body {
-    @apply bg-background text-foreground;
+    @apply antialiased;
   }
+}
+
+/* -----------------------------
+   Accessibility helpers
+   ----------------------------- */
+
+/* High contrast mode */
+.high-contrast body {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+.high-contrast a {
+  text-decoration: underline;
+}
+
+.high-contrast input,
+.high-contrast select,
+.high-contrast textarea {
+  background: #000 !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
+
+/* Large text mode */
+.large-text body {
+  font-size: 112.5%;
+}
+
+/* Reduced motion mode */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
 }
