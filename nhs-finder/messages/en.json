@@ -111,9 +111,13 @@
   "edit": "Edit",
   "export": "Export",
   "delete": "Delete"
+},
+"languageSelector": {
+  "language": "Language",
+  "english": "English",
+  "polish": "Polish",
+  "french": "French",
+  "spanish": "Spanish"
 }
-
-
-
 
 }

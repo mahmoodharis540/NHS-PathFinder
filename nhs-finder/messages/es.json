@@ -110,9 +110,13 @@
   "edit": "Editar",
   "export": "Exportar",
   "delete": "Eliminar"
+},
+"languageSelector": {
+  "language": "Idioma",
+  "english": "Inglés",
+  "polish": "Polaco",
+  "french": "Francés",
+  "spanish": "Español"
 }
-
-
-
 
 }
