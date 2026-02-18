@@ -18,7 +18,8 @@ export default function HomePage() {
         <h1 className="text-3xl font-bold mb-2">{t("welcome")}</h1>
         <p className="text-sm italic mb-6">{t("subtitle")}</p>
         <p className="mb-6">{t("prompt")}</p>
-        <MainDropdown />
+        <MainDropdown/>
+        <MainDropdown/>
       </div>
       <AccessibilityToolbar />
     </main>

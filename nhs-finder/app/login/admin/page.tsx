@@ -1,198 +1,144 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Settings } from "lucide-react";
 import ManagePathsSection from "@/components/ManagePathsSection";
 
-type Building = { BuildingID: number; BuildingName: string };
-type Status = { StatusID: number; StatusType: string };
-type Destination = {
-  DestinationID: number;
-  DestinationName: string;
+type Building = {
   BuildingID: number;
-  isEntrance: number;
+  BuildingName: string;
 };
+
+function moveItem<T>(arr: T[], from: number, to: number) {
+  const copy = [...arr];
+  const [item] = copy.splice(from, 1);
+  copy.splice(to, 0, item);
+  return copy;
+}
 
 export default function StaffPortalPage() {
   const [tab, setTab] = useState<"upload" | "manage">("upload");
   const router = useRouter();
 
-  // dropdown data
   const [buildings, setBuildings] = useState<Building[]>([]);
-  const [statuses, setStatuses] = useState<Status[]>([]);
-  const [destinations, setDestinations] = useState<Destination[]>([]);
+  const [loadingBuildings, setLoadingBuildings] = useState(false);
 
-  // form state (IDs for DB)
-  const [BuildingID, setBuildingID] = useState<number | "">("");
-  const [PathName, setPathName] = useState("");
-  const [Start, setStart] = useState<number | "">("");
-  const [End, setEnd] = useState<number | "">("");
-  const [StatusID, setStatusID] = useState<number | "">("");
-  const [AccessToggle, setAccessToggle] = useState<number>(0);
+  // Form state
+  const [buildingId, setBuildingId] = useState<string>("");
+  const [pathName, setPathName] = useState("");
+  const [startName, setStartName] = useState("");
+  const [endName, setEndName] = useState("");
+  const [description, setDescription] = useState("");
+  const [accessible, setAccessible] = useState(false);
 
-  // ✅ renamed from `Date` to avoid colliding with global Date()
-  const [pathDate, setPathDate] = useState<string>(
-    new Date().toISOString().slice(0, 10)
-  );
-
-  // Searchable input text for Start/End
-  const [startText, setStartText] = useState("");
-  const [endText, setEndText] = useState("");
-  const [showStartDropdown, setShowStartDropdown] = useState(false);
-  const [showEndDropdown, setShowEndDropdown] = useState(false);
-
-  // Optional extras (not in DB yet)
   const [files, setFiles] = useState<File[]>([]);
-  const [notes, setNotes] = useState("");
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // UI state
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [message, setMessage] = useState<string>("");
 
-  // Load buildings + statuses once
+  // drag reorder state
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+
   useEffect(() => {
-    (async () => {
+    const loadBuildings = async () => {
+      setLoadingBuildings(true);
+      setMessage("");
       try {
-        const [b, s] = await Promise.all([
-          fetch("/api/buildings").then((r) => r.json()),
-          fetch("/api/statuses").then((r) => r.json()),
-        ]);
-
-        setBuildings(Array.isArray(b) ? b : []);
-        setStatuses(Array.isArray(s) ? s : []);
-
-        // set default status if available and not chosen yet
-        if (Array.isArray(s) && s.length && StatusID === "") {
-          setStatusID(s[0].StatusID);
-        }
-      } catch (e) {
-        console.error(e);
-        setError("Failed to load dropdown data.");
+        const res = await fetch("/api/buildings");
+        const text = await res.text();
+        if (!res.ok) throw new Error(text);
+        const data: Building[] = JSON.parse(text);
+        setBuildings(data);
+      } catch (e: any) {
+        setMessage(e?.message ?? "Failed to load buildings.");
+      } finally {
+        setLoadingBuildings(false);
       }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    };
+
+    loadBuildings();
   }, []);
 
-  // Load destinations when building changes
-  useEffect(() => {
-    (async () => {
-      if (BuildingID === "") {
-        setDestinations([]);
-        setStart("");
-        setEnd("");
-        setStartText("");
-        setEndText("");
-        return;
-      }
+  const canSubmit = useMemo(() => {
+    return (
+      !!buildingId &&
+      pathName.trim().length > 0 &&
+      startName.trim().length > 0 &&
+      endName.trim().length > 0 &&
+      files.length > 0 &&
+      !isSaving
+    );
+  }, [buildingId, pathName, startName, endName, files.length, isSaving]);
 
-      try {
-        const d = await fetch(`/api/destinations?buildingId=${BuildingID}`).then(
-          (r) => r.json()
-        );
-        setDestinations(Array.isArray(d) ? d : []);
-        // clear previous selections when switching building
-        setStart("");
-        setEnd("");
-        setStartText("");
-        setEndText("");
-      } catch (e) {
-        console.error(e);
-        setError("Failed to load destinations.");
-      }
-    })();
-  }, [BuildingID]);
+  const openFilePicker = () => fileInputRef.current?.click();
 
-  const filteredStart = useMemo(() => {
-    const q = startText.trim().toLowerCase();
-    if (!q) return destinations.slice(0, 50);
-    return destinations
-      .filter((d) => d.DestinationName.toLowerCase().includes(q))
-      .slice(0, 50);
-  }, [destinations, startText]);
-
-  const filteredEnd = useMemo(() => {
-    const q = endText.trim().toLowerCase();
-    if (!q) return destinations.slice(0, 50);
-    return destinations
-      .filter((d) => d.DestinationName.toLowerCase().includes(q))
-      .slice(0, 50);
-  }, [destinations, endText]);
-
-  const onPickFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const list = e.target.files ? Array.from(e.target.files) : [];
-    setFiles(list);
+  const addFiles = (incoming: FileList | File[]) => {
+    const next = Array.from(incoming);
+    setFiles((prev) => [...prev, ...next]);
   };
 
-  const resetForm = () => {
-    setPathName("");
-    setStart("");
-    setEnd("");
-    setStartText("");
-    setEndText("");
-    setAccessToggle(0);
-    setPathDate(new Date().toISOString().slice(0, 10));
-    setFiles([]);
-    setNotes("");
-    setError(null);
-    setSuccess(null);
-    setShowStartDropdown(false);
-    setShowEndDropdown(false);
+  const removeFile = (idx: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  const onUploadPath = async () => {
-    setError(null);
-    setSuccess(null);
+  const moveUp = (idx: number) => {
+    if (idx <= 0) return;
+    setFiles((prev) => moveItem(prev, idx, idx - 1));
+  };
 
-    if (
-      BuildingID === "" ||
-      StatusID === "" ||
-      !PathName.trim() ||
-      Start === "" ||
-      End === ""
-    ) {
-      setError("Please fill: Building, Path Name, Start, End, Status.");
-      return;
-    }
+  const moveDown = (idx: number) => {
+    if (idx >= files.length - 1) return;
+    setFiles((prev) => moveItem(prev, idx, idx + 1));
+  };
 
-    if (Start === End) {
-      setError("Start and End cannot be the same destination.");
-      return;
-    }
+  const submit = async (statusType: "Active" | "Draft") => {
+    setMessage("");
+    setIsSaving(true);
 
-    setIsSubmitting(true);
     try {
-      const res = await fetch("/api/paths", {
+      const fd = new FormData();
+      fd.append("buildingId", buildingId);
+      fd.append("pathName", pathName.trim());
+      fd.append("startName", startName.trim());
+      fd.append("endName", endName.trim());
+      fd.append("description", description.trim());
+      fd.append("statusType", statusType);
+      fd.append("accessToggle", accessible ? "1" : "0");
+
+      // Optional: store date as YYYY-MM-DD
+      const d = new Date();
+      const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+        d.getDate()
+      ).padStart(2, "0")}`;
+      fd.append("date", date);
+
+      // ✅ Order is preserved here — your API will follow this order
+      for (const f of files) fd.append("files", f);
+
+      const res = await fetch("/api/admin/path", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          PathName: PathName.trim(),
-          BuildingID,
-          Start,
-          End,
-          StatusID,
-          AccessToggle,
-          Date: pathDate, // matches schema field `Date`
-          // notes/files not saved yet (schema doesn't include them)
-        }),
+        body: fd,
       });
 
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        setError(data?.error ?? "Failed to upload path.");
-        return;
-      }
+      const text = await res.text();
+      if (!res.ok) throw new Error(text);
 
-      setSuccess("Path uploaded successfully.");
-      setTab("manage");
-      resetForm();
-    } catch (e) {
-      console.error(e);
-      setError("Server error while uploading path.");
+      setMessage(statusType === "Draft" ? "Saved draft to database ✅" : "Uploaded path to database ✅");
+
+      // reset form
+      setPathName("");
+      setStartName("");
+      setEndName("");
+      setDescription("");
+      setAccessible(false);
+      setFiles([]);
+    } catch (e: any) {
+      setMessage(e?.message ?? "Upload failed.");
     } finally {
-      setIsSubmitting(false);
+      setIsSaving(false);
     }
   };
 
@@ -216,10 +162,7 @@ export default function StaffPortalPage() {
           </div>
         </div>
 
-        <Link
-          href="/settings"
-          className="bg-white text-[#003087] p-2 rounded-full hover:bg-gray-100 transition"
-        >
+        <Link href="/settings" className="bg-white text-[#003087] p-2 rounded-full hover:bg-gray-100 transition">
           <Settings className="h-5 w-5" />
         </Link>
       </div>
@@ -230,9 +173,7 @@ export default function StaffPortalPage() {
           <button
             onClick={() => setTab("upload")}
             className={`px-6 py-2 rounded-full text-sm font-medium ${
-              tab === "upload"
-                ? "bg-black text-white"
-                : "bg-gray-200 text-gray-900 hover:bg-gray-300"
+              tab === "upload" ? "bg-black text-white" : "bg-gray-200 text-gray-900 hover:bg-gray-300"
             }`}
           >
             Upload Paths
@@ -241,9 +182,7 @@ export default function StaffPortalPage() {
           <button
             onClick={() => setTab("manage")}
             className={`px-6 py-2 rounded-full text-sm font-medium ${
-              tab === "manage"
-                ? "bg-black text-white"
-                : "bg-gray-200 text-gray-900 hover:bg-gray-300"
+              tab === "manage" ? "bg-black text-white" : "bg-gray-200 text-gray-900 hover:bg-gray-300"
             }`}
           >
             Manage Paths
@@ -257,28 +196,26 @@ export default function StaffPortalPage() {
           <div className="bg-white rounded-xl shadow-sm p-8">
             <h2 className="text-xl font-semibold mb-2">Upload New Path</h2>
             <p className="text-gray-500 mb-6">
-              Upload navigation paths for patients to follow within hospital
-              buildings
+              Upload navigation paths for patients to follow within hospital buildings
             </p>
 
-            {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
-            {success && <p className="mb-4 text-sm text-green-700">{success}</p>}
+            {message && (
+              <div className="mb-4 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-800 whitespace-pre-wrap">
+                {message}
+              </div>
+            )}
 
             {/* Select Building */}
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">
-                Select Building
-              </label>
+              <label className="block text-sm font-medium mb-2">Select Building</label>
               <select
-                value={BuildingID}
-                onChange={(e) =>
-                  setBuildingID(e.target.value ? Number(e.target.value) : "")
-                }
+                value={buildingId}
+                onChange={(e) => setBuildingId(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
               >
-                <option value="">Choose a building</option>
+                <option value="">{loadingBuildings ? "Loading buildings..." : "Choose a building"}</option>
                 {buildings.map((b) => (
-                  <option key={b.BuildingID} value={b.BuildingID}>
+                  <option key={b.BuildingID} value={String(b.BuildingID)}>
                     {b.BuildingName}
                   </option>
                 ))}
@@ -289,87 +226,32 @@ export default function StaffPortalPage() {
             <div className="mb-4">
               <label className="block text-sm font-medium mb-2">Path Name</label>
               <input
-                value={PathName}
+                value={pathName}
                 onChange={(e) => setPathName(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
                 placeholder="e.g., Main Entrance to Cardiology"
               />
             </div>
 
-            {/* Start & End Points (Searchable dropdown inputs) */}
+            {/* Start & End Points */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              {/* Start */}
-              <div className="relative">
-                <label className="block text-sm font-medium mb-2">
-                  Start Point
-                </label>
+              <div>
+                <label className="block text-sm font-medium mb-2">Start Point</label>
                 <input
-                  value={startText}
-                  onChange={(e) => {
-                    setStartText(e.target.value);
-                    setShowStartDropdown(true);
-                    setStart("");
-                  }}
-                  onFocus={() => setShowStartDropdown(true)}
-                  onBlur={() => {
-                    // delay closing so click registers
-                    setTimeout(() => setShowStartDropdown(false), 120);
-                  }}
-                  disabled={BuildingID === ""}
+                  value={startName}
+                  onChange={(e) => setStartName(e.target.value)}
                   className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
-                  placeholder={BuildingID === "" ? "Select a building first" : "Type to search..."}
+                  placeholder="e.g., Main Entrance"
                 />
-
-                {showStartDropdown && BuildingID !== "" && (
-                  <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow max-h-44 overflow-y-auto">
-                    {filteredStart.length > 0 ? (
-                      filteredStart.map((d) => (
-                        <button
-                          key={d.DestinationID}
-                          type="button"
-                          onMouseDown={(e) => e.preventDefault()}
-                          onClick={() => {
-                            setStart(d.DestinationID);
-                            setStartText(d.DestinationName);
-                            setShowStartDropdown(false);
-                          }}
-                          className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                        >
-                          {d.DestinationName}
-                        </button>
-                      ))
-                    ) : (
-                      <div className="px-4 py-2 text-sm text-gray-500">
-                        No matches found
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                <p className="mt-1 text-xs text-gray-500">
-                  Selected ID: {Start === "" ? "—" : Start}
-                </p>
               </div>
 
-              {/* End */}
-              <div className="relative">
-                <label className="block text-sm font-medium mb-2">
-                  End Point
-                </label>
+              <div>
+                <label className="block text-sm font-medium mb-2">End Point</label>
                 <input
-                  value={endText}
-                  onChange={(e) => {
-                    setEndText(e.target.value);
-                    setShowEndDropdown(true);
-                    setEnd("");
-                  }}
-                  onFocus={() => setShowEndDropdown(true)}
-                  onBlur={() => {
-                    setTimeout(() => setShowEndDropdown(false), 120);
-                  }}
-                  disabled={BuildingID === ""}
+                  value={endName}
+                  onChange={(e) => setEndName(e.target.value)}
                   className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
-                  placeholder={BuildingID === "" ? "Select a building first" : "Type to search..."}
+                  placeholder="e.g., Cardiology - Room 301"
                 />
 
                 {showEndDropdown && BuildingID !== "" && (
@@ -404,92 +286,158 @@ export default function StaffPortalPage() {
               </div>
             </div>
 
-            {/* Floors (kept as your original UI placeholders) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Start Floor
-                </label>
-                <select className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm">
-                  <option>Select floor</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">End Floor</label>
-                <select className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm">
-                  <option>Select floor</option>
-                </select>
-              </div>
+            {/* Accessible toggle */}
+            <div className="mb-6 flex items-center gap-3">
+              <input
+                id="accessible"
+                type="checkbox"
+                checked={accessible}
+                onChange={(e) => setAccessible(e.target.checked)}
+                className="h-4 w-4"
+              />
+              <label htmlFor="accessible" className="text-sm">
+                Accessible route (avoid stairs) / AccessToggle
+              </label>
             </div>
 
-            {/* Status + Accessible + Date */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium mb-2">Status</label>
-                <select
-                  value={StatusID}
-                  onChange={(e) =>
-                    setStatusID(e.target.value ? Number(e.target.value) : "")
-                  }
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
-                >
-                  <option value="">Select status</option>
-                  {statuses.map((s) => (
-                    <option key={s.StatusID} value={s.StatusID}>
-                      {s.StatusType}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            {/* Upload Box */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="image/*,video/*"
+              className="hidden"
+              onChange={(e) => {
+                if (e.target.files) addFiles(e.target.files);
+                e.currentTarget.value = "";
+              }}
+            />
 
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Accessible Route
-                </label>
-                <select
-                  value={AccessToggle}
-                  onChange={(e) => setAccessToggle(Number(e.target.value))}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
-                >
-                  <option value={0}>No</option>
-                  <option value={1}>Yes</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Date</label>
-                <input
-                  type="date"
-                  value={pathDate}
-                  onChange={(e) => setPathDate(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
-                />
-              </div>
-            </div>
-
-            {/* Upload Box (kept, but functional file input) */}
-            <div className="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center text-gray-500 mb-6">
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={openFilePicker}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") openFilePicker();
+              }}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                if (e.dataTransfer.files) addFiles(e.dataTransfer.files);
+              }}
+              className="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center text-gray-500 mb-4 cursor-pointer hover:bg-gray-50 transition"
+            >
               <p className="text-3xl mb-2">📁</p>
               <p className="text-sm">Click to upload or drag and drop</p>
-              <p className="text-xs mt-1">
-                Supported formats: JPEG, HEVC, MOV, PNG, MP4
-              </p>
+              <p className="text-xs mt-1">Then reorder the list below before uploading</p>
+            </div>
 
-              <div className="mt-4">
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*,video/*"
-                  onChange={onPickFiles}
-                  className="block w-full text-sm"
-                />
-                {files.length > 0 && (
-                  <p className="mt-2 text-xs text-gray-600">
-                    {files.length} file(s) selected
-                  </p>
-                )}
+            {/* Reorder list */}
+            {files.length > 0 && (
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-medium">Files order (drag to reorder)</p>
+                  <p className="text-xs text-gray-500">Top = first step</p>
+                </div>
+
+                <div className="space-y-2">
+                  {files.map((f, idx) => (
+                    <div
+                      key={`${f.name}-${f.size}-${idx}`}
+                      draggable
+                      onDragStart={() => setDragIndex(idx)}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = "move";
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        if (dragIndex === null || dragIndex === idx) return;
+                        setFiles((prev) => moveItem(prev, dragIndex, idx));
+                        setDragIndex(null);
+                      }}
+                      onDragEnd={() => setDragIndex(null)}
+                      className={`flex items-center justify-between rounded-lg border px-3 py-2 text-sm bg-white ${
+                        dragIndex === idx ? "border-blue-400" : "border-gray-200"
+                      }`}
+                      title="Drag to reorder"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="text-gray-400 select-none">☰</span>
+                        <span className="text-gray-500 w-6 text-right select-none">{idx + 1}.</span>
+                        <div className="min-w-0">
+                          <div className="truncate">{f.name}</div>
+                          <div className="text-xs text-gray-400">{Math.round(f.size / 1024)} KB</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => moveUp(idx)}
+                          className="px-2 py-1 rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-40"
+                          disabled={idx === 0}
+                          aria-label="Move up"
+                        >
+                          ↑
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => moveDown(idx)}
+                          className="px-2 py-1 rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-40"
+                          disabled={idx === files.length - 1}
+                          aria-label="Move down"
+                        >
+                          ↓
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeFile(idx)}
+                          className="text-red-600 hover:underline ml-2"
+                        >
+                          remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
+            )}
+
+            {/* Description */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium mb-2">Media Description (Optional)</label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm min-h-[100px]"
+                placeholder="Optional notes for these media items..."
+              />
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-4">
+              <button
+                disabled={!canSubmit}
+                onClick={() => submit("Active")}
+                className={`flex-1 py-3 rounded-lg text-sm font-medium transition ${
+                  canSubmit ? "bg-[#003087] text-white hover:bg-blue-800" : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                }`}
+              >
+                {isSaving ? "Saving..." : "Upload Path"}
+              </button>
+
+              <button
+                disabled={!canSubmit}
+                onClick={() => submit("Draft")}
+                className={`flex-1 py-3 rounded-lg text-sm transition ${
+                  canSubmit
+                    ? "bg-gray-100 border border-gray-300 hover:bg-gray-200"
+                    : "bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed"
+                }`}
+              >
+                {isSaving ? "Saving..." : "Save as Draft"}
+              </button>
             </div>
 
             {/* Description */}
@@ -530,7 +478,6 @@ export default function StaffPortalPage() {
         </div>
       )}
 
-      {/* Manage tab */}
       {tab === "manage" && <ManagePathsSection />}
     </div>
   );
