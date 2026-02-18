@@ -117,6 +117,10 @@
   "polish": "Polaco",
   "french": "Francés",
   "spanish": "Español"
+},
+"topBar": {
+  "staffPortal": "Portal del personal",
+  "settings": "Configuración"
 }
 
 }

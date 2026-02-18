@@ -118,6 +118,10 @@
   "polish": "Polish",
   "french": "French",
   "spanish": "Spanish"
+},
+"topBar": {
+  "staffPortal": "Staff Portal",
+  "settings": "Settings"
 }
 
 }
