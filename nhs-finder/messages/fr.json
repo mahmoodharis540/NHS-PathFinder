@@ -1,15 +1,118 @@
 {
   "home": {
     "welcome": "Bienvenue sur NHS Finder",
-    "subtitle": "Votre passerelle vers les services de santé." ,
-    "prompt": "Dans quel bâtiment souhaitez-vous vous rendre ? "
+    "pathfinder": "Pathfinder",
+    "subtitle": "Votre passerelle vers les services de santé.",
+    "prompt": "Vers quel bâtiment souhaitez-vous aller ?",
+
+    "nhsLogoAlt": "Logo NHS",
+
+    "whereAreYouLabel": "Où êtes-vous :",
+    "whereAreYouPlaceholder": "Recherchez l'entrée où vous vous trouvez...",
+
+    "appointmentBuildingLabel": "Dans quel bâtiment avez-vous votre rendez-vous :",
+    "appointmentBuildingPlaceholder": "Recherchez le bâtiment/service...",
+
+    "startNavigation": "Démarrer la navigation"
   },
   "login": {
-    "Welcome": "Page de connexion",
-    "Username" : "Nom d'utilisateur",
-    "Password" :" Mot de passe ",
-    "EnterUsername" : "Entrer le nom d'utilisateur",
-    "EnterPassword" : "Entrer le mot de passe" ,
-    "Login" : "Connexion" 
-  }
+  "Welcome": "Page de connexion",
+  "Username": "Nom d'utilisateur",
+  "Password": "Mot de passe",
+  "EnterUsername": "Entrez le nom d'utilisateur",
+  "EnterPassword": "Entrez le mot de passe",
+  "Login": "Se connecter"
+},
+"settings": {
+  "title": "Paramètres",
+  "subtitle": "Accessibilité et préférences",
+  "back": "Retour à la page principale",
+
+  "languageTitle": "Langue",
+  "languageDesc": "Choisissez la langue utilisée dans l'application.",
+  "appLanguage": "Langue de l'application",
+  "saveLanguage": "Enregistrer la langue",
+
+  "defaultBuildingTitle": "Bâtiment par défaut",
+  "defaultBuildingDesc": "L'application peut présélectionner ce bâtiment pour gagner du temps.",
+  "chooseBuilding": "Choisir un bâtiment",
+  "saveDefaultBuilding": "Enregistrer le bâtiment par défaut",
+
+  "accessibilityTitle": "Accessibilité",
+  "accessibilityDesc": "Options pour améliorer la lisibilité et réduire la fatigue.",
+  "highContrast": "Mode contraste élevé",
+  "highContrastDesc": "Couleurs plus fortes et texte plus clair pour les déficiences visuelles.",
+  "largeText": "Texte agrandi",
+  "largeTextDesc": "Augmenter la taille du texte pour une lecture plus facile.",
+  "reduceMotion": "Réduire les animations",
+  "reduceMotionDesc": "Réduire les animations pour éviter les vertiges ou l'inconfort.",
+
+  "resetDefaults": "Réinitialiser par défaut",
+  "done": "Terminé",
+  "saved": "Enregistré",
+
+  "northernGeneral": "Hôpital Northern General",
+  "royalHallamshire": "Hôpital Royal Hallamshire",
+  "westonPark": "Hôpital Weston Park"
+},
+"staff": {
+  "title": "Portail du personnel",
+  "subtitle": "Système de gestion des itinéraires",
+  "back": "Retour à la page principale",
+
+  "uploadTab": "Téléverser des itinéraires",
+  "manageTab": "Gérer les itinéraires",
+
+  "uploadNewPath": "Téléverser un nouvel itinéraire",
+  "uploadDescription": "Téléversez des itinéraires de navigation à suivre par les patients dans les bâtiments de l'hôpital",
+
+  "failedLoadBuildings": "Impossible de charger les bâtiments.",
+  "savedDraft": "Brouillon enregistré dans la base de données.",
+  "uploadedPath": "Itinéraire téléversé dans la base de données.",
+  "uploadFailed": "Échec du téléversement.",
+
+  "pathName": "Nom de l'itinéraire",
+  "pathNamePlaceholder": "ex. Entrée principale vers la cardiologie",
+
+  "startPoint": "Point de départ",
+  "startPointPlaceholder": "Recherchez l'entrée où vous vous trouvez...",
+
+  "endPoint": "Point d'arrivée",
+  "endPointPlaceholder": "Recherchez le bâtiment/service...",
+
+  "accessibleRoute": "Itinéraire accessible (éviter les escaliers) / AccessToggle",
+
+  "clickToUpload": "Cliquez pour téléverser ou glisser-déposer",
+  "reorderBeforeUpload": "Réorganisez ensuite la liste ci-dessous avant de téléverser",
+
+  "fileOrder": "Ordre des fichiers (glisser pour réorganiser)",
+  "topIsFirst": "Haut = première étape",
+
+  "dragToReorder": "Glisser pour réorganiser",
+  "moveUp": "Monter",
+  "moveDown": "Descendre",
+  "remove": "supprimer",
+
+  "mediaDescription": "Description du média (optionnel)",
+  "mediaDescriptionPlaceholder": "Notes optionnelles pour ces médias...",
+
+  "uploadPath": "Téléverser l'itinéraire",
+  "saveDraft": "Enregistrer en brouillon",
+  "saving": "Enregistrement..."
+},
+"managePaths": {
+  "searchPlaceholder": "Rechercher des itinéraires...",
+  "filterByBuilding": "Filtrer par bâtiment",
+  "filterByStatus": "Filtrer par statut",
+  "active": "Actif",
+  "draft": "Brouillon",
+  "uploadedPaths": "Itinéraires téléversés",
+  "edit": "Modifier",
+  "export": "Exporter",
+  "delete": "Supprimer"
+}
+
+
+
+
 }
