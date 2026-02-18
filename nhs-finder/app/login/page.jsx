@@ -1,20 +1,40 @@
 "use client";
 
-import { prisma } from '@/lib/prisma'
 import Languages from "@/components/Languages";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 
 function LoginPage() {
+  const router = useRouter();
+  const t = useTranslations("login");
+
   async function loginFunc(e) {
     e.preventDefault();
 
-    const res = await fetch("/api/buildings");
-    const data = await res.json();
+    const formData = new FormData(e.target);
+    const pass = formData.get("pass");
 
-    console.log(data);
-}
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ pass }),
+      });
 
-  const t = useTranslations("login");
+      const data = await res.json();
+
+      if (data.success) {
+        router.push("/login/admin");
+      } else {
+        alert("Wrong password");
+      }
+    } catch (err) {
+      alert("Server error");
+      console.error(err);
+    }
+  }
 
   return (
     <main className="min-h-screen bg-[#003087] text-white relative">
