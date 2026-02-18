@@ -4,7 +4,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Settings } from "lucide-react";
+
 import ManagePathsSection from "@/components/ManagePathsSection";
+import AdminSearchDropdown from "@/components/AdminSearchDropdown";
+import AdminBuildingSelect from "@/components/AdminBuildingSelect";
 
 type Building = {
   BuildingID: number;
@@ -19,20 +22,22 @@ function moveItem<T>(arr: T[], from: number, to: number) {
 }
 
 export default function StaffPortalPage() {
-  const [tab, setTab] = useState<"upload" | "manage">("upload");
   const router = useRouter();
+
+  const [tab, setTab] = useState<"upload" | "manage">("upload");
 
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [loadingBuildings, setLoadingBuildings] = useState(false);
 
   // Form state
-  const [buildingId, setBuildingId] = useState<string>("");
+  const [buildingId, setBuildingId] = useState<string>(""); // OPTIONAL now
   const [pathName, setPathName] = useState("");
   const [startName, setStartName] = useState("");
   const [endName, setEndName] = useState("");
   const [description, setDescription] = useState("");
   const [accessible, setAccessible] = useState(false);
 
+  // Media files
   const [files, setFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -51,7 +56,7 @@ export default function StaffPortalPage() {
         const text = await res.text();
         if (!res.ok) throw new Error(text);
         const data: Building[] = JSON.parse(text);
-        setBuildings(data);
+        setBuildings(Array.isArray(data) ? data : []);
       } catch (e: any) {
         setMessage(e?.message ?? "Failed to load buildings.");
       } finally {
@@ -64,14 +69,13 @@ export default function StaffPortalPage() {
 
   const canSubmit = useMemo(() => {
     return (
-      !!buildingId &&
       pathName.trim().length > 0 &&
       startName.trim().length > 0 &&
       endName.trim().length > 0 &&
       files.length > 0 &&
       !isSaving
     );
-  }, [buildingId, pathName, startName, endName, files.length, isSaving]);
+  }, [pathName, startName, endName, files.length, isSaving]);
 
   const openFilePicker = () => fileInputRef.current?.click();
 
@@ -100,7 +104,9 @@ export default function StaffPortalPage() {
 
     try {
       const fd = new FormData();
-      fd.append("buildingId", buildingId);
+
+      if (buildingId) fd.append("buildingId", buildingId);
+
       fd.append("pathName", pathName.trim());
       fd.append("startName", startName.trim());
       fd.append("endName", endName.trim());
@@ -108,14 +114,12 @@ export default function StaffPortalPage() {
       fd.append("statusType", statusType);
       fd.append("accessToggle", accessible ? "1" : "0");
 
-      // store date as YYYY-MM-DD
       const d = new Date();
       const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
         d.getDate()
       ).padStart(2, "0")}`;
       fd.append("date", date);
 
-      // Order preserved
       for (const f of files) fd.append("files", f);
 
       const res = await fetch("/api/admin/path", {
@@ -126,9 +130,8 @@ export default function StaffPortalPage() {
       const text = await res.text();
       if (!res.ok) throw new Error(text);
 
-      setMessage(statusType === "Draft" ? "Saved draft to database ✅" : "Uploaded path to database ✅");
+      setMessage(statusType === "Draft" ? "Saved draft to database." : "Uploaded path to database.");
 
-      // reset
       setPathName("");
       setStartName("");
       setEndName("");
@@ -203,22 +206,14 @@ export default function StaffPortalPage() {
               </div>
             )}
 
-            {/* Select Building */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">Select Building</label>
-              <select
-                value={buildingId}
-                onChange={(e) => setBuildingId(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
-              >
-                <option value="">{loadingBuildings ? "Loading buildings..." : "Choose a building"}</option>
-                {buildings.map((b) => (
-                  <option key={b.BuildingID} value={String(b.BuildingID)}>
-                    {b.BuildingName}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {/* Building select + Add new building */}
+            <AdminBuildingSelect
+              buildings={buildings}
+              value={buildingId}
+              onChange={setBuildingId}
+              disabled={loadingBuildings}
+              onBuildingCreated={(b) => setBuildings((prev) => [b, ...prev])}
+            />
 
             {/* Path Name */}
             <div className="mb-4">
@@ -231,25 +226,31 @@ export default function StaffPortalPage() {
               />
             </div>
 
-            {/* Start & End Points */}
+            {/* Start & End Points (ADMIN dropdowns with Add New) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Start Point</label>
-                <input
+                <AdminSearchDropdown
+                  label="Start Point"
+                  placeholder="Search the entrance you are at..."
+                  apiUrl="/api/entrances"
+                  buildingId={buildingId} 
+                  isEntrance={1}
                   value={startName}
-                  onChange={(e) => setStartName(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
-                  placeholder="e.g., Main Entrance"
+                  onChangeText={setStartName}
+                  labelClassName="text-gray-900"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">End Point</label>
-                <input
+                <AdminSearchDropdown
+                  label="End Point"
+                  placeholder="Search for the building/department..."
+                  apiUrl="/api/destinations-search"
+                  buildingId={buildingId} 
+                  isEntrance={0}
                   value={endName}
-                  onChange={(e) => setEndName(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
-                  placeholder="e.g., Cardiology - Room 301"
+                  onChangeText={setEndName}
+                  labelClassName="text-gray-900"
                 />
               </div>
             </div>
@@ -370,7 +371,7 @@ export default function StaffPortalPage() {
               </div>
             )}
 
-            {/* Media Description */}
+            {/* Media Description (Optional) */}
             <div className="mb-6">
               <label className="block text-sm font-medium mb-2">Media Description (Optional)</label>
               <textarea
@@ -409,6 +410,7 @@ export default function StaffPortalPage() {
         </div>
       )}
 
+      {/* Manage Section */}
       {tab === "manage" && <ManagePathsSection />}
     </div>
   );
