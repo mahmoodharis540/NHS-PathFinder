@@ -71,3 +71,14 @@ model Status {
   StatusType String @unique(map: "sqlite_autoindex_Status_2")
   Path       Path[]
 }
+
+model ContactMessage {
+  ContactMessageID Int    @id @default(autoincrement())
+  FullName         String
+  Email            String
+  Phone            String?
+  Category         String
+  Building         String?
+  Message          String
+  Date             String
+}
