@@ -253,6 +253,36 @@ export default function StaffPortalPage() {
                   className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
                   placeholder="e.g., Cardiology - Room 301"
                 />
+
+                {showEndDropdown && BuildingID !== "" && (
+                  <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow max-h-44 overflow-y-auto">
+                    {filteredEnd.length > 0 ? (
+                      filteredEnd.map((d) => (
+                        <button
+                          key={d.DestinationID}
+                          type="button"
+                          onMouseDown={(e) => e.preventDefault()}
+                          onClick={() => {
+                            setEnd(d.DestinationID);
+                            setEndText(d.DestinationName);
+                            setShowEndDropdown(false);
+                          }}
+                          className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                        >
+                          {d.DestinationName}
+                        </button>
+                      ))
+                    ) : (
+                      <div className="px-4 py-2 text-sm text-gray-500">
+                        No matches found
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <p className="mt-1 text-xs text-gray-500">
+                  Selected ID: {End === "" ? "—" : End}
+                </p>
               </div>
             </div>
 
@@ -407,6 +437,41 @@ export default function StaffPortalPage() {
                 }`}
               >
                 {isSaving ? "Saving..." : "Save as Draft"}
+              </button>
+            </div>
+
+            {/* Description */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium mb-2">
+                Path Description (Optional)
+              </label>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm min-h-[100px]"
+                placeholder="Add any additional notes or instructions for this path..."
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                (Not saved yet — your DB schema doesn’t have a Notes column.)
+              </p>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-4">
+              <button
+                onClick={onUploadPath}
+                disabled={isSubmitting}
+                className="flex-1 bg-[#003087] text-white py-3 rounded-lg text-sm font-medium hover:bg-blue-800 transition disabled:opacity-60"
+              >
+                {isSubmitting ? "Uploading..." : "Upload Path"}
+              </button>
+
+              <button
+                type="button"
+                onClick={resetForm}
+                className="flex-1 bg-gray-100 border border-gray-300 py-3 rounded-lg text-sm hover:bg-gray-200 transition"
+              >
+                Clear
               </button>
             </div>
           </div>
