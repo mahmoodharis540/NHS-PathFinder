@@ -1,6 +1,5 @@
 "use client";
 
-import { prisma } from '@/lib/prisma'
 import Languages from "@/components/Languages";
 import { useTranslations } from "next-intl";
 
