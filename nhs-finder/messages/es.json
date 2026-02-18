@@ -1,0 +1,15 @@
+{
+  "home": {
+    "welcome": "Bienvenido a NHS Finder",
+    "subtitle": "Tu puerta de entrada a los servicios de salud.",
+    "prompt": "¿A qué edificio quieres ir?"
+  },
+  "login": {
+    "Welcome": "a",
+    "Username": "Usernsssame",
+    "Password": "Password",
+    "EnterUsername": "Enter Username",
+    "EnterPassword": "Enter Password",
+    "Login": "login"
+  }
+}
