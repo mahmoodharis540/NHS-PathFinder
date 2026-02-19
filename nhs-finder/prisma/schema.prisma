@@ -1,10 +1,10 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./PathfinderDB.db"
 }
 
 model Building {
@@ -23,8 +23,6 @@ model Destination {
   Path_Path_StartToDestination Path[]   @relation("Path_StartToDestination")
   Path_Path_EndToDestination   Path[]   @relation("Path_EndToDestination")
 }
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model Login {
   Code String @id
 }
@@ -70,15 +68,4 @@ model Status {
   StatusID   Int    @id @unique(map: "sqlite_autoindex_Status_1") @default(autoincrement())
   StatusType String @unique(map: "sqlite_autoindex_Status_2")
   Path       Path[]
-}
-
-model ContactMessage {
-  ContactMessageID Int    @id @default(autoincrement())
-  FullName         String
-  Email            String
-  Phone            String?
-  Category         String
-  Building         String?
-  Message          String
-  Date             String
 }
