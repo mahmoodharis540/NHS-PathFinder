@@ -44,7 +44,6 @@ export default function HomePage() {
             priority
           />
 
-          {/* Don't wrap a <p> inside <h1> (invalid HTML). Just put the text directly */}
           <h1 className="text-2xl font-bold mt-6">{t("pathfinder")}</h1>
 
           <p className="text-sm italic mt-2 mb-4">{t("subtitle")}</p>
