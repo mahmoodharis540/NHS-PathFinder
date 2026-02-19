@@ -4,7 +4,7 @@
     "pathfinder": "Pionier ©",
     "subtitle": "Twoja brama do usług opieki zdrowotnej.",
     "prompt": "Do którego budynku chcesz się udać?",
-
+    "accessibleRoute": "Dostępna trasa (omijaj schody) / Przełącznik dostępu",
     "nhsLogoAlt": "Logo NHS",
 
     "whereAreYouLabel": "Gdzie się znajdujesz?",

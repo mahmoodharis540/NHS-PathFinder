@@ -3,6 +3,7 @@
     "welcome": "Bienvenue sur NHS Finder",
     "pathfinder": "Éclaireur ©",
     "subtitle": "Votre passerelle vers les services de santé.",
+    "accessibleRoute": "Itinéraire accessible (éviter les escaliers) / Activer/Désactiver l'accès",
     "prompt": "Vers quel bâtiment souhaitez-vous aller ?",
 
     "nhsLogoAlt": "Logo NHS",

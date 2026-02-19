@@ -4,7 +4,7 @@
     "pathfinder": "Pathfinder ©",
     "subtitle": "Your gateway to healthcare services.",
     "prompt": "What building do you want to go to?",
-
+    "accessibleRoute": "Accessible route (avoid stairs) / AccessToggle",
     "nhsLogoAlt": "NHS Logo",
 
     "whereAreYouLabel": "Where are you:",
