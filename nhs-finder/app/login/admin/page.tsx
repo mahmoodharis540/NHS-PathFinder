@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Settings } from "lucide-react";
-import { useTranslations } from "next-intl";
 
 import ManagePathsSection from "@/components/ManagePathsSection";
 import AdminSearchDropdown from "@/components/AdminSearchDropdown";
@@ -24,7 +23,6 @@ function moveItem<T>(arr: T[], from: number, to: number) {
 
 export default function StaffPortalPage() {
   const router = useRouter();
-  const t = useTranslations("staff");
 
   const [tab, setTab] = useState<"upload" | "manage">("upload");
 
@@ -32,7 +30,7 @@ export default function StaffPortalPage() {
   const [loadingBuildings, setLoadingBuildings] = useState(false);
 
   // Form state
-  const [buildingId, setBuildingId] = useState<string>(""); // OPTIONAL
+  const [buildingId, setBuildingId] = useState<string>(""); // OPTIONAL now
   const [pathName, setPathName] = useState("");
   const [startName, setStartName] = useState("");
   const [endName, setEndName] = useState("");
@@ -60,14 +58,14 @@ export default function StaffPortalPage() {
         const data: Building[] = JSON.parse(text);
         setBuildings(Array.isArray(data) ? data : []);
       } catch (e: any) {
-        setMessage(e?.message ?? t("failedLoadBuildings"));
+        setMessage(e?.message ?? "Failed to load buildings.");
       } finally {
         setLoadingBuildings(false);
       }
     };
 
     loadBuildings();
-  }, [t]);
+  }, []);
 
   const canSubmit = useMemo(() => {
     return (
@@ -132,7 +130,7 @@ export default function StaffPortalPage() {
       const text = await res.text();
       if (!res.ok) throw new Error(text);
 
-      setMessage(statusType === "Draft" ? t("savedDraft") : t("uploadedPath"));
+      setMessage(statusType === "Draft" ? "Saved draft to database." : "Uploaded path to database.");
 
       setPathName("");
       setStartName("");
@@ -141,7 +139,7 @@ export default function StaffPortalPage() {
       setAccessible(false);
       setFiles([]);
     } catch (e: any) {
-      setMessage(e?.message ?? t("uploadFailed"));
+      setMessage(e?.message ?? "Upload failed.");
     } finally {
       setIsSaving(false);
     }
@@ -156,14 +154,14 @@ export default function StaffPortalPage() {
             type="button"
             onClick={() => router.push("/")}
             className="text-xl select-none hover:opacity-80 transition"
-            aria-label={t("back")}
+            aria-label="Go to main page"
           >
             ←
           </button>
 
           <div>
-            <h1 className="text-2xl font-semibold">{t("title")}</h1>
-            <p className="text-sm opacity-80">{t("subtitle")}</p>
+            <h1 className="text-2xl font-semibold">Staff Portal</h1>
+            <p className="text-sm opacity-80">Path Management System</p>
           </div>
         </div>
 
@@ -181,7 +179,7 @@ export default function StaffPortalPage() {
               tab === "upload" ? "bg-black text-white" : "bg-gray-200 text-gray-900 hover:bg-gray-300"
             }`}
           >
-            {t("uploadTab")}
+            Upload Paths
           </button>
 
           <button
@@ -190,7 +188,7 @@ export default function StaffPortalPage() {
               tab === "manage" ? "bg-black text-white" : "bg-gray-200 text-gray-900 hover:bg-gray-300"
             }`}
           >
-            {t("manageTab")}
+            Manage Paths
           </button>
         </div>
       </div>
@@ -199,8 +197,8 @@ export default function StaffPortalPage() {
       {tab === "upload" && (
         <div className="px-8 mt-6">
           <div className="bg-white rounded-xl shadow-sm p-8">
-            <h2 className="text-xl font-semibold mb-2">{t("uploadNewPath")}</h2>
-            <p className="text-gray-500 mb-6">{t("uploadDescription")}</p>
+            <h2 className="text-xl font-semibold mb-2">Upload New Path</h2>
+            <p className="text-gray-500 mb-6">Upload navigation paths for patients to follow within hospital buildings</p>
 
             {message && (
               <div className="mb-4 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-800 whitespace-pre-wrap">
@@ -219,23 +217,23 @@ export default function StaffPortalPage() {
 
             {/* Path Name */}
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">{t("pathName")}</label>
+              <label className="block text-sm font-medium mb-2">Path Name</label>
               <input
                 value={pathName}
                 onChange={(e) => setPathName(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
-                placeholder={t("pathNamePlaceholder")}
+                placeholder="e.g., Main Entrance to Cardiology"
               />
             </div>
 
-            {/* Start & End Points */}
+            {/* Start & End Points (ADMIN dropdowns with Add New) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <AdminSearchDropdown
-                  label={t("startPoint")}
-                  placeholder={t("startPointPlaceholder")}
+                  label="Start Point"
+                  placeholder="Search the entrance you are at..."
                   apiUrl="/api/entrances"
-                  buildingId={buildingId}
+                  buildingId={buildingId} 
                   isEntrance={1}
                   value={startName}
                   onChangeText={setStartName}
@@ -245,10 +243,10 @@ export default function StaffPortalPage() {
 
               <div>
                 <AdminSearchDropdown
-                  label={t("endPoint")}
-                  placeholder={t("endPointPlaceholder")}
+                  label="End Point"
+                  placeholder="Search for the building/department..."
                   apiUrl="/api/destinations-search"
-                  buildingId={buildingId}
+                  buildingId={buildingId} 
                   isEntrance={0}
                   value={endName}
                   onChangeText={setEndName}
@@ -267,7 +265,7 @@ export default function StaffPortalPage() {
                 className="h-4 w-4"
               />
               <label htmlFor="accessible" className="text-sm">
-                {t("accessibleRoute")}
+                Accessible route (avoid stairs) / AccessToggle
               </label>
             </div>
 
@@ -299,16 +297,16 @@ export default function StaffPortalPage() {
               className="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center text-gray-500 mb-4 cursor-pointer hover:bg-gray-50 transition"
             >
               <p className="text-3xl mb-2">📁</p>
-              <p className="text-sm">{t("clickToUpload")}</p>
-              <p className="text-xs mt-1">{t("reorderBeforeUpload")}</p>
+              <p className="text-sm">Click to upload or drag and drop</p>
+              <p className="text-xs mt-1">Then reorder the list below before uploading</p>
             </div>
 
             {/* Reorder list */}
             {files.length > 0 && (
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium">{t("fileOrder")}</p>
-                  <p className="text-xs text-gray-500">{t("topIsFirst")}</p>
+                  <p className="text-sm font-medium">Files order (drag to reorder)</p>
+                  <p className="text-xs text-gray-500">Top = first step</p>
                 </div>
 
                 <div className="space-y-2">
@@ -329,7 +327,7 @@ export default function StaffPortalPage() {
                       }}
                       onDragEnd={() => setDragIndex(null)}
                       className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm bg-white border-gray-200"
-                      title={t("dragToReorder")}
+                      title="Drag to reorder"
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <span className="text-gray-400 select-none">☰</span>
@@ -346,7 +344,7 @@ export default function StaffPortalPage() {
                           onClick={() => moveUp(idx)}
                           className="px-2 py-1 rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-40"
                           disabled={idx === 0}
-                          aria-label={t("moveUp")}
+                          aria-label="Move up"
                         >
                           ↑
                         </button>
@@ -355,7 +353,7 @@ export default function StaffPortalPage() {
                           onClick={() => moveDown(idx)}
                           className="px-2 py-1 rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-40"
                           disabled={idx === files.length - 1}
-                          aria-label={t("moveDown")}
+                          aria-label="Move down"
                         >
                           ↓
                         </button>
@@ -364,7 +362,7 @@ export default function StaffPortalPage() {
                           onClick={() => removeFile(idx)}
                           className="text-red-600 hover:underline ml-2"
                         >
-                          {t("remove")}
+                          remove
                         </button>
                       </div>
                     </div>
@@ -375,12 +373,12 @@ export default function StaffPortalPage() {
 
             {/* Media Description (Optional) */}
             <div className="mb-6">
-              <label className="block text-sm font-medium mb-2">{t("mediaDescription")}</label>
+              <label className="block text-sm font-medium mb-2">Media Description (Optional)</label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm min-h-[100px]"
-                placeholder={t("mediaDescriptionPlaceholder")}
+                placeholder="Optional notes for these media items..."
               />
             </div>
 
@@ -393,7 +391,7 @@ export default function StaffPortalPage() {
                   canSubmit ? "bg-[#003087] text-white hover:bg-blue-800" : "bg-gray-200 text-gray-500 cursor-not-allowed"
                 }`}
               >
-                {isSaving ? t("saving") : t("uploadPath")}
+                {isSaving ? "Saving..." : "Upload Path"}
               </button>
 
               <button
@@ -405,7 +403,7 @@ export default function StaffPortalPage() {
                     : "bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed"
                 }`}
               >
-                {isSaving ? t("saving") : t("saveDraft")}
+                {isSaving ? "Saving..." : "Save as Draft"}
               </button>
             </div>
           </div>
