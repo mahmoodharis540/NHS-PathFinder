@@ -1,15 +1,126 @@
 {
   "home": {
-    "welcome": "Welcome to NHS Finder",
-    "subtitle": "Your gateway to healthcare services.",
-    "prompt": "What building do you want to go to?"
+    "welcome": "Witamy w NHS Finder",
+    "pathfinder": "Pionier ©",
+    "subtitle": "Twoja brama do usług opieki zdrowotnej.",
+    "prompt": "Do którego budynku chcesz się udać?",
+
+    "nhsLogoAlt": "Logo NHS",
+
+    "whereAreYouLabel": "Gdzie się znajdujesz?",
+    "whereAreYouPlaceholder": "Wyszukaj wejście, przy którym się znajdujesz...",
+
+    "appointmentBuildingLabel": "W którym budynku masz wizytę?",
+    "appointmentBuildingPlaceholder": "Wyszukaj budynek/oddział...",
+
+    "startNavigation": "Rozpocznij nawigację"
   },
   "login": {
-    "Welcome": "Login Page",
-    "Username": "Username",
-    "Password": "Password",
-    "EnterUsername": "Enter Username",
-    "EnterPassword": "Enter Password",
-    "Login": "Login"
-  }
+  "Welcome": "Strona logowania",
+  "Username": "Nazwa użytkownika",
+  "Password": "Hasło",
+  "EnterUsername": "Wpisz nazwę użytkownika",
+  "EnterPassword": "Wpisz hasło",
+  "Login": "Zaloguj się"
+},
+"settings": {
+  "title": "Ustawienia",
+  "subtitle": "Dostępność i preferencje",
+  "back": "Powrót do strony głównej",
+
+  "languageTitle": "Język",
+  "languageDesc": "Wybierz język używany w aplikacji.",
+  "appLanguage": "Język aplikacji",
+  "saveLanguage": "Zapisz język",
+
+  "defaultBuildingTitle": "Domyślny budynek",
+  "defaultBuildingDesc": "Aplikacja może wstępnie wybrać ten budynek, aby przyspieszyć proces.",
+  "chooseBuilding": "Wybierz budynek",
+  "saveDefaultBuilding": "Zapisz domyślny budynek",
+
+  "accessibilityTitle": "Dostępność",
+  "accessibilityDesc": "Opcje poprawiające czytelność i zmniejszające zmęczenie.",
+  "highContrast": "Tryb wysokiego kontrastu",
+  "highContrastDesc": "Mocniejsze kolory i wyraźniejszy tekst dla osób z problemami wzroku.",
+  "largeText": "Duży tekst",
+  "largeTextDesc": "Zwiększ rozmiar tekstu dla łatwiejszego czytania.",
+  "reduceMotion": "Ogranicz animacje",
+  "reduceMotionDesc": "Zmniejsz animacje, aby ograniczyć zawroty głowy lub dyskomfort.",
+
+  "resetDefaults": "Przywróć ustawienia domyślne",
+  "done": "Gotowe",
+  "saved": "Zapisano",
+
+  "northernGeneral": "Szpital Northern General",
+  "royalHallamshire": "Szpital Royal Hallamshire",
+  "westonPark": "Szpital Weston Park"
+},
+"staff": {
+  "title": "Portal personelu",
+  "subtitle": "System zarządzania trasami",
+  "back": "Powrót do strony głównej",
+
+  "uploadTab": "Dodaj trasy",
+  "manageTab": "Zarządzaj trasami",
+
+  "uploadNewPath": "Dodaj nową trasę",
+  "uploadDescription": "Dodawaj trasy nawigacji, które pacjenci mogą śledzić w budynkach szpitala",
+
+  "failedLoadBuildings": "Nie udało się wczytać budynków.",
+  "savedDraft": "Szkic zapisano w bazie danych.",
+  "uploadedPath": "Trasę zapisano w bazie danych.",
+  "uploadFailed": "Nie udało się przesłać.",
+
+  "pathName": "Nazwa trasy",
+  "pathNamePlaceholder": "np. Wejście główne do kardiologii",
+
+  "startPoint": "Punkt startowy",
+  "startPointPlaceholder": "Wyszukaj wejście, przy którym się znajdujesz...",
+
+  "endPoint": "Punkt docelowy",
+  "endPointPlaceholder": "Wyszukaj budynek/oddział...",
+
+  "accessibleRoute": "Trasa dostępna (bez schodów) / AccessToggle",
+
+  "clickToUpload": "Kliknij, aby dodać pliki lub przeciągnij i upuść",
+  "reorderBeforeUpload": "Następnie zmień kolejność listy poniżej przed przesłaniem",
+
+  "fileOrder": "Kolejność plików (przeciągnij, aby zmienić)",
+  "topIsFirst": "Góra = pierwszy krok",
+
+  "dragToReorder": "Przeciągnij, aby zmienić kolejność",
+  "moveUp": "Przesuń w górę",
+  "moveDown": "Przesuń w dół",
+  "remove": "usuń",
+
+  "mediaDescription": "Opis multimediów (opcjonalnie)",
+  "mediaDescriptionPlaceholder": "Opcjonalne notatki do tych plików...",
+
+  "uploadPath": "Dodaj trasę",
+  "saveDraft": "Zapisz jako szkic",
+  "saving": "Zapisywanie..."
+},
+"managePaths": {
+  "searchPlaceholder": "Szukaj tras...",
+  "filterByBuilding": "Filtruj według budynku",
+  "filterByStatus": "Filtruj według statusu",
+  "active": "Aktywna",
+  "draft": "Szkic",
+  "uploadedPaths": "Przesłane trasy",
+  "edit": "Edytuj",
+  "export": "Eksportuj",
+  "delete": "Usuń"
+},
+"languageSelector": {
+  "language": "Język",
+  "english": "Angielski",
+  "polish": "Polski",
+  "french": "Francuski",
+  "spanish": "Hiszpański"
+},
+"topBar": {
+  "staffPortal": "Portal personelu",
+  "settings": "Ustawienia"
+}
+
 }

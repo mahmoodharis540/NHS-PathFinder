@@ -12,7 +12,7 @@ type AppSettings = {
   language: Language;
   defaultBuilding: BuildingId;
   highContrast: boolean;
-  largeText: boolean;
+  largeText: number;
   reducedMotion: boolean;
 };
 
@@ -24,7 +24,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   language: "en",
   defaultBuilding: "northern-general",
   highContrast: false,
-  largeText: false,
+  largeText: 16,
   reducedMotion: false,
 };
 
@@ -69,7 +69,7 @@ export default function SettingsPage() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
       window.dispatchEvent(new Event("nhs-settings-updated"));
-    } catch {}
+    } catch { }
   }, [settings]);
 
   function showSaved() {
@@ -192,13 +192,42 @@ export default function SettingsPage() {
               checked={settings.highContrast}
               onChange={(v) => setSettings((p) => ({ ...p, highContrast: v }))}
             />
+            <div className="flex flex-col gap-2 p-4 rounded-xl border border-gray-200">
+              <div className="flex items-center justify-between">
+                <p className="font-medium">Font size</p>
+                <span className="text-sm text-gray-600">{settings.largeText}px</span>
+              </div>
+              <p className="text-sm text-gray-600">Adjust the overall Font size.</p>
+              <input
+                type="range"
+                min={12}
+                max={24}
+                step={2}
+                value={settings.largeText}
+                onChange={(e) =>
+                  setSettings((p) => ({ ...p, largeText: Number(e.target.value) }))
+                }
+                style={{
+                  background: `linear-gradient(to right, #003087 0%, #003087 ${((settings.largeText - 12) / (24 - 12)) * 100   // was settings.textSize
+                    }%, #d1d5db ${((settings.largeText - 12) / (24 - 12)) * 100
+                    }%, #d1d5db 100%)`,
+                }}
+                className="w-full h-2 rounded-full appearance-none cursor-pointer mt-2
+                  [&::-webkit-slider-thumb]:appearance-none
+                  [&::-webkit-slider-thumb]:h-5
+                  [&::-webkit-slider-thumb]:w-5
+                  [&::-webkit-slider-thumb]:rounded-full
+                  [&::-webkit-slider-thumb]:bg-[#003087]
+                  [&::-webkit-slider-thumb]:cursor-pointer"
+                aria-label="Text size"
 
-            <ToggleRow
-              title="Large text"
-              description="Increase overall text size for easier reading."
-              checked={settings.largeText}
-              onChange={(v) => setSettings((p) => ({ ...p, largeText: v }))}
-            />
+              />
+              <div className="flex justify-between text-xs text-gray-400">
+                <span>Smallest</span>
+                <span>Default</span>
+                <span>Largest</span>
+              </div>
+            </div>
 
             <ToggleRow
               title="Reduce motion"
@@ -271,6 +300,7 @@ function ToggleRow({
           ].join(" ")}
         />
       </button>
+
     </div>
   );
 }

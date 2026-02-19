@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import TopBar from "@/components/TopBar";
@@ -34,28 +35,36 @@ export default function HomePage() {
       </div>
 
       <div className="flex flex-col items-center justify-center min-h-screen px-4">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold mb-2">{t("welcome")}</h1>
-          <p className="text-sm italic mb-4">{t("subtitle")}</p>
+        <div className="text-center mb-10 flex flex-col items-center">
+          <Image
+            src="/NHSlogo.png"
+            alt={t("nhsLogoAlt")}
+            width={160}
+            height={70}
+            priority
+          />
+
+          <h1 className="text-2xl font-bold mt-6">{t("pathfinder")}</h1>
+
+          <p className="text-sm italic mt-2 mb-4">{t("subtitle")}</p>
           <p>{t("prompt")}</p>
         </div>
 
         <div className="w-full flex flex-col items-center gap-6 max-w-md">
           <SearchDropdown
-            label="Where are you:"
-            placeholder="Search the entrance you are at..."
+            label={t("whereAreYouLabel")}
+            placeholder={t("whereAreYouPlaceholder")}
             apiUrl="/api/entrances"
             onSelect={(item) => setEntrance(item)}
           />
 
           <SearchDropdown
-            label="What building is your appointment:"
-            placeholder="Search for the building/department..."
+            label={t("appointmentBuildingLabel")}
+            placeholder={t("appointmentBuildingPlaceholder")}
             apiUrl="/api/destinations-search"
             onSelect={(item) => setDestination(item)}
           />
 
-          {/* Start Navigation Button */}
           <button
             onClick={handleStartNavigation}
             disabled={!entrance || !destination}
@@ -65,7 +74,7 @@ export default function HomePage() {
                 : "bg-gray-400 text-gray-700 cursor-not-allowed"
             }`}
           >
-            Start Navigation
+            {t("startNavigation")}
           </button>
         </div>
       </div>

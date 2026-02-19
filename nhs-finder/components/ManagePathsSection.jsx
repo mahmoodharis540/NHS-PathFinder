@@ -1,3 +1,5 @@
+"use client";
+
 import { useMemo, useState } from "react";
 import {
   Map,
@@ -8,8 +10,11 @@ import {
   MapPin,
   CalendarDays,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function ManagePathsSection() {
+  const t = useTranslations("managePaths");
+
   const [search, setSearch] = useState("");
   const [buildingFilter, setBuildingFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -76,7 +81,7 @@ export default function ManagePathsSection() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="flex-1 border border-gray-200 rounded-lg px-4 py-3 text-sm"
-            placeholder="Search paths..."
+            placeholder={t("searchPlaceholder")}
           />
 
           <select
@@ -84,7 +89,7 @@ export default function ManagePathsSection() {
             onChange={(e) => setBuildingFilter(e.target.value)}
             className="w-full md:w-56 border border-gray-200 rounded-lg px-4 py-3 text-sm bg-white"
           >
-            <option value="">Filter by building</option>
+            <option value="">{t("filterByBuilding")}</option>
             {buildings.map((b) => (
               <option key={b}>{b}</option>
             ))}
@@ -95,9 +100,9 @@ export default function ManagePathsSection() {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="w-full md:w-56 border border-gray-200 rounded-lg px-4 py-3 text-sm bg-white"
           >
-            <option value="">Filter by status</option>
-            <option>Active</option>
-            <option>Draft</option>
+            <option value="">{t("filterByStatus")}</option>
+            <option value="Active">{t("active")}</option>
+            <option value="Draft">{t("draft")}</option>
           </select>
         </div>
       </div>
@@ -106,15 +111,12 @@ export default function ManagePathsSection() {
       <div className="bg-white rounded-xl shadow-sm p-6 mt-6">
         <div className="flex items-center gap-2 mb-4">
           <Map className="h-5 w-5 text-blue-700" />
-          <h2 className="text-base font-semibold">Uploaded Paths</h2>
+          <h2 className="text-base font-semibold">{t("uploadedPaths")}</h2>
         </div>
 
         <div className="space-y-4">
           {filteredPaths.map((p) => (
-            <div
-              key={p.id}
-              className="border border-gray-200 rounded-xl p-5"
-            >
+            <div key={p.id} className="border border-gray-200 rounded-xl p-5">
               <div className="flex justify-between items-start">
                 <h3 className="text-lg font-semibold">{p.name}</h3>
                 <span
@@ -124,7 +126,7 @@ export default function ManagePathsSection() {
                       : "bg-amber-500 text-white"
                   }`}
                 >
-                  {p.status}
+                  {p.status === "Active" ? t("active") : t("draft")}
                 </span>
               </div>
 
@@ -146,15 +148,15 @@ export default function ManagePathsSection() {
               <div className="mt-4 flex gap-2">
                 <button className="flex items-center gap-1 border px-3 py-2 rounded-lg text-sm">
                   <Pencil className="h-4 w-4" />
-                  Edit
+                  {t("edit")}
                 </button>
                 <button className="flex items-center gap-1 border px-3 py-2 rounded-lg text-sm">
                   <Download className="h-4 w-4" />
-                  Export
+                  {t("export")}
                 </button>
                 <button className="flex items-center gap-1 border border-red-200 text-red-600 px-3 py-2 rounded-lg text-sm">
                   <Trash2 className="h-4 w-4" />
-                  Delete
+                  {t("delete")}
                 </button>
               </div>
             </div>
