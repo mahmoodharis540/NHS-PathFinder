@@ -54,7 +54,13 @@
 
   "northernGeneral": "Hôpital Northern General",
   "royalHallamshire": "Hôpital Royal Hallamshire",
-  "westonPark": "Hôpital Weston Park"
+  "westonPark": "Hôpital Weston Park",
+  "fontSize": "Taille du texte",
+  "fontSizeDesc": "Ajustez la taille globale du texte.",
+  "textSizeAria": "Taille du texte",
+  "smallest": "Plus petit",
+  "default": "Par défaut",
+  "largest": "Plus grand"
 },
 "staff": {
   "title": "Portail du personnel",

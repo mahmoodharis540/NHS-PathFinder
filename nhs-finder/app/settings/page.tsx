@@ -4,6 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, Check } from "lucide-react";
+import { useTranslations } from "next-intl";
+import LanguageSelector from "@/components/Languages";
+
 
 type Language = "en" | "ur" | "pl" | "ar";
 type BuildingId = "northern-general" | "royal-hallamshire" | "weston-park";
@@ -17,7 +20,6 @@ type AppSettings = {
 };
 
 const STORAGE_KEY = "nhs_pathfinder_settings_v1";
-
 const NHS_BLUE = "#003087";
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -30,22 +32,23 @@ const DEFAULT_SETTINGS: AppSettings = {
 
 export default function SettingsPage() {
   const router = useRouter();
+  const t = useTranslations("settings");
 
   const buildingOptions = useMemo(
     () => [
-      { id: "northern-general" as const, name: "Northern General Hospital" },
-      { id: "royal-hallamshire" as const, name: "Royal Hallamshire Hospital" },
-      { id: "weston-park" as const, name: "Weston Park Hospital" },
+      { id: "northern-general" as const, name: t("northernGeneral") },
+      { id: "royal-hallamshire" as const, name: t("royalHallamshire") },
+      { id: "weston-park" as const, name: t("westonPark") },
     ],
-    []
+    [t]
   );
 
   const languageOptions = useMemo(
     () => [
       { id: "en" as const, name: "English" },
       { id: "ur" as const, name: "Urdu" },
-      { id: "pl" as const, name: "Polski (Polish)" },
-      { id: "ar" as const, name: "العربية (Arabic)" },
+      { id: "pl" as const, name: "Polski" },
+      { id: "ar" as const, name: "العربية" },
     ],
     []
   );
@@ -69,13 +72,15 @@ export default function SettingsPage() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
       window.dispatchEvent(new Event("nhs-settings-updated"));
-    } catch { }
+    } catch {}
   }, [settings]);
 
   function showSaved() {
     setSavedToast(true);
     window.setTimeout(() => setSavedToast(false), 1200);
   }
+
+  const sliderPct = ((settings.largeText - 12) / (24 - 12)) * 100;
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900">
@@ -89,14 +94,14 @@ export default function SettingsPage() {
             type="button"
             onClick={() => router.push("/")}
             className="inline-flex items-center justify-center rounded-full p-2 hover:bg-white/10 transition"
-            aria-label="Back to main page"
+            aria-label={t("back")}
           >
             <ChevronLeft className="h-6 w-6" />
           </button>
 
           <div>
-            <h1 className="text-2xl font-semibold">Settings</h1>
-            <p className="text-white/80 text-sm">Accessibility & preferences</p>
+            <h1 className="text-2xl font-semibold">{t("title")}</h1>
+            <p className="text-white/80 text-sm">{t("subtitle")}</p>
           </div>
         </div>
       </div>
@@ -104,51 +109,28 @@ export default function SettingsPage() {
       <div className="px-6 md:px-8 py-8 max-w-3xl mx-auto space-y-6">
         {/* Language */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold">Language</h2>
-          <p className="text-sm text-gray-600 mt-1">
-            Choose the language used across the app.
-          </p>
+          <h2 className="text-lg font-semibold">{t("languageTitle")}</h2>
+          <p className="text-sm text-gray-600 mt-1">{t("languageDesc")}</p>
 
           <div className="mt-4">
-            <label className="block text-sm font-medium mb-2">App language</label>
-            <select
-              value={settings.language}
-              onChange={(e) =>
-                setSettings((prev) => ({
-                  ...prev,
-                  language: e.target.value as Language,
-                }))
-              }
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600/30"
-            >
-              {languageOptions.map((l) => (
-                <option key={l.id} value={l.id}>
-                  {l.name}
-                </option>
-              ))}
-            </select>
-
-            <button
-              type="button"
-              onClick={showSaved}
-              className="mt-4 inline-flex items-center gap-2 text-white px-4 py-2 rounded-lg transition hover:opacity-90"
-              style={{ backgroundColor: NHS_BLUE }}
-            >
-              <Check className="h-4 w-4" />
-              Save language
-            </button>
+            <label className="block text-sm font-medium mb-2">
+              {t("appLanguage")}
+            </label>
+            <div className="mt-2">
+              <LanguageSelector />
+            </div>
           </div>
         </section>
 
         {/* Default building */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold">Default building</h2>
-          <p className="text-sm text-gray-600 mt-1">
-            The app can pre-select this building to speed things up.
-          </p>
+          <h2 className="text-lg font-semibold">{t("defaultBuildingTitle")}</h2>
+          <p className="text-sm text-gray-600 mt-1">{t("defaultBuildingDesc")}</p>
 
           <div className="mt-4">
-            <label className="block text-sm font-medium mb-2">Choose building</label>
+            <label className="block text-sm font-medium mb-2">
+              {t("chooseBuilding")}
+            </label>
             <select
               value={settings.defaultBuilding}
               onChange={(e) =>
@@ -173,31 +155,33 @@ export default function SettingsPage() {
               style={{ backgroundColor: NHS_BLUE }}
             >
               <Check className="h-4 w-4" />
-              Save default building
+              {t("saveDefaultBuilding")}
             </button>
           </div>
         </section>
 
         {/* Accessibility */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold">Accessibility</h2>
-          <p className="text-sm text-gray-600 mt-1">
-            Options to improve readability and reduce strain.
-          </p>
+          <h2 className="text-lg font-semibold">{t("accessibilityTitle")}</h2>
+          <p className="text-sm text-gray-600 mt-1">{t("accessibilityDesc")}</p>
 
           <div className="mt-5 space-y-4">
             <ToggleRow
-              title="High contrast mode"
-              description="Stronger colours and clearer text for visual impairment."
+              title={t("highContrast")}
+              description={t("highContrastDesc")}
               checked={settings.highContrast}
               onChange={(v) => setSettings((p) => ({ ...p, highContrast: v }))}
             />
+
+            {/* Font size slider */}
             <div className="flex flex-col gap-2 p-4 rounded-xl border border-gray-200">
               <div className="flex items-center justify-between">
-                <p className="font-medium">Font size</p>
+                <p className="font-medium">{t("fontSize")}</p>
                 <span className="text-sm text-gray-600">{settings.largeText}px</span>
               </div>
-              <p className="text-sm text-gray-600">Adjust the overall Font size.</p>
+
+              <p className="text-sm text-gray-600">{t("fontSizeDesc")}</p>
+
               <input
                 type="range"
                 min={12}
@@ -208,9 +192,7 @@ export default function SettingsPage() {
                   setSettings((p) => ({ ...p, largeText: Number(e.target.value) }))
                 }
                 style={{
-                  background: `linear-gradient(to right, #003087 0%, #003087 ${((settings.largeText - 12) / (24 - 12)) * 100   // was settings.textSize
-                    }%, #d1d5db ${((settings.largeText - 12) / (24 - 12)) * 100
-                    }%, #d1d5db 100%)`,
+                  background: `linear-gradient(to right, #003087 0%, #003087 ${sliderPct}%, #d1d5db ${sliderPct}%, #d1d5db 100%)`,
                 }}
                 className="w-full h-2 rounded-full appearance-none cursor-pointer mt-2
                   [&::-webkit-slider-thumb]:appearance-none
@@ -219,19 +201,19 @@ export default function SettingsPage() {
                   [&::-webkit-slider-thumb]:rounded-full
                   [&::-webkit-slider-thumb]:bg-[#003087]
                   [&::-webkit-slider-thumb]:cursor-pointer"
-                aria-label="Text size"
-
+                aria-label={t("textSizeAria")}
               />
+
               <div className="flex justify-between text-xs text-gray-400">
-                <span>Smallest</span>
-                <span>Default</span>
-                <span>Largest</span>
+                <span>{t("smallest")}</span>
+                <span>{t("default")}</span>
+                <span>{t("largest")}</span>
               </div>
             </div>
 
             <ToggleRow
-              title="Reduce motion"
-              description="Minimise animations to reduce dizziness or discomfort."
+              title={t("reduceMotion")}
+              description={t("reduceMotionDesc")}
               checked={settings.reducedMotion}
               onChange={(v) => setSettings((p) => ({ ...p, reducedMotion: v }))}
             />
@@ -244,7 +226,7 @@ export default function SettingsPage() {
               }}
               className="mt-2 w-full md:w-auto inline-flex justify-center bg-gray-100 border border-gray-300 text-gray-900 px-4 py-2 rounded-lg hover:bg-gray-200 transition"
             >
-              Reset to defaults
+              {t("resetDefaults")}
             </button>
 
             <Link
@@ -252,14 +234,14 @@ export default function SettingsPage() {
               className="mt-4 block w-full md:w-auto text-center text-white px-4 py-2 rounded-lg transition hover:opacity-90"
               style={{ backgroundColor: NHS_BLUE }}
             >
-              Done
+              {t("done")}
             </Link>
           </div>
         </section>
 
         {savedToast && (
           <div className="fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-4 py-2 rounded-full text-sm shadow-lg">
-            Saved
+            {t("saved")}
           </div>
         )}
       </div>
@@ -300,7 +282,6 @@ function ToggleRow({
           ].join(" ")}
         />
       </button>
-
     </div>
   );
 }
