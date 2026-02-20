@@ -169,6 +169,7 @@ export default function DirectionsPage() {
           >
             {isVideo(item.media) ? (
               <video
+                key={`${item.pSequenceId}-${i === slideIndex}`}
                 src={item.media}
                 autoPlay={i === slideIndex}
                 loop
