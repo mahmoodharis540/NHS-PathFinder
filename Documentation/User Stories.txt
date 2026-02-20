@@ -1,0 +1,248 @@
+SHOULD HAVE
+
+US-01 – Search Department
+
+
+
+As a patient, I want to search for a department by name so that I can find where my appointment is.
+
+• Priority: Must
+
+• Story Points: 3
+
+• Reason: Core functionality, moderate logic
+
+
+US-02 – Map View
+
+
+
+As a patient, I want to see the department location on a map so that I can visualise where it is.
+
+• Priority: Must
+
+• Story Points: 3
+
+• Reason: Map integration
+
+
+US-03 – Step-by-Step Directions
+
+
+
+As a patient, I want written walking directions from the main entrance so that I don’t get lost.
+
+• Priority: Must
+
+• Story Points: 8
+
+
+US-04 – Accessible Route Toggle
+
+
+
+As a mobility-impaired patient, I want routes that avoid stairs so that I can reach my destination safely.
+
+• Priority: Must
+
+• Story Points: 5
+
+
+US-05 – Ward Search
+
+
+
+As a visitor, I want to search for a ward number so that I can visit a patient.
+
+• Priority: Must
+
+• Story Points: 3
+
+
+US-06 – View Visiting Hours
+
+
+
+As a visitor, I want to see visiting times so that I don’t arrive outside allowed hours.
+
+• Priority: Must
+
+• Story Points: 2
+
+
+US-07 – Guest Mode
+
+
+
+As a user, I want to use the app without creating an account so that access is quick and simple.
+
+• Priority: Must
+
+• Story Points: 3
+
+
+US-08 – GDPR Consent Notice
+
+
+
+As a patient, I want to be informed how my data is used so that I understand my privacy rights.
+
+• Priority: Must
+
+• Story Points: 1
+
+
+US-09 - Staff Login
+
+As Staff I want to be able to login to add routes or faster routes 
+
+Priority: Must 
+Story Points: 5
+
+
+US-10 – QR Code at Entrances
+
+As a visitor, I want to scan a QR code at the entrance so that my starting location is set automatically.
+
+Points: 5
+
+
+US-11 – Appointment Lookup
+
+
+
+As a patient, I want to enter my appointment reference so that I can automatically locate my department.
+
+• Priority: Should
+
+• Story Points: 5
+
+
+US-12 – Parking Information
+
+
+
+As a visitor, I want to see nearby car parks so that I know where to park.
+
+• Priority: Should
+
+• Story Points: 5
+
+
+US-13 – Nearest Entrance Suggestion
+
+
+
+As a visitor, I want the app to suggest the closest entrance to my destination so that I minimise walking time.
+
+• Priority: Should
+
+• Story Points: 8
+
+
+US-14 – Lift routes 
+
+
+
+As a patient, I want lift routes to be an option to help me get around easier. 
+
+• Priority: Should
+
+• Story Points: 3
+
+
+US-15 – Large Text Mode
+
+
+
+As an elderly patient, I want an adjustable text size so that instructions are easier to read.
+
+• Priority: Should
+
+• Story Points: 3
+
+
+COULD HAVE
+
+
+US-16 – Indoor GPS Tracking
+
+
+
+As a patient, I want real-time indoor tracking so that I can see my position on the map.
+
+• Priority: Could
+
+• Story Points: 13
+
+• Reason: Technically complex
+
+
+US-17 – Multi-Language Support
+
+
+
+As an international visitor, I want the app to be available in multiple languages.
+
+• Priority: Could
+
+• Story Points: 8
+
+
+US-18 – Voice Navigation
+
+
+
+As a visually impaired patient, I want spoken directions.
+
+• Priority: Could
+
+• Story Points: 8
+
+
+US-19 – Dark Mode
+
+
+
+As a user, I want dark mode so that the app is easier to use in low light.
+
+• Priority: Could
+
+• Story Points: 2
+
+
+US-20 – Feedback Submission
+
+
+
+As a patient, I want to leave feedback about navigation accuracy.
+
+• Priority: Could
+
+• Story Points: 3
+
+
+US-21 – Staff Login Portal
+
+
+
+As an admin staff, I want to update department details.
+
+• Priority: Could
+
+• Story Points: 8
+
+
+WONT DO
+
+US-22 – Full NHS Account Integration
+
+• Priority: Won’t
+
+• Reason: Too complex for Year 2 scope
+
+
+• Story Points: 13+
+
+
+
