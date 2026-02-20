@@ -1,15 +1,133 @@
 {
   "home": {
     "welcome": "Bienvenido a NHS Finder",
-    "subtitle": "Tu puerta de entrada a los servicios de salud.",
-    "prompt": "¿A qué edificio quieres ir?"
+    "pathfinder": "Buscador de caminos ©",
+    "subtitle": "Tu puerta de acceso a los servicios de salud.",
+    "prompt": "¿A qué edificio deseas ir?",
+    "accessibleRoute": "Ruta accesible (evitar escaleras) / Alternar acceso",
+    "nhsLogoAlt": "Logotipo del NHS",
+
+    "whereAreYouLabel": "¿Dónde te encuentras?",
+    "whereAreYouPlaceholder": "Busca la entrada en la que te encuentras...",
+
+    "appointmentBuildingLabel": "¿En qué edificio es tu cita?",
+    "appointmentBuildingPlaceholder": "Busca el edificio/departamento...",
+
+    "startNavigation": "Iniciar navegación"
   },
   "login": {
-    "Welcome": "a",
-    "Username": "Usernsssame",
-    "Password": "Password",
-    "EnterUsername": "Enter Username",
-    "EnterPassword": "Enter Password",
-    "Login": "login"
-  }
+  "Welcome": "Página de inicio de sesión",
+  "Username": "Nombre de usuario",
+  "Password": "Contraseña",
+  "EnterUsername": "Introduce el nombre de usuario",
+  "EnterPassword": "Introduce la contraseña",
+  "Login": "Iniciar sesión"
+},
+"settings": {
+  "title": "Configuración",
+  "subtitle": "Accesibilidad y preferencias",
+  "back": "Volver a la página principal",
+
+  "languageTitle": "Idioma",
+  "languageDesc": "Elige el idioma utilizado en la aplicación.",
+  "appLanguage": "Idioma de la aplicación",
+  "saveLanguage": "Guardar idioma",
+
+  "defaultBuildingTitle": "Edificio predeterminado",
+  "defaultBuildingDesc": "La aplicación puede preseleccionar este edificio para agilizar el proceso.",
+  "chooseBuilding": "Elegir edificio",
+  "saveDefaultBuilding": "Guardar edificio predeterminado",
+
+  "accessibilityTitle": "Accesibilidad",
+  "accessibilityDesc": "Opciones para mejorar la legibilidad y reducir el esfuerzo visual.",
+  "highContrast": "Modo de alto contraste",
+  "highContrastDesc": "Colores más intensos y texto más claro para personas con dificultades visuales.",
+  "largeText": "Texto grande",
+  "largeTextDesc": "Aumentar el tamaño del texto para facilitar la lectura.",
+  "reduceMotion": "Reducir movimiento",
+  "reduceMotionDesc": "Minimizar animaciones para evitar mareos o incomodidad.",
+
+  "resetDefaults": "Restablecer valores predeterminados",
+  "done": "Finalizar",
+  "saved": "Guardado",
+
+  "northernGeneral": "Hospital Northern General",
+  "royalHallamshire": "Hospital Royal Hallamshire",
+  "westonPark": "Hospital Weston Park",
+  "fontSize": "Tamaño del texto",
+  "fontSizeDesc": "Ajusta el tamaño general del texto.",
+  "textSizeAria": "Tamaño del texto",
+  "smallest": "Más pequeño",
+  "default": "Predeterminado",
+  "largest": "Más grande"
+
+},
+"staff": {
+  "title": "Portal del personal",
+  "subtitle": "Sistema de gestión de rutas",
+  "back": "Volver a la página principal",
+
+  "uploadTab": "Subir rutas",
+  "manageTab": "Gestionar rutas",
+
+  "uploadNewPath": "Subir nueva ruta",
+  "uploadDescription": "Sube rutas de navegación para que los pacientes las sigan dentro de los edificios del hospital",
+
+  "failedLoadBuildings": "No se pudieron cargar los edificios.",
+  "savedDraft": "Borrador guardado en la base de datos.",
+  "uploadedPath": "Ruta subida a la base de datos.",
+  "uploadFailed": "La subida falló.",
+
+  "pathName": "Nombre de la ruta",
+  "pathNamePlaceholder": "p. ej., Entrada principal a Cardiología",
+
+  "startPoint": "Punto de inicio",
+  "startPointPlaceholder": "Busca la entrada en la que te encuentras...",
+
+  "endPoint": "Punto de destino",
+  "endPointPlaceholder": "Busca el edificio/departamento...",
+
+  "accessibleRoute": "Ruta accesible (evitar escaleras) / AccessToggle",
+
+  "clickToUpload": "Haz clic para subir o arrastra y suelta",
+  "reorderBeforeUpload": "Luego reordena la lista de abajo antes de subir",
+
+  "fileOrder": "Orden de archivos (arrastra para reordenar)",
+  "topIsFirst": "Arriba = primer paso",
+
+  "dragToReorder": "Arrastra para reordenar",
+  "moveUp": "Mover arriba",
+  "moveDown": "Mover abajo",
+  "remove": "eliminar",
+
+  "mediaDescription": "Descripción del contenido (opcional)",
+  "mediaDescriptionPlaceholder": "Notas opcionales para estos archivos...",
+
+  "uploadPath": "Subir ruta",
+  "saveDraft": "Guardar como borrador",
+  "saving": "Guardando..."
+},
+"managePaths": {
+  "searchPlaceholder": "Buscar rutas...",
+  "filterByBuilding": "Filtrar por edificio",
+  "filterByStatus": "Filtrar por estado",
+  "active": "Activa",
+  "draft": "Borrador",
+  "uploadedPaths": "Rutas subidas",
+  "edit": "Editar",
+  "export": "Exportar",
+  "delete": "Eliminar"
+},
+"languageSelector": {
+  "language": "Idioma",
+  "english": "Inglés",
+  "polish": "Polaco",
+  "french": "Francés",
+  "spanish": "Español"
+},
+"topBar": {
+  "staffPortal": "Portal del personal",
+  "settings": "Configuración"
+}
+
 }

@@ -8,16 +8,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { useRouter } from "next/navigation";
-
-const languages = [
-  { code: "en", name: "English" },
-  { code: "pl", name: "Polish" },
-  { code: "fr", name: "French"},
-  { code: "es", name: "Spanish"},
-];
+import { useTranslations } from "next-intl";
 
 export default function LanguageSelector() {
   const router = useRouter();
+  const t = useTranslations("languageSelector");
+
+  const languages = [
+    { code: "en", label: t("english") },
+    { code: "pl", label: t("polish") },
+    { code: "fr", label: t("french") },
+    { code: "es", label: t("spanish") },
+  ];
 
   const changeLanguage = (locale: string) => {
     document.cookie = `locale=${locale}; path=/; max-age=31536000`;
@@ -28,7 +30,7 @@ export default function LanguageSelector() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="border px-3 py-1 rounded">
-          Language ▾
+          {t("language")} ▾
         </button>
       </DropdownMenuTrigger>
 
@@ -38,7 +40,7 @@ export default function LanguageSelector() {
             key={lang.code}
             onClick={() => changeLanguage(lang.code)}
           >
-            {lang.name}
+            {lang.label}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

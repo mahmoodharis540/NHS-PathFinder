@@ -132,36 +132,42 @@
 /* -----------------------------
    Accessibility helpers
    ----------------------------- */
-
-/* High contrast mode */
-.high-contrast body {
-  background: #000 !important;
-  color: #fff !important;
+html.high-contrast,
+html.high-contrast body {
+  background-color: #000000 !important;
+  color: #ffff00 !important;
 }
 
-.high-contrast a {
+html.high-contrast * {
+  background-color: #000000 !important;
+  color: #ffff00 !important;
+  border-color: #ffff00 !important;
+}
+
+html.high-contrast a {
+  color: #ffff00 !important;
   text-decoration: underline;
 }
 
-.high-contrast input,
-.high-contrast select,
-.high-contrast textarea {
-  background: #000 !important;
-  color: #fff !important;
-  border-color: #fff !important;
+html.high-contrast button,
+html.high-contrast select,
+html.high-contrast input,
+html.high-contrast textarea {
+  background-color: #000000 !important;
+  color: #ffff00 !important;
+  border: 1px solid #ffff00 !important;
 }
 
-/* Large text mode */
-.large-text body {
-  font-size: 112.5%;
-}
 
-/* Reduced motion mode */
-.reduce-motion *,
-.reduce-motion *::before,
-.reduce-motion *::after {
+html.reduce-motion *,
+html.reduce-motion *::before,
+html.reduce-motion *::after {
   animation-duration: 0.001ms !important;
   animation-iteration-count: 1 !important;
   transition-duration: 0.001ms !important;
   scroll-behavior: auto !important;
+}
+p, li, span, label, a, td, th, blockquote,
+input, select, textarea, button {
+  font-size: var(--nhs-text-size, 16px);
 }
