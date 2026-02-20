@@ -4,20 +4,16 @@ import { useEffect, useState, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import type { PathSummary, MediaItem } from "@/types/paths";
 
-// ─── helpers ────────────────────────────────────────────────────────────────
 
 function isVideo(src: string) {
   return /\.(mp4|webm|ogg|mov)$/i.test(src);
 }
 
-// ─── component ───────────────────────────────────────────────────────────────
 
 export default function DirectionsPage() {
   const searchParams = useSearchParams();
   const router       = useRouter();
 
-  // Guard against the home page passing the literal string "undefined"
-  // when the SearchDropdown onSelect item shape doesn't have a .name property
   const clean = (key: string) => {
     const v = searchParams.get(key) ?? "";
     return v === "undefined" ? "" : v;
@@ -31,7 +27,6 @@ export default function DirectionsPage() {
   const [loading, setLoading]     = useState(true);
   const [error, setError]         = useState<string | null>(null);
 
-  // ── fetch matching path ───────────────────────────────────────────────────
   useEffect(() => {
     if (!entrance || !destination) {
       setError("Missing start or destination. Please go back and try again.");
@@ -65,8 +60,6 @@ export default function DirectionsPage() {
       })
       .finally(() => setLoading(false));
   }, [entrance, destination]);
-
-  // ── fetch media sequence once we have a path ──────────────────────────────
   useEffect(() => {
     if (!path) return;
     setSlideIndex(0);
@@ -96,13 +89,11 @@ export default function DirectionsPage() {
       });
   }, [path]);
 
-  // ── slide navigation ──────────────────────────────────────────────────────
   const prev = () =>
     setSlideIndex((i) => (i - 1 + sequence.length) % sequence.length);
   const next = () =>
     setSlideIndex((i) => (i + 1) % sequence.length);
 
-  // ─── loading ──────────────────────────────────────────────────────────────
   if (loading) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-[#003087]">
@@ -117,7 +108,6 @@ export default function DirectionsPage() {
     );
   }
 
-  // ─── error ────────────────────────────────────────────────────────────────
   if (error) {
     return (
       <div className="flex h-screen w-screen flex-col items-center justify-center gap-6 bg-[#003087] text-white px-6">
@@ -132,11 +122,10 @@ export default function DirectionsPage() {
     );
   }
 
-  // ─── render ───────────────────────────────────────────────────────────────
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-black text-white font-sans">
 
-      {/* ── Top bar ──────────────────────────────────────────────────────── */}
+   
       <header className="flex items-center justify-between px-6 py-4 shrink-0 bg-[#003087]">
         <button
           onClick={() => router.push("/")}
@@ -161,17 +150,14 @@ export default function DirectionsPage() {
         )}
       </header>
 
-      {/* ── Canvas ───────────────────────────────────────────────────────── */}
+    
       <div className="relative flex-1 overflow-hidden bg-black">
 
-        {/* No media */}
         {sequence.length === 0 && (
           <div className="absolute inset-0 flex items-center justify-center text-white/40">
             <p className="m-0 text-base">No media available for this path.</p>
           </div>
         )}
-
-        {/* Slides */}
         {sequence.map((item, i) => (
           <div
             key={item.pSequenceId}
@@ -199,7 +185,6 @@ export default function DirectionsPage() {
               />
             )}
 
-            {/* Caption */}
             {item.mediaDesc && (
               <div className="absolute bottom-0 left-0 right-0 px-6 pt-8 pb-24 bg-gradient-to-t from-black/80 to-transparent">
                 <p className="m-0 text-sm text-white/70 max-w-xl">
@@ -210,7 +195,7 @@ export default function DirectionsPage() {
           </div>
         ))}
 
-        {/* Left arrow */}
+
         {sequence.length > 1 && (
           <button
             onClick={prev}
@@ -222,7 +207,6 @@ export default function DirectionsPage() {
           </button>
         )}
 
-        {/* Right arrow */}
         {sequence.length > 1 && (
           <button
             onClick={next}
