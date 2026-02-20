@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Languages from "@/components/Languages";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
 
 function LoginPage() {
   const router = useRouter();
