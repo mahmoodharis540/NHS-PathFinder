@@ -4,7 +4,7 @@
     "pathfinder": "Pathfinder ©",
     "subtitle": "Your gateway to healthcare services.",
     "prompt": "What building do you want to go to?",
-
+    "accessibleRoute": "Accessible route (avoid stairs) / AccessToggle",
     "nhsLogoAlt": "NHS Logo",
 
     "whereAreYouLabel": "Where are you:",
@@ -54,7 +54,14 @@
 
   "northernGeneral": "Northern General Hospital",
   "royalHallamshire": "Royal Hallamshire Hospital",
-  "westonPark": "Weston Park Hospital"
+  "westonPark": "Weston Park Hospital",
+  "fontSize": "Font size",
+  "fontSizeDesc": "Adjust the overall font size.",
+  "textSizeAria": "Text size",
+  "smallest": "Smallest",
+  "default": "Default",
+  "largest": "Largest"
+
 },
 "staff": {
   "title": "Staff Portal",
@@ -123,5 +130,4 @@
   "staffPortal": "Staff Portal",
   "settings": "Settings"
 }
-
 }

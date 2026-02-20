@@ -4,7 +4,7 @@
     "pathfinder": "Pionier ©",
     "subtitle": "Twoja brama do usług opieki zdrowotnej.",
     "prompt": "Do którego budynku chcesz się udać?",
-
+    "accessibleRoute": "Dostępna trasa (omijaj schody) / Przełącznik dostępu",
     "nhsLogoAlt": "Logo NHS",
 
     "whereAreYouLabel": "Gdzie się znajdujesz?",
@@ -53,7 +53,14 @@
 
   "northernGeneral": "Szpital Northern General",
   "royalHallamshire": "Szpital Royal Hallamshire",
-  "westonPark": "Szpital Weston Park"
+  "westonPark": "Szpital Weston Park",
+  "fontSize": "Rozmiar tekstu",
+  "fontSizeDesc": "Dostosuj ogólny rozmiar tekstu.",
+  "textSizeAria": "Rozmiar tekstu",
+  "smallest": "Najmniejszy",
+  "default": "Domyślny",
+  "largest": "Największy"
+
 },
 "staff": {
   "title": "Portal personelu",

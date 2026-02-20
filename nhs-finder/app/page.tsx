@@ -12,6 +12,7 @@ import { useTranslations } from "next-intl";
 export default function HomePage() {
   const t = useTranslations("home");
   const router = useRouter();
+  const [accessible, setAccessible] = useState(false);
 
   const [entrance, setEntrance] = useState<any>(null);
   const [destination, setDestination] = useState<any>(null);
@@ -21,8 +22,10 @@ export default function HomePage() {
 
     router.push(
       `/directions?entrance=${encodeURIComponent(
-        entrance.name
-      )}&destination=${encodeURIComponent(destination.name)}`
+        entrance.DestinationName   // ← was entrance.name
+      )}&destination=${encodeURIComponent(
+        destination.DestinationName // ← was destination.name
+      )}`
     );
   };
 
@@ -64,6 +67,20 @@ export default function HomePage() {
             apiUrl="/api/destinations-search"
             onSelect={(item) => setDestination(item)}
           />
+
+          {/* Accessible toggle */}
+          <div className="mb-6 flex items-center gap-3">
+            <input
+              id="accessible"
+              type="checkbox"
+              checked={accessible}
+              onChange={(e) => setAccessible(e.target.checked)}
+              className="h-4 w-4"
+            />
+            <label htmlFor="accessible" className="text-sm">
+              {t("accessibleRoute")}
+            </label>
+          </div>
 
           <button
             onClick={handleStartNavigation}
