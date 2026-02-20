@@ -22,6 +22,11 @@ function moveItem<T>(arr: T[], from: number, to: number) {
   return copy;
 }
 
+type SimpleVoice = {
+  name: string;
+  lang: string;
+};
+
 export default function StaffPortalPage() {
   const router = useRouter();
   const t = useTranslations("staff");
@@ -31,23 +36,129 @@ export default function StaffPortalPage() {
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [loadingBuildings, setLoadingBuildings] = useState(false);
 
-  // Form state
-  const [buildingId, setBuildingId] = useState<string>(""); // OPTIONAL
+  const [buildingId, setBuildingId] = useState<string>(""); 
   const [pathName, setPathName] = useState("");
   const [startName, setStartName] = useState("");
   const [endName, setEndName] = useState("");
   const [description, setDescription] = useState("");
   const [accessible, setAccessible] = useState(false);
 
-  // Media files
   const [files, setFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<string>("");
 
-  // drag reorder state
   const [dragIndex, setDragIndex] = useState<number | null>(null);
+
+
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  const speechSupported = useMemo(() => {
+    return typeof window !== "undefined" && "speechSynthesis" in window;
+  }, []);
+
+  const ttsLanguages = useMemo(
+    () => [
+      { value: "en-GB", label: "English (UK)" },
+      { value: "en-US", label: "English (US)" },
+      { value: "pl-PL", label: "Polski (PL)" },
+      { value: "fr-FR", label: "Français (FR)" },
+      { value: "es-ES", label: "Español (ES)" },
+    ],
+    []
+  );
+
+  const [ttsLang, setTtsLang] = useState<string>("en-GB");
+  const [voices, setVoices] = useState<SimpleVoice[]>([]);
+  const [selectedVoiceName, setSelectedVoiceName] = useState<string>("");
+
+  const refreshVoices = () => {
+    if (typeof window === "undefined") return;
+    const raw = window.speechSynthesis.getVoices?.() ?? [];
+    const mapped: SimpleVoice[] = raw.map((v) => ({ name: v.name, lang: v.lang }));
+    setVoices(mapped);
+  };
+
+  useEffect(() => {
+    if (!speechSupported) return;
+
+    refreshVoices();
+
+    const handler = () => refreshVoices();
+    window.speechSynthesis.onvoiceschanged = handler;
+
+    return () => {
+      window.speechSynthesis.onvoiceschanged = null;
+    };
+  }, [speechSupported]);
+
+  const voicesForLang = useMemo(() => {
+    const langLower = ttsLang.toLowerCase();
+    return voices.filter((v) => v.lang?.toLowerCase() === langLower);
+  }, [voices, ttsLang]);
+
+  useEffect(() => {
+    if (!speechSupported) return;
+
+    if (selectedVoiceName && voicesForLang.some((v) => v.name === selectedVoiceName)) return;
+
+    if (voicesForLang.length > 0) {
+      setSelectedVoiceName(voicesForLang[0].name);
+      return;
+    }
+
+    const base = ttsLang.split("-")[0]?.toLowerCase();
+    const baseMatch = voices.find((v) => (v.lang ?? "").toLowerCase().startsWith(base));
+    if (baseMatch) {
+      setSelectedVoiceName(baseMatch.name);
+    } else if (voices.length > 0) {
+      setSelectedVoiceName(voices[0].name);
+    } else {
+      setSelectedVoiceName("");
+    }
+  }, [speechSupported, ttsLang, voicesForLang, voices, selectedVoiceName]);
+
+  const stopSpeaking = () => {
+    if (typeof window === "undefined") return;
+    try {
+      window.speechSynthesis.cancel();
+    } finally {
+      setIsSpeaking(false);
+    }
+  };
+
+  const speakDescription = () => {
+    if (!speechSupported) return;
+
+    const text = description.trim();
+    if (!text) return;
+
+    stopSpeaking();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = ttsLang; 
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
+    const rawVoices = window.speechSynthesis.getVoices?.() ?? [];
+    const chosen = rawVoices.find((v) => v.name === selectedVoiceName);
+    if (chosen) utterance.voice = chosen;
+
+    window.speechSynthesis.speak(utterance);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const loadBuildings = async () => {
@@ -140,6 +251,8 @@ export default function StaffPortalPage() {
       setDescription("");
       setAccessible(false);
       setFiles([]);
+
+      stopSpeaking();
     } catch (e: any) {
       setMessage(e?.message ?? t("uploadFailed"));
     } finally {
@@ -382,6 +495,85 @@ export default function StaffPortalPage() {
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm min-h-[100px]"
                 placeholder={t("mediaDescriptionPlaceholder")}
               />
+
+              {/* TTS settings + buttons */}
+              <div className="mt-3 space-y-3">
+                {/* Language + Voice dropdowns */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">TTS language</label>
+                    <select
+                      value={ttsLang}
+                      onChange={(e) => setTtsLang(e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white"
+                      disabled={!speechSupported}
+                    >
+                      {ttsLanguages.map((l) => (
+                        <option key={l.value} value={l.value}>
+                          {l.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Voice</label>
+                    <select
+                      value={selectedVoiceName}
+                      onChange={(e) => setSelectedVoiceName(e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white"
+                      disabled={!speechSupported || voices.length === 0}
+                    >
+                      {voicesForLang.length > 0 ? (
+                        voicesForLang.map((v) => (
+                          <option key={`${v.lang}-${v.name}`} value={v.name}>
+                            {v.name}
+                          </option>
+                        ))
+                      ) : (
+                        <option value="">
+                          No voices found for {ttsLang} (try another language)
+                        </option>
+                      )}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Buttons */}
+                <div className="flex gap-3 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={speakDescription}
+                    disabled={!speechSupported || description.trim().length === 0}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                      !speechSupported || description.trim().length === 0
+                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        : "bg-green-600 text-white hover:bg-green-700"
+                    }`}
+                  >
+                    🔊 Read description
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={stopSpeaking}
+                    disabled={!speechSupported || !isSpeaking}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                      !speechSupported || !isSpeaking
+                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        : "bg-gray-600 text-white hover:bg-gray-700"
+                    }`}
+                  >
+                    ⏹ Stop
+                  </button>
+
+                  {!speechSupported && (
+                    <p className="text-xs text-gray-500 self-center">
+                      TTS not supported in this browser.
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Buttons */}
