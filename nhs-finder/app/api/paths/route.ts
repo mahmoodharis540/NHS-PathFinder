@@ -2,6 +2,10 @@ import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
+// GET /api/paths
+// Optional query params: ?entrance=<name>&destination=<name>
+// Without params → returns all paths (used by admin/staff portal)
+// With params    → resolves names to IDs first, then filters paths by Start/End
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const entrance    = searchParams.get("entrance");
@@ -56,6 +60,7 @@ export async function GET(req: Request) {
   }
 }
 
+// POST /api/paths
 // Creates a new path — used by the staff/admin portal
 export async function POST(req: Request) {
   try {

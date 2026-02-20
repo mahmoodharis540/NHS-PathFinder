@@ -22,8 +22,10 @@ export default function HomePage() {
 
     router.push(
       `/directions?entrance=${encodeURIComponent(
-        entrance.name
-      )}&destination=${encodeURIComponent(destination.name)}`
+        entrance.DestinationName   // ← was entrance.name
+      )}&destination=${encodeURIComponent(
+        destination.DestinationName // ← was destination.name
+      )}`
     );
   };
 
@@ -67,18 +69,18 @@ export default function HomePage() {
           />
 
           {/* Accessible toggle */}
-            <div className="mb-6 flex items-center gap-3">
-              <input
-                id="accessible"
-                type="checkbox"
-                checked={accessible}
-                onChange={(e) => setAccessible(e.target.checked)}
-                className="h-4 w-4"
-              />
-              <label htmlFor="accessible" className="text-sm">
-                {t("accessibleRoute")}
-              </label>
-            </div>
+          <div className="mb-6 flex items-center gap-3">
+            <input
+              id="accessible"
+              type="checkbox"
+              checked={accessible}
+              onChange={(e) => setAccessible(e.target.checked)}
+              className="h-4 w-4"
+            />
+            <label htmlFor="accessible" className="text-sm">
+              {t("accessibleRoute")}
+            </label>
+          </div>
 
           <button
             onClick={handleStartNavigation}
