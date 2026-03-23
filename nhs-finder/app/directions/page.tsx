@@ -160,17 +160,17 @@ export default function DirectionsPage() {
         )}
         {sequence.map((item, i) => (
           <div
-            key={item.pSequenceId}
+            key={String(item.pSequenceId ?? i)}
             className="absolute inset-0 flex items-center justify-center transition-opacity duration-500 ease-in-out"
             style={{
               opacity: i === slideIndex ? 1 : 0,
               pointerEvents: i === slideIndex ? "all" : "none",
             }}
           >
-            {isVideo(item.media) ? (
+            {isVideo(String(item.media ?? "")) ? (
               <video
                 key={`${item.pSequenceId}-${i === slideIndex}`}
-                src={item.media}
+                src={String(item.media ?? "")}
                 autoPlay={i === slideIndex}
                 loop
                 muted
@@ -179,17 +179,17 @@ export default function DirectionsPage() {
               />
             ) : (
               <img
-                src={item.media}
-                alt={item.mediaDesc}
+                src={String(item.media ?? "")}
+                alt={String(item.mediaDesc ?? "")}
                 loading="lazy"
                 className="max-w-full max-h-full object-contain select-none"
               />
             )}
 
-            {item.mediaDesc && (
+            {String(item.mediaDesc ?? "") && (
               <div className="absolute bottom-0 left-0 right-0 px-6 pt-8 pb-24 bg-gradient-to-t from-black/80 to-transparent">
                 <p className="m-0 text-sm text-white/70 max-w-xl">
-                  {item.mediaDesc}
+                  {String(item.mediaDesc ?? "")}
                 </p>
               </div>
             )}
