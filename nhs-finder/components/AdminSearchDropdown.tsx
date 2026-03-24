@@ -9,6 +9,10 @@ type Item = {
   isEntrance: number;
 };
 
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback;
+}
+
 function useDebouncedValue<T>(value: T, delayMs: number) {
   const [debounced, setDebounced] = useState(value);
   useEffect(() => {
@@ -55,17 +59,25 @@ export default function AdminSearchDropdown({
       setLoading(true);
       setErr("");
       try {
-        const res = await fetch(`${apiUrl}?take=35&q=${encodeURIComponent(debounced)}`, {
+        const params = new URLSearchParams({
+          take: "35",
+          q: debounced,
+        });
+
+        if (buildingId) params.set("buildingId", buildingId);
+        params.set("isEntrance", String(isEntrance));
+
+        const res = await fetch(`${apiUrl}?${params.toString()}`, {
           cache: "no-store",
         });
         const text = await res.text();
         if (!res.ok) throw new Error(text);
         const data = JSON.parse(text) as Item[];
         if (!cancelled) setResults(Array.isArray(data) ? data : []);
-      } catch (e: any) {
+      } catch (error: unknown) {
         if (!cancelled) {
           setResults([]);
-          setErr(e?.message ?? "Failed to load results");
+          setErr(getErrorMessage(error, "Failed to load results"));
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -76,7 +88,7 @@ export default function AdminSearchDropdown({
     return () => {
       cancelled = true;
     };
-  }, [apiUrl, debounced]);
+  }, [apiUrl, buildingId, debounced, isEntrance]);
 
   const exactMatch = useMemo(() => {
     const lower = trimmed.toLowerCase();
@@ -122,8 +134,8 @@ export default function AdminSearchDropdown({
       });
 
       setOpen(false);
-    } catch (e: any) {
-      setErr(e?.message ?? "Failed to create destination");
+    } catch (error: unknown) {
+      setErr(getErrorMessage(error, "Failed to create destination"));
     } finally {
       setCreating(false);
     }
@@ -145,6 +157,12 @@ export default function AdminSearchDropdown({
           className="w-full rounded-xl px-4 py-3 text-sm text-black border border-gray-200 focus:outline-none"
           placeholder={placeholder}
         />
+
+        {!buildingId && (
+          <p className="mt-2 px-1 text-xs text-amber-700">
+            Select a building first to keep node choices linked to the correct hospital map.
+          </p>
+        )}
 
         {open && (
           <div className="absolute left-0 right-0 z-20 mt-2 rounded-xl bg-white text-black border border-gray-200 shadow-sm overflow-hidden">
@@ -190,7 +208,10 @@ export default function AdminSearchDropdown({
                     setOpen(false);
                   }}
                 >
-                  {r.DestinationName}
+                  <div className="font-medium">{r.DestinationName}</div>
+                  <div className="text-xs text-gray-500">
+                    {r.isEntrance === 1 ? "Entrance node" : "Location node"}
+                  </div>
                 </button>
               ))}
             </div>
@@ -200,4 +221,3 @@ export default function AdminSearchDropdown({
     </div>
   );
 }
-
