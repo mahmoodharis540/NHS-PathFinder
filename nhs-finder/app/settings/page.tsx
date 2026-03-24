@@ -7,7 +7,6 @@ import { ChevronLeft, Check } from "lucide-react";
 import { useTranslations } from "next-intl";
 import LanguageSelector from "@/components/Languages";
 
-
 type Language = "en" | "ur" | "pl" | "ar";
 type BuildingId = "northern-general" | "royal-hallamshire" | "weston-park";
 
@@ -270,16 +269,22 @@ function ToggleRow({
       <button
         type="button"
         onClick={() => onChange(!checked)}
-        className="relative inline-flex h-7 w-12 items-center rounded-full transition"
-        style={{ backgroundColor: checked ? "#003087" : "#d1d5db" }}
+        className="relative inline-flex items-center rounded-full transition flex-shrink-0"
+        style={{
+          width: "3em",
+          height: "1.75em",
+          backgroundColor: checked ? "#003087" : "#d1d5db",
+        }}
         aria-pressed={checked}
         aria-label={title}
       >
         <span
-          className={[
-            "inline-block h-5 w-5 transform rounded-full bg-white transition",
-            checked ? "translate-x-6" : "translate-x-1",
-          ].join(" ")}
+          className="inline-block rounded-full bg-white transition"
+          style={{
+            width: "1.25em",
+            height: "1.25em",
+            transform: checked ? "translateX(1.5em)" : "translateX(0.25em)",
+          }}
         />
       </button>
     </div>

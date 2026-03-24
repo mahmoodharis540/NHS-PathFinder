@@ -15,6 +15,29 @@ type Building = {
   BuildingName: string;
 };
 
+type ExistingMediaItem = {
+  MediaID: number;
+  Media: string;
+  MediaDesc?: string | null;
+};
+
+type EditingPath = {
+  id: number;
+  pathName: string;
+  buildingId: number;
+  building?: string;
+  startId?: number;
+  endId?: number;
+  startName: string;
+  endName: string;
+  statusId?: number;
+  statusType: string;
+  accessToggle: number;
+  date?: string;
+  description?: string;
+  media?: ExistingMediaItem[];
+};
+
 function moveItem<T>(arr: T[], from: number, to: number) {
   const copy = [...arr];
   const [item] = copy.splice(from, 1);
@@ -32,11 +55,12 @@ export default function StaffPortalPage() {
   const t = useTranslations("staff");
 
   const [tab, setTab] = useState<"upload" | "manage">("upload");
+  const [editingPath, setEditingPath] = useState<EditingPath | null>(null);
 
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [loadingBuildings, setLoadingBuildings] = useState(false);
 
-  const [buildingId, setBuildingId] = useState<string>(""); 
+  const [buildingId, setBuildingId] = useState<string>("");
   const [pathName, setPathName] = useState("");
   const [startName, setStartName] = useState("");
   const [endName, setEndName] = useState("");
@@ -44,13 +68,16 @@ export default function StaffPortalPage() {
   const [accessible, setAccessible] = useState(false);
 
   const [files, setFiles] = useState<File[]>([]);
+  const [existingMedia, setExistingMedia] = useState<ExistingMediaItem[]>([]);
+  const [removedMediaIds, setRemovedMediaIds] = useState<number[]>([]);
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<string>("");
 
   const [dragIndex, setDragIndex] = useState<number | null>(null);
-
+  const [existingDragIndex, setExistingDragIndex] = useState<number | null>(null);
 
   const [isSpeaking, setIsSpeaking] = useState(false);
 
@@ -137,7 +164,7 @@ export default function StaffPortalPage() {
     stopSpeaking();
 
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = ttsLang; 
+    utterance.lang = ttsLang;
     utterance.rate = 0.9;
     utterance.pitch = 1;
 
@@ -180,7 +207,46 @@ export default function StaffPortalPage() {
     loadBuildings();
   }, [t]);
 
+  useEffect(() => {
+    if (!editingPath) return;
+
+    setBuildingId(String(editingPath.buildingId ?? ""));
+    setPathName(editingPath.pathName ?? "");
+    setStartName(editingPath.startName ?? "");
+    setEndName(editingPath.endName ?? "");
+    setAccessible(Number(editingPath.accessToggle) === 1);
+    setDescription(editingPath.description ?? "");
+    setExistingMedia(editingPath.media ?? []);
+    setRemovedMediaIds([]);
+    setFiles([]);
+    setTab("upload");
+    stopSpeaking();
+  }, [editingPath]);
+
+  const clearForm = () => {
+    setBuildingId("");
+    setPathName("");
+    setStartName("");
+    setEndName("");
+    setDescription("");
+    setAccessible(false);
+    setFiles([]);
+    setExistingMedia([]);
+    setRemovedMediaIds([]);
+    setEditingPath(null);
+    stopSpeaking();
+  };
+
   const canSubmit = useMemo(() => {
+    if (editingPath) {
+      return (
+        pathName.trim().length > 0 &&
+        startName.trim().length > 0 &&
+        endName.trim().length > 0 &&
+        !isSaving
+      );
+    }
+
     return (
       pathName.trim().length > 0 &&
       startName.trim().length > 0 &&
@@ -188,7 +254,7 @@ export default function StaffPortalPage() {
       files.length > 0 &&
       !isSaving
     );
-  }, [pathName, startName, endName, files.length, isSaving]);
+  }, [editingPath, pathName, startName, endName, files.length, isSaving]);
 
   const openFilePicker = () => fileInputRef.current?.click();
 
@@ -209,6 +275,26 @@ export default function StaffPortalPage() {
   const moveDown = (idx: number) => {
     if (idx >= files.length - 1) return;
     setFiles((prev) => moveItem(prev, idx, idx + 1));
+  };
+
+  const removeExistingMedia = (idx: number) => {
+    setExistingMedia((prev) => {
+      const item = prev[idx];
+      if (item) {
+        setRemovedMediaIds((old) => [...old, item.MediaID]);
+      }
+      return prev.filter((_, i) => i !== idx);
+    });
+  };
+
+  const moveExistingMediaUp = (idx: number) => {
+    if (idx <= 0) return;
+    setExistingMedia((prev) => moveItem(prev, idx, idx - 1));
+  };
+
+  const moveExistingMediaDown = (idx: number) => {
+    if (idx >= existingMedia.length - 1) return;
+    setExistingMedia((prev) => moveItem(prev, idx, idx + 1));
   };
 
   const submit = async (statusType: "Active" | "Draft") => {
@@ -233,28 +319,37 @@ export default function StaffPortalPage() {
       ).padStart(2, "0")}`;
       fd.append("date", date);
 
+      fd.append(
+        "existingMediaOrder",
+        JSON.stringify(existingMedia.map((m) => m.MediaID))
+      );
+      fd.append("removedMediaIds", JSON.stringify(removedMediaIds));
+
       for (const f of files) fd.append("files", f);
 
-      const res = await fetch("/api/admin/path", {
-        method: "POST",
+      const url = editingPath ? `/api/manage/${editingPath.id}` : "/api/admin/path";
+      const method = editingPath ? "PATCH" : "POST";
+
+      const res = await fetch(url, {
+        method,
         body: fd,
       });
 
       const text = await res.text();
       if (!res.ok) throw new Error(text);
 
-      setMessage(statusType === "Draft" ? t("savedDraft") : t("uploadedPath"));
+      setMessage(
+        editingPath
+          ? "Path updated successfully."
+          : statusType === "Draft"
+          ? t("savedDraft")
+          : t("uploadedPath")
+      );
 
-      setPathName("");
-      setStartName("");
-      setEndName("");
-      setDescription("");
-      setAccessible(false);
-      setFiles([]);
-
-      stopSpeaking();
+      clearForm();
+      setTab("manage");
     } catch (e: any) {
-      setMessage(e?.message ?? t("uploadFailed"));
+      setMessage(e?.message ?? (editingPath ? "Update failed." : t("uploadFailed")));
     } finally {
       setIsSaving(false);
     }
@@ -262,7 +357,6 @@ export default function StaffPortalPage() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Header */}
       <div className="bg-[#003087] text-white px-8 py-6 flex justify-between items-center">
         <div className="flex items-center gap-4">
           <button
@@ -285,7 +379,6 @@ export default function StaffPortalPage() {
         </Link>
       </div>
 
-      {/* Tabs */}
       <div className="px-8 mt-6">
         <div className="flex gap-4">
           <button
@@ -308,12 +401,16 @@ export default function StaffPortalPage() {
         </div>
       </div>
 
-      {/* Upload Section */}
       {tab === "upload" && (
         <div className="px-8 mt-6">
           <div className="bg-white rounded-xl shadow-sm p-8">
-            <h2 className="text-xl font-semibold mb-2">{t("uploadNewPath")}</h2>
-            <p className="text-gray-500 mb-6">{t("uploadDescription")}</p>
+            <h2 className="text-xl font-semibold mb-2">
+              {editingPath ? "Edit Path" : t("uploadNewPath")}
+            </h2>
+
+            <p className="text-gray-500 mb-6">
+              {editingPath ? "Update the selected path details below." : t("uploadDescription")}
+            </p>
 
             {message && (
               <div className="mb-4 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-800 whitespace-pre-wrap">
@@ -321,7 +418,12 @@ export default function StaffPortalPage() {
               </div>
             )}
 
-            {/* Building select + Add new building */}
+            {editingPath && (
+              <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900">
+                Editing path ID: {editingPath.id}
+              </div>
+            )}
+
             <AdminBuildingSelect
               buildings={buildings}
               value={buildingId}
@@ -330,7 +432,6 @@ export default function StaffPortalPage() {
               onBuildingCreated={(b) => setBuildings((prev) => [b, ...prev])}
             />
 
-            {/* Path Name */}
             <div className="mb-4">
               <label className="block text-sm font-medium mb-2">{t("pathName")}</label>
               <input
@@ -341,7 +442,6 @@ export default function StaffPortalPage() {
               />
             </div>
 
-            {/* Start & End Points */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <AdminSearchDropdown
@@ -370,7 +470,6 @@ export default function StaffPortalPage() {
               </div>
             </div>
 
-            {/* Accessible toggle */}
             <div className="mb-6 flex items-center gap-3">
               <input
                 id="accessible"
@@ -384,7 +483,93 @@ export default function StaffPortalPage() {
               </label>
             </div>
 
-            {/* Upload Box */}
+            {editingPath && existingMedia.length > 0 && (
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-medium">Current media</p>
+                  <p className="text-xs text-gray-500">Top item shows first</p>
+                </div>
+
+                <div className="space-y-3">
+                  {existingMedia.map((item, idx) => {
+                    const isVideo = /\.(mp4|webm|ogg|mov)$/i.test(item.Media);
+
+                    return (
+                      <div
+                        key={item.MediaID}
+                        draggable
+                        onDragStart={() => setExistingDragIndex(idx)}
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          e.dataTransfer.dropEffect = "move";
+                        }}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          if (existingDragIndex === null || existingDragIndex === idx) return;
+                          setExistingMedia((prev) => moveItem(prev, existingDragIndex, idx));
+                          setExistingDragIndex(null);
+                        }}
+                        onDragEnd={() => setExistingDragIndex(null)}
+                        className="rounded-lg border border-gray-200 p-3 bg-white"
+                      >
+                        <div className="flex items-center justify-between gap-3 mb-3">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <span className="text-gray-400 select-none">☰</span>
+                            <span className="text-gray-500 w-6 text-right select-none">{idx + 1}.</span>
+                            <span className="text-xs text-gray-500 truncate">
+                              Media ID: {item.MediaID}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => moveExistingMediaUp(idx)}
+                              className="px-2 py-1 rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-40"
+                              disabled={idx === 0}
+                            >
+                              ↑
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => moveExistingMediaDown(idx)}
+                              className="px-2 py-1 rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-40"
+                              disabled={idx === existingMedia.length - 1}
+                            >
+                              ↓
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => removeExistingMedia(idx)}
+                              className="text-red-600 hover:underline"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+
+                        {isVideo ? (
+                          <video
+                            src={item.Media}
+                            controls
+                            className="w-full rounded-lg max-h-56 bg-black"
+                          />
+                        ) : (
+                          <img
+                            src={item.Media}
+                            alt={item.MediaDesc ?? "Uploaded media"}
+                            className="w-full rounded-lg max-h-56 object-cover"
+                          />
+                        )}
+
+                        <p className="mt-2 text-xs text-gray-600 break-all">{item.Media}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             <input
               ref={fileInputRef}
               type="file"
@@ -412,15 +597,18 @@ export default function StaffPortalPage() {
               className="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center text-gray-500 mb-4 cursor-pointer hover:bg-gray-50 transition"
             >
               <p className="text-3xl mb-2">📁</p>
-              <p className="text-sm">{t("clickToUpload")}</p>
+              <p className="text-sm">
+                {editingPath
+                  ? "Add new media files to append after the current media."
+                  : t("clickToUpload")}
+              </p>
               <p className="text-xs mt-1">{t("reorderBeforeUpload")}</p>
             </div>
 
-            {/* Reorder list */}
             {files.length > 0 && (
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium">{t("fileOrder")}</p>
+                  <p className="text-sm font-medium">New media to upload</p>
                   <p className="text-xs text-gray-500">{t("topIsFirst")}</p>
                 </div>
 
@@ -442,7 +630,6 @@ export default function StaffPortalPage() {
                       }}
                       onDragEnd={() => setDragIndex(null)}
                       className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm bg-white border-gray-200"
-                      title={t("dragToReorder")}
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <span className="text-gray-400 select-none">☰</span>
@@ -459,7 +646,6 @@ export default function StaffPortalPage() {
                           onClick={() => moveUp(idx)}
                           className="px-2 py-1 rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-40"
                           disabled={idx === 0}
-                          aria-label={t("moveUp")}
                         >
                           ↑
                         </button>
@@ -468,7 +654,6 @@ export default function StaffPortalPage() {
                           onClick={() => moveDown(idx)}
                           className="px-2 py-1 rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-40"
                           disabled={idx === files.length - 1}
-                          aria-label={t("moveDown")}
                         >
                           ↓
                         </button>
@@ -486,7 +671,6 @@ export default function StaffPortalPage() {
               </div>
             )}
 
-            {/* Media Description (Optional) */}
             <div className="mb-6">
               <label className="block text-sm font-medium mb-2">{t("mediaDescription")}</label>
               <textarea
@@ -496,9 +680,7 @@ export default function StaffPortalPage() {
                 placeholder={t("mediaDescriptionPlaceholder")}
               />
 
-              {/* TTS settings + buttons */}
               <div className="mt-3 space-y-3">
-                {/* Language + Voice dropdowns */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">TTS language</label>
@@ -539,7 +721,6 @@ export default function StaffPortalPage() {
                   </div>
                 </div>
 
-                {/* Buttons */}
                 <div className="flex gap-3 flex-wrap">
                   <button
                     type="button"
@@ -576,7 +757,6 @@ export default function StaffPortalPage() {
               </div>
             </div>
 
-            {/* Buttons */}
             <div className="flex gap-4">
               <button
                 disabled={!canSubmit}
@@ -585,7 +765,7 @@ export default function StaffPortalPage() {
                   canSubmit ? "bg-[#003087] text-white hover:bg-blue-800" : "bg-gray-200 text-gray-500 cursor-not-allowed"
                 }`}
               >
-                {isSaving ? t("saving") : t("uploadPath")}
+                {isSaving ? t("saving") : editingPath ? "Save changes" : t("uploadPath")}
               </button>
 
               <button
@@ -597,15 +777,22 @@ export default function StaffPortalPage() {
                     : "bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed"
                 }`}
               >
-                {isSaving ? t("saving") : t("saveDraft")}
+                {isSaving ? t("saving") : editingPath ? "Save as draft" : t("saveDraft")}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Manage Section */}
-      {tab === "manage" && <ManagePathsSection />}
+      {tab === "manage" && (
+        <ManagePathsSection
+          onEditPath={(path: EditingPath) => {
+            setMessage("");
+            setEditingPath(path);
+            setTab("upload");
+          }}
+        />
+      )}
     </div>
   );
 }
