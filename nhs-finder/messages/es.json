@@ -15,8 +15,10 @@
 
     "appointmentBuildingLabel": "¿En qué edificio es tu cita?",
     "appointmentBuildingPlaceholder": "Busca el edificio/departamento...",
-
-    "startNavigation": "Iniciar navegación"
+    "startNavigation": "Iniciar navegación",
+    "qrLoading": "Estableciendo tu ubicación inicial desde el código QR...",
+    "qrSuccess": "Ubicación inicial establecida en {entrance}.",
+    "qrInvalid": "Este código QR no coincide con una entrada válida."
   },
   "login": {
   "Welcome": "Página de inicio de sesión",

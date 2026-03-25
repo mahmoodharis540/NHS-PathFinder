@@ -16,8 +16,10 @@
 
     "appointmentBuildingLabel": "Dans quel bâtiment avez-vous votre rendez-vous :",
     "appointmentBuildingPlaceholder": "Recherchez le bâtiment/service...",
-
-    "startNavigation": "Démarrer la navigation"
+    "startNavigation": "Démarrer la navigation",
+    "qrLoading": "Définition de votre point de départ à partir du QR code...",
+    "qrSuccess": "Point de départ défini sur {entrance}.",
+    "qrInvalid": "Ce QR code ne correspond à aucune entrée valide."
   },
   "login": {
   "Welcome": "Page de connexion",

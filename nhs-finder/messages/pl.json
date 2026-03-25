@@ -15,8 +15,10 @@
 
     "appointmentBuildingLabel": "W którym budynku masz wizytę?",
     "appointmentBuildingPlaceholder": "Wyszukaj budynek/oddział...",
-
-    "startNavigation": "Rozpocznij nawigację"
+    "startNavigation": "Rozpocznij nawigację",
+    "qrLoading": "Ustawianie lokalizacji startowej z kodu QR...",
+    "qrSuccess": "Lokalizacja startowa ustawiona na {entrance}.",
+    "qrInvalid": "Ten kod QR nie odpowiada prawidłowemu wejściu."
   },
   "login": {
   "Welcome": "Strona logowania",
