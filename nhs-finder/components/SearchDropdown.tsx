@@ -61,7 +61,7 @@ export default function SearchDropdown({
     <div className="w-full max-w-lg">
       <label className={`block text-sm mb-2 ${labelClassName ?? "text-white"}`}>{label}</label>
 
-      <div className="relative bg-white rounded-2xl shadow-md p-3">
+      <div className="relative rounded-2xl bg-white p-3 shadow-md dark:bg-slate-900">
         <input
           value={displayValue}
           onChange={(e) => {
@@ -72,17 +72,17 @@ export default function SearchDropdown({
           }}
           onFocus={() => setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 150)}
-          className="w-full rounded-xl px-4 py-3 text-sm text-black border border-gray-200 focus:outline-none"
+          className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-900 focus:outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
           placeholder={placeholder}
         />
 
         {open && results.length > 0 && (
-          <div className="absolute left-0 right-0 z-20 mt-2 rounded-xl bg-white text-black border border-gray-200 shadow-sm max-h-64 overflow-auto">
+          <div className="absolute left-0 right-0 z-20 mt-2 max-h-64 overflow-auto rounded-xl border border-gray-200 bg-white text-gray-900 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
             {results.map((r) => (
               <button
                 key={r.DestinationID}
                 type="button"
-                className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50"
+                className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 dark:hover:bg-slate-800"
                 onMouseDown={(ev) => ev.preventDefault()}
                 onClick={() => {
                   setQuery(r.DestinationName);

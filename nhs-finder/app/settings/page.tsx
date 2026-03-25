@@ -14,9 +14,12 @@ type BuildingId = "northern-general" | "royal-hallamshire" | "weston-park";
 type AppSettings = {
   language: Language;
   defaultBuilding: BuildingId;
+  theme: "light" | "dark";
   highContrast: boolean;
   largeText: number;
   reducedMotion: boolean;
+  readableFont: boolean;
+  highlightLinks: boolean;
 };
 
 const STORAGE_KEY = "nhs_pathfinder_settings_v1";
@@ -25,9 +28,12 @@ const NHS_BLUE = "#003087";
 const DEFAULT_SETTINGS: AppSettings = {
   language: "en",
   defaultBuilding: "northern-general",
+  theme: "light",
   highContrast: false,
   largeText: 16,
   reducedMotion: false,
+  readableFont: false,
+  highlightLinks: false,
 };
 
 export default function SettingsPage() {
@@ -53,8 +59,9 @@ export default function SettingsPage() {
     []
   );
 
-  const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState<AppSettings | null>(null);
   const [savedToast, setSavedToast] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     try {
@@ -62,22 +69,33 @@ export default function SettingsPage() {
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<AppSettings>;
         setSettings({ ...DEFAULT_SETTINGS, ...parsed });
+      } else {
+        setSettings(DEFAULT_SETTINGS);
       }
     } catch {
       setSettings(DEFAULT_SETTINGS);
+    } finally {
+      setHydrated(true);
     }
   }, []);
 
   useEffect(() => {
+    if (!hydrated || !settings) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
       window.dispatchEvent(new Event("nhs-settings-updated"));
     } catch {}
-  }, [settings]);
+  }, [hydrated, settings]);
 
   function showSaved() {
     setSavedToast(true);
     window.setTimeout(() => setSavedToast(false), 1200);
+  }
+
+  if (!hydrated || !settings) {
+    return (
+      <div className="min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-100" />
+    );
   }
 
   const sliderPct = ((settings.largeText - 12) / (24 - 12)) * 100;
@@ -135,7 +153,7 @@ export default function SettingsPage() {
               value={settings.defaultBuilding}
               onChange={(e) =>
                 setSettings((prev) => ({
-                  ...prev,
+                  ...(prev ?? DEFAULT_SETTINGS),
                   defaultBuilding: e.target.value as BuildingId,
                 }))
               }
@@ -166,11 +184,51 @@ export default function SettingsPage() {
           <p className="text-sm text-gray-600 mt-1">{t("accessibilityDesc")}</p>
 
           <div className="mt-5 space-y-4">
+            <div className="flex flex-col gap-2 p-4 rounded-xl border border-gray-200">
+              <div className="flex items-center justify-between">
+                <p className="font-medium">{t("themeTitle")}</p>
+                <span className="text-sm text-gray-600">{t(settings.theme === "dark" ? "darkMode" : "lightMode")}</span>
+              </div>
+              <p className="text-sm text-gray-600">{t("themeDesc")}</p>
+
+              <div className="mt-2 grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSettings((p) => ({ ...(p ?? DEFAULT_SETTINGS), theme: "light" }))
+                  }
+                  className={`rounded-lg border px-4 py-3 text-sm font-medium transition ${
+                    settings.theme === "light"
+                      ? "border-[#003087] bg-[#003087] text-white"
+                      : "border-gray-300 bg-white text-gray-900 hover:bg-gray-50"
+                  }`}
+                >
+                  {t("lightMode")}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSettings((p) => ({ ...(p ?? DEFAULT_SETTINGS), theme: "dark" }))
+                  }
+                  className={`rounded-lg border px-4 py-3 text-sm font-medium transition ${
+                    settings.theme === "dark"
+                      ? "border-[#003087] bg-[#003087] text-white"
+                      : "border-gray-300 bg-white text-gray-900 hover:bg-gray-50"
+                  }`}
+                >
+                  {t("darkMode")}
+                </button>
+              </div>
+            </div>
+
             <ToggleRow
               title={t("highContrast")}
               description={t("highContrastDesc")}
               checked={settings.highContrast}
-              onChange={(v) => setSettings((p) => ({ ...p, highContrast: v }))}
+              onChange={(v) =>
+                setSettings((p) => ({ ...(p ?? DEFAULT_SETTINGS), highContrast: v }))
+              }
             />
 
             {/* Font size slider */}
@@ -189,7 +247,10 @@ export default function SettingsPage() {
                 step={2}
                 value={settings.largeText}
                 onChange={(e) =>
-                  setSettings((p) => ({ ...p, largeText: Number(e.target.value) }))
+                  setSettings((p) => ({
+                    ...(p ?? DEFAULT_SETTINGS),
+                    largeText: Number(e.target.value),
+                  }))
                 }
                 style={{
                   background: `linear-gradient(to right, #003087 0%, #003087 ${sliderPct}%, #d1d5db ${sliderPct}%, #d1d5db 100%)`,
@@ -215,7 +276,27 @@ export default function SettingsPage() {
               title={t("reduceMotion")}
               description={t("reduceMotionDesc")}
               checked={settings.reducedMotion}
-              onChange={(v) => setSettings((p) => ({ ...p, reducedMotion: v }))}
+              onChange={(v) =>
+                setSettings((p) => ({ ...(p ?? DEFAULT_SETTINGS), reducedMotion: v }))
+              }
+            />
+
+            <ToggleRow
+              title={t("readableFont")}
+              description={t("readableFontDesc")}
+              checked={settings.readableFont}
+              onChange={(v) =>
+                setSettings((p) => ({ ...(p ?? DEFAULT_SETTINGS), readableFont: v }))
+              }
+            />
+
+            <ToggleRow
+              title={t("highlightLinks")}
+              description={t("highlightLinksDesc")}
+              checked={settings.highlightLinks}
+              onChange={(v) =>
+                setSettings((p) => ({ ...(p ?? DEFAULT_SETTINGS), highlightLinks: v }))
+              }
             />
 
             <button

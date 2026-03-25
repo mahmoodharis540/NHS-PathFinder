@@ -33,6 +33,10 @@
   "title": "Settings",
   "subtitle": "Accessibility & preferences",
   "back": "Back to main page",
+  "themeTitle": "Theme",
+  "themeDesc": "Choose between light and dark mode across the app.",
+  "lightMode": "Light mode",
+  "darkMode": "Dark mode",
 
   "languageTitle": "Language",
   "languageDesc": "Choose the language used across the app.",
@@ -52,6 +56,10 @@
   "largeTextDesc": "Increase overall text size for easier reading.",
   "reduceMotion": "Reduce motion",
   "reduceMotionDesc": "Minimise animations to reduce dizziness or discomfort.",
+  "readableFont": "Dyslexia friendly",
+  "readableFontDesc": "Switch to a dyslexia-friendly font style with wider spacing across the app.",
+  "highlightLinks": "Highlight links",
+  "highlightLinksDesc": "Add a strong yellow highlight to links so they are easy to spot.",
 
   "resetDefaults": "Reset to defaults",
   "done": "Done",
@@ -173,6 +181,8 @@
 },
 "topBar": {
   "staffPortal": "Staff Portal",
-  "settings": "Settings"
+  "settings": "Settings",
+  "lightMode": "Switch to light mode",
+  "darkMode": "Switch to dark mode"
 }
 }

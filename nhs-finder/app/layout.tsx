@@ -4,6 +4,9 @@ import "./globals.css";
 import FontProvider from "@/components/Font";
 import HighContrast from "@/components/HighContrastProvider";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
+import ThemeProvider from "@/components/ThemeProvider";
+import ThemeToggleButton from "@/components/ThemeToggleButton";
+import SettingsButton from "@/components/SettingsButton";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 
@@ -44,11 +47,21 @@ export default async function RootLayout({
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ServiceWorkerRegistration />
-          <FontProvider>
-            <HighContrast>
-          {children}
-            </HighContrast>
-          </FontProvider>
+          <ThemeProvider>
+            <FontProvider>
+              <HighContrast>
+                {children}
+                <div className="pointer-events-none fixed right-4 top-4 z-[70] flex items-center gap-3">
+                  <div className="pointer-events-auto">
+                    <ThemeToggleButton />
+                  </div>
+                  <div className="pointer-events-auto">
+                    <SettingsButton />
+                  </div>
+                </div>
+              </HighContrast>
+            </FontProvider>
+          </ThemeProvider>
         </NextIntlClientProvider>
       </body>
     </html>

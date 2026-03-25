@@ -33,6 +33,10 @@
   "title": "Paramètres",
   "subtitle": "Accessibilité et préférences",
   "back": "Retour à la page principale",
+  "themeTitle": "Thème",
+  "themeDesc": "Choisissez entre le mode clair et le mode sombre dans toute l'application.",
+  "lightMode": "Mode clair",
+  "darkMode": "Mode sombre",
 
   "languageTitle": "Langue",
   "languageDesc": "Choisissez la langue utilisée dans l'application.",
@@ -52,6 +56,10 @@
   "largeTextDesc": "Augmenter la taille du texte pour une lecture plus facile.",
   "reduceMotion": "Réduire les animations",
   "reduceMotionDesc": "Réduire les animations pour éviter les vertiges ou l'inconfort.",
+  "readableFont": "Police dyslexie",
+  "readableFontDesc": "Utiliser une police adaptée à la dyslexie avec un espacement plus large dans toute l'application.",
+  "highlightLinks": "Mettre les liens en évidence",
+  "highlightLinksDesc": "Ajouter une forte surbrillance jaune aux liens pour les repérer facilement.",
 
   "resetDefaults": "Réinitialiser par défaut",
   "done": "Terminé",
@@ -172,7 +180,9 @@
 },
 "topBar": {
   "staffPortal": "Portail du personnel",
-  "settings": "Paramètres"
+  "settings": "Paramètres",
+  "lightMode": "Passer au mode clair",
+  "darkMode": "Passer au mode sombre"
 }
 
 }

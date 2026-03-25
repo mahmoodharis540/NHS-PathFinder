@@ -2,9 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
-import { Settings } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import ManagePathsSection from "@/components/ManagePathsSection";
@@ -365,9 +363,6 @@ export default function StaffPortalPage() {
           </div>
         </div>
 
-        <Link href="/settings" className="bg-white text-[#003087] p-2 rounded-full hover:bg-gray-100 transition">
-          <Settings className="h-5 w-5" />
-        </Link>
       </div>
 
       <div className="px-8 mt-6">
