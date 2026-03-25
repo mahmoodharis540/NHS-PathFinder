@@ -9,6 +9,9 @@
 
     "whereAreYouLabel": "Where are you:",
     "whereAreYouPlaceholder": "Search the entrance you are at...",
+    "qrLoading": "Setting your starting entrance from the QR code...",
+    "qrSuccess": "Starting location set to {entrance}.",
+    "qrInvalid": "This QR code did not match a valid entrance.",
 
     "appointmentBuildingLabel": "What building is your appointment:",
     "appointmentBuildingPlaceholder": "Search for the building/department...",

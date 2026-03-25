@@ -9,6 +9,9 @@
 
     "whereAreYouLabel": "¿Dónde te encuentras?",
     "whereAreYouPlaceholder": "Busca la entrada en la que te encuentras...",
+    "qrLoading": "Estableciendo tu entrada inicial desde el codigo QR...",
+    "qrSuccess": "La ubicacion inicial se ha establecido en {entrance}.",
+    "qrInvalid": "Este codigo QR no coincide con una entrada valida.",
 
     "appointmentBuildingLabel": "¿En qué edificio es tu cita?",
     "appointmentBuildingPlaceholder": "Busca el edificio/departamento...",

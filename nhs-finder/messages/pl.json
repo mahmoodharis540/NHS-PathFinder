@@ -9,6 +9,9 @@
 
     "whereAreYouLabel": "Gdzie się znajdujesz?",
     "whereAreYouPlaceholder": "Wyszukaj wejście, przy którym się znajdujesz...",
+    "qrLoading": "Ustawianie punktu startowego na podstawie kodu QR...",
+    "qrSuccess": "Punkt startowy ustawiono na {entrance}.",
+    "qrInvalid": "Ten kod QR nie pasuje do prawidlowego wejscia.",
 
     "appointmentBuildingLabel": "W którym budynku masz wizytę?",
     "appointmentBuildingPlaceholder": "Wyszukaj budynek/oddział...",

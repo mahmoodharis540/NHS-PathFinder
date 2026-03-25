@@ -1,21 +1,90 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import TopBar from "@/components/TopBar";
 import AccessibilityToolbar from "@/components/AccessibilityToolbar";
 import Languages from "@/components/Languages";
 import SearchDropdown from "@/components/SearchDropdown";
 import { useTranslations } from "next-intl";
 
+type LocationItem = {
+  DestinationID: number;
+  DestinationName: string;
+  BuildingID: number;
+  isEntrance: number;
+};
+
 export default function HomePage() {
   const t = useTranslations("home");
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [accessible, setAccessible] = useState(false);
 
-  const [entrance, setEntrance] = useState<any>(null);
-  const [destination, setDestination] = useState<any>(null);
+  const [entrance, setEntrance] = useState<LocationItem | null>(null);
+  const [destination, setDestination] = useState<LocationItem | null>(null);
+  const [entranceText, setEntranceText] = useState("");
+  const [qrMessage, setQrMessage] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadEntranceFromQr() {
+      const entranceId = (searchParams.get("entranceId") ?? "").trim();
+      const entranceName = (searchParams.get("entrance") ?? "").trim();
+
+      if (!entranceId && !entranceName) {
+        return;
+      }
+
+      setQrMessage(t("qrLoading"));
+
+      try {
+        let resolvedEntrance: LocationItem | null = null;
+
+        if (entranceId) {
+          const res = await fetch(`/api/entrances/${encodeURIComponent(entranceId)}`, {
+            cache: "no-store",
+          });
+          const text = await res.text();
+          if (!res.ok) throw new Error(text);
+          resolvedEntrance = JSON.parse(text) as LocationItem;
+        } else if (entranceName) {
+          const res = await fetch(
+            `/api/entrances?take=35&q=${encodeURIComponent(entranceName)}`,
+            { cache: "no-store" }
+          );
+          const text = await res.text();
+          if (!res.ok) throw new Error(text);
+          const matches = JSON.parse(text) as LocationItem[];
+          resolvedEntrance =
+            matches.find(
+              (item) => item.DestinationName.toLowerCase() === entranceName.toLowerCase()
+            ) ?? null;
+          if (!resolvedEntrance) throw new Error("Entrance not found");
+        }
+
+        if (!resolvedEntrance) return;
+
+        if (!cancelled) {
+          setEntrance(resolvedEntrance);
+          setEntranceText(resolvedEntrance.DestinationName);
+          setQrMessage(t("qrSuccess", { entrance: resolvedEntrance.DestinationName }));
+        }
+      } catch {
+        if (!cancelled) {
+          setQrMessage(t("qrInvalid"));
+        }
+      }
+    }
+
+    loadEntranceFromQr();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [searchParams, t]);
 
   const handleStartNavigation = () => {
     if (!entrance || !destination) return;
@@ -54,11 +123,27 @@ export default function HomePage() {
         </div>
 
         <div className="w-full flex flex-col items-center gap-6 max-w-md">
+          {qrMessage && (
+            <div className="w-full rounded-xl bg-white/10 px-4 py-3 text-sm text-white">
+              {qrMessage}
+            </div>
+          )}
+
           <SearchDropdown
             label={t("whereAreYouLabel")}
             placeholder={t("whereAreYouPlaceholder")}
             apiUrl="/api/entrances"
-            onSelect={(item) => setEntrance(item)}
+            onSelect={(item) => {
+              setEntrance(item);
+              setEntranceText(item.DestinationName);
+              setQrMessage("");
+            }}
+            value={entranceText}
+            onChangeText={(text) => {
+              setEntranceText(text);
+              setEntrance(null);
+              setQrMessage("");
+            }}
           />
 
           <SearchDropdown

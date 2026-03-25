@@ -10,6 +10,9 @@
 
     "whereAreYouLabel": "Où êtes-vous :",
     "whereAreYouPlaceholder": "Recherchez l'entrée où vous vous trouvez...",
+    "qrLoading": "Definition de votre point de depart depuis le code QR...",
+    "qrSuccess": "Le point de depart est defini sur {entrance}.",
+    "qrInvalid": "Ce code QR ne correspond pas a une entree valide.",
 
     "appointmentBuildingLabel": "Dans quel bâtiment avez-vous votre rendez-vous :",
     "appointmentBuildingPlaceholder": "Recherchez le bâtiment/service...",
