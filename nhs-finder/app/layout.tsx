@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import FontProvider from "@/components/Font";
 import HighContrast from "@/components/HighContrastProvider";
+import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 
@@ -42,6 +43,7 @@ export default async function RootLayout({
         ].join(" ")}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
+          <ServiceWorkerRegistration />
           <FontProvider>
             <HighContrast>
           {children}

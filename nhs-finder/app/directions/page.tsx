@@ -26,6 +26,31 @@ export default function DirectionsPage() {
   const [slideIndex, setSlideIndex] = useState(0);
   const [loading, setLoading]     = useState(true);
   const [error, setError]         = useState<string | null>(null);
+  const [isOffline, setIsOffline] = useState(false);
+
+  useEffect(() => {
+    const syncOnlineState = () => setIsOffline(!navigator.onLine);
+
+    syncOnlineState();
+    window.addEventListener("online", syncOnlineState);
+    window.addEventListener("offline", syncOnlineState);
+
+    return () => {
+      window.removeEventListener("online", syncOnlineState);
+      window.removeEventListener("offline", syncOnlineState);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!("caches" in window)) return;
+    if (!entrance || !destination) return;
+
+    const pathSearchUrl = `/api/paths?entrance=${encodeURIComponent(entrance)}&destination=${encodeURIComponent(destination)}`;
+
+    caches.open("nhs-pathfinder-api-v1").then((cache) => {
+      cache.add(pathSearchUrl).catch(() => undefined);
+    });
+  }, [entrance, destination]);
 
   useEffect(() => {
     if (!entrance || !destination) {
@@ -82,10 +107,31 @@ export default function DirectionsPage() {
       .then(({ mediaSequence }) => {
         console.log("Media sequence length:", mediaSequence?.length, mediaSequence);
         setSequence(mediaSequence ?? []);
+
+        if (!("caches" in window)) return;
+
+        const mediaUrls = (mediaSequence ?? [])
+          .map((item: MediaItem) => String(item.media ?? item.Media ?? item.url ?? ""))
+          .filter(Boolean)
+          .map((src: string) => new URL(src, window.location.origin).toString());
+
+        caches.open("nhs-pathfinder-api-v1").then((cache) => {
+          cache.add(seqUrl).catch(() => undefined);
+        });
+
+        caches.open("nhs-pathfinder-media-v1").then((cache) => {
+          mediaUrls.forEach((src: string) => {
+            cache.add(src).catch(() => undefined);
+          });
+        });
       })
       .catch((err) => {
         console.error("Failed to load sequence:", err);
-        setError("Failed to load media for this path.");
+        setError(
+          navigator.onLine
+            ? "Failed to load media for this path."
+            : "You are offline and this route was not cached yet."
+        );
       });
   }, [path]);
 
@@ -149,6 +195,12 @@ export default function DirectionsPage() {
           </p>
         )}
       </header>
+
+      {isOffline && (
+        <div className="shrink-0 bg-amber-400 px-6 py-3 text-sm font-medium text-black">
+          Offline mode: using cached route data and media.
+        </div>
+      )}
 
     
       <div className="relative flex-1 overflow-hidden bg-black">
