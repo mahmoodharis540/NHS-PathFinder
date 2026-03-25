@@ -4,6 +4,10 @@ import { prisma } from "@/lib/prisma";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -70,9 +74,9 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(created);
-  } catch (err: any) {
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: "Failed to create destination", details: err?.message ?? String(err) },
+      { error: "Failed to create destination", details: getErrorMessage(error) },
       { status: 500 }
     );
   }

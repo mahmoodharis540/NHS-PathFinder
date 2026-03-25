@@ -7,6 +7,10 @@ type Building = {
   BuildingName: string;
 };
 
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback;
+}
+
 export default function AdminBuildingSelect({
   buildings,
   value,
@@ -49,8 +53,8 @@ export default function AdminBuildingSelect({
       onBuildingCreated(created);
       onChange(String(created.BuildingID));
       setNewName("");
-    } catch (e: any) {
-      setErr(e?.message ?? "Failed to create building");
+    } catch (error: unknown) {
+      setErr(getErrorMessage(error, "Failed to create building"));
     } finally {
       setCreating(false);
     }

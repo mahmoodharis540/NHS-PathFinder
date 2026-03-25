@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./PathfinderDB.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Building {
@@ -19,6 +20,9 @@ model Destination {
   DestinationName              String   @unique(map: "sqlite_autoindex_Destination_2")
   BuildingID                   Int
   isEntrance                   Int
+  Accessibility                Int?
+  Weight                       Int?
+  NodeImage                    String?
   Building                     Building @relation(fields: [BuildingID], references: [BuildingID], onDelete: Cascade)
   Path_Path_StartToDestination Path[]   @relation("Path_StartToDestination")
   Path_Path_EndToDestination   Path[]   @relation("Path_EndToDestination")

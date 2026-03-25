@@ -10,6 +10,8 @@ CREATE TABLE "Destination" (
     "DestinationName" TEXT NOT NULL,
     "BuildingID" INTEGER NOT NULL,
     "isEntrance" INTEGER NOT NULL,
+    "Accessibility" INTEGER,
+    "Weight" INTEGER,
     CONSTRAINT "Destination_BuildingID_fkey" FOREIGN KEY ("BuildingID") REFERENCES "Building" ("BuildingID") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -104,4 +106,3 @@ Pragma writable_schema=0;
 Pragma writable_schema=1;
 CREATE UNIQUE INDEX "sqlite_autoindex_Status_2" ON "Status"("StatusType");
 Pragma writable_schema=0;
-
