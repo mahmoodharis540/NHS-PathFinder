@@ -29,6 +29,20 @@ function readSqliteJson(query) {
   return JSON.parse(raw || "[]");
 }
 
+function sqliteTableExists(tableName) {
+  const raw = execFileSync(
+    "sqlite3",
+    ["-json", sqlitePath, `SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}';`],
+    {
+      cwd: projectRoot,
+      encoding: "utf8",
+    }
+  );
+
+  const rows = JSON.parse(raw || "[]");
+  return rows.length > 0;
+}
+
 async function resetPostgresData() {
   await prisma.path.deleteMany();
   await prisma.pSequence.deleteMany();
@@ -79,9 +93,11 @@ async function main() {
   const paths = readSqliteJson(
     'SELECT "PathID", "PathName", "AccessToggle", "Date", "Start", "End", "PSequenceID", "StatusID", "BuildingID" FROM "Path" ORDER BY "PathID";'
   );
-  const contactMessages = readSqliteJson(
-    'SELECT "ContactMessageID", "FullName", "Email", "Phone", "Category", "Building", "Message", "Date" FROM "ContactMessage" ORDER BY "ContactMessageID";'
-  );
+  const contactMessages = sqliteTableExists("ContactMessage")
+    ? readSqliteJson(
+        'SELECT "ContactMessageID", "FullName", "Email", "Phone", "Category", "Building", "Message", "Date" FROM "ContactMessage" ORDER BY "ContactMessageID";'
+      )
+    : [];
 
   await resetPostgresData();
 
