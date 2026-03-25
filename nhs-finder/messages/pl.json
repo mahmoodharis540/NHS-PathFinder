@@ -13,7 +13,7 @@
     "qrSuccess": "Punkt startowy ustawiono na {entrance}.",
     "qrInvalid": "Ten kod QR nie pasuje do prawidlowego wejscia.",
 
-    "appointmentBuildingLabel": "W którym budynku masz wizytę?",
+    "appointmentBuildingLabel": "Gdzie jest Twoja wizyta?",
     "appointmentBuildingPlaceholder": "Wyszukaj budynek/oddział...",
     "startNavigation": "Rozpocznij nawigację",
     "qrLoading": "Ustawianie lokalizacji startowej z kodu QR...",

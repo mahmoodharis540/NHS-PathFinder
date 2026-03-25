@@ -13,7 +13,7 @@
     "qrSuccess": "La ubicacion inicial se ha establecido en {entrance}.",
     "qrInvalid": "Este codigo QR no coincide con una entrada valida.",
 
-    "appointmentBuildingLabel": "¿En qué edificio es tu cita?",
+    "appointmentBuildingLabel": "¿Dónde es tu cita?",
     "appointmentBuildingPlaceholder": "Busca el edificio/departamento...",
     "startNavigation": "Iniciar navegación",
     "qrLoading": "Estableciendo tu ubicación inicial desde el código QR...",

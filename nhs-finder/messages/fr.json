@@ -14,7 +14,7 @@
     "qrSuccess": "Le point de depart est defini sur {entrance}.",
     "qrInvalid": "Ce code QR ne correspond pas a une entree valide.",
 
-    "appointmentBuildingLabel": "Dans quel bâtiment avez-vous votre rendez-vous :",
+    "appointmentBuildingLabel": "Où est votre rendez-vous :",
     "appointmentBuildingPlaceholder": "Recherchez le bâtiment/service...",
     "startNavigation": "Démarrer la navigation",
     "qrLoading": "Définition de votre point de départ à partir du QR code...",

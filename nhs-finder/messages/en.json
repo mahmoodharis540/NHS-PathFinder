@@ -13,7 +13,7 @@
     "qrSuccess": "Starting location set to {entrance}.",
     "qrInvalid": "This QR code did not match a valid entrance.",
 
-    "appointmentBuildingLabel": "What building is your appointment:",
+    "appointmentBuildingLabel": "Where is your appointment:",
     "appointmentBuildingPlaceholder": "Search for the building/department...",
     "startNavigation": "Start Navigation",
     "qrLoading": "Setting your starting location from QR code...",
