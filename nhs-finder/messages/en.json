@@ -19,6 +19,26 @@
     "appointmentBuildingPlaceholder": "Search for the building/department...",
     "startNavigation": "Start Navigation"
   },
+  "directions": {
+    "back": "← Back",
+    "goBack": "← Go Back",
+    "goBackAria": "Go back",
+    "findingRoute": "Finding your route…",
+    "missingRouteParams": "Missing start or destination. Please go back and try again.",
+    "noPathFound": "No path found between these locations.",
+    "failedToLoadPath": "Failed to load path. Please try again.",
+    "couldNotResolvePathId": "Could not resolve path ID.",
+    "failedToLoadMedia": "Failed to load media for this path.",
+    "offlineNotCached": "You are offline and this route was not cached yet.",
+    "offlineMode": "Offline mode: using cached route data and media.",
+    "noMediaAvailable": "No media available for this path.",
+    "previous": "Previous",
+    "next": "Next",
+    "previousSlide": "Previous slide",
+    "nextSlide": "Next slide",
+    "readStep": "Read step",
+    "stopReading": "Stop reading"
+  },
   "login": {
     "Welcome": "Login Page",
     "Username": "Username",

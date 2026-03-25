@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { PersonStanding } from "lucide-react";
 
 const STORAGE_KEY = "nhs_pathfinder_settings_v1";
@@ -14,9 +15,11 @@ type AppSettings = {
   reducedMotion?: boolean;
   readableFont?: boolean;
   highlightLinks?: boolean;
+  screenReaderEnabled?: boolean;
 };
 
 export default function AccessibilityToolbar() {
+  const pathname = usePathname();
   const [fontSize, setFontSize] = useState(16);
   const [speechSupported, setSpeechSupported] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -28,8 +31,10 @@ export default function AccessibilityToolbar() {
     reducedMotion: false,
     readableFont: false,
     highlightLinks: false,
+    screenReaderEnabled: false,
   });
   const hideTimerRef = useRef<number | null>(null);
+  const speakTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     setSpeechSupported(typeof window !== "undefined" && "speechSynthesis" in window);
@@ -45,6 +50,7 @@ export default function AccessibilityToolbar() {
         reducedMotion: !!settings.reducedMotion,
         readableFont: !!settings.readableFont,
         highlightLinks: !!settings.highlightLinks,
+        screenReaderEnabled: !!settings.screenReaderEnabled,
       });
     } catch {
       setFontSize(16);
@@ -62,6 +68,7 @@ export default function AccessibilityToolbar() {
           reducedMotion: !!settings.reducedMotion,
           readableFont: !!settings.readableFont,
           highlightLinks: !!settings.highlightLinks,
+          screenReaderEnabled: !!settings.screenReaderEnabled,
         });
       } catch {}
     };
@@ -86,6 +93,9 @@ export default function AccessibilityToolbar() {
     return () => {
       if (hideTimerRef.current) {
         window.clearTimeout(hideTimerRef.current);
+      }
+      if (speakTimerRef.current) {
+        window.clearTimeout(speakTimerRef.current);
       }
     };
   }, []);
@@ -160,20 +170,13 @@ export default function AccessibilityToolbar() {
     return rawText.slice(0, 1800);
   }
 
-  function toggleScreenReaderHelp() {
-    restartHideTimer();
+  function speakCurrentPage() {
     if (!speechSupported) {
       setAnnouncement("Screen reader speech is not supported in this browser.");
       return;
     }
 
-    if (window.speechSynthesis.speaking || isSpeaking) {
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
-      setAnnouncement("Screen reader speech stopped.");
-      return;
-    }
-
+    window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(getReadablePageText());
     utterance.rate = 0.95;
     utterance.onstart = () => {
@@ -193,6 +196,57 @@ export default function AccessibilityToolbar() {
     window.speechSynthesis.speak(utterance);
   }
 
+  function setScreenReaderEnabled(nextValue: boolean) {
+    restartHideTimer();
+
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const current = raw ? (JSON.parse(raw) as AppSettings) : {};
+
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          ...current,
+          screenReaderEnabled: nextValue,
+        })
+      );
+
+      setSettings((prev) => ({ ...prev, screenReaderEnabled: nextValue }));
+      window.dispatchEvent(new Event("nhs-settings-updated"));
+    } catch {}
+
+    if (!nextValue) {
+      if (speakTimerRef.current) {
+        window.clearTimeout(speakTimerRef.current);
+      }
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      setAnnouncement("Screen reader speech stopped.");
+      return;
+    }
+
+    setAnnouncement("Screen reader speech enabled.");
+    speakCurrentPage();
+  }
+
+  useEffect(() => {
+    if (!speechSupported || !settings.screenReaderEnabled) return;
+
+    if (speakTimerRef.current) {
+      window.clearTimeout(speakTimerRef.current);
+    }
+
+    speakTimerRef.current = window.setTimeout(() => {
+      speakCurrentPage();
+    }, 300);
+
+    return () => {
+      if (speakTimerRef.current) {
+        window.clearTimeout(speakTimerRef.current);
+      }
+    };
+  }, [pathname, speechSupported, settings.screenReaderEnabled]);
+
   return (
     <>
       <div
@@ -202,58 +256,60 @@ export default function AccessibilityToolbar() {
         {announcement}
       </div>
 
-      <div className="fixed bottom-4 right-4 z-50">
+      <div className="fixed bottom-2 right-2 z-50 sm:bottom-4 sm:right-4">
         {isOpen ? (
-          <div className="w-[min(calc(100vw-2rem),34rem)] rounded-2xl bg-white p-3 text-black shadow-lg dark:bg-slate-900 dark:text-slate-100">
+          <div className="w-[min(calc(100vw-1rem),28rem)] rounded-2xl bg-white p-2 text-black shadow-lg dark:bg-slate-900 dark:text-slate-100 sm:w-[min(calc(100vw-2rem),34rem)] sm:p-3">
             <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
             <button
               onClick={() => updateBooleanSetting("highContrast")}
               aria-label="Toggle high contrast"
-              className={`min-h-12 rounded-xl border px-3 py-3 text-sm font-medium dark:border-slate-700 ${settings.highContrast ? "bg-[#003087] text-white" : ""}`}
+              className={`min-h-11 rounded-xl border px-2 py-2 text-xs font-medium dark:border-slate-700 sm:min-h-12 sm:px-3 sm:py-3 sm:text-sm ${settings.highContrast ? "bg-[#003087] text-white" : ""}`}
             >
               HC
             </button>
             <button
               onClick={() => updateFontSize(1)}
               aria-label="Increase text size"
-              className="min-h-12 rounded-xl border px-3 py-3 text-sm font-medium dark:border-slate-700"
+              className="min-h-11 rounded-xl border px-2 py-2 text-xs font-medium dark:border-slate-700 sm:min-h-12 sm:px-3 sm:py-3 sm:text-sm"
             >
               A+
             </button>
             <button
               onClick={() => updateFontSize(-1)}
               aria-label="Decrease text size"
-              className="min-h-12 rounded-xl border px-3 py-3 text-sm font-medium dark:border-slate-700"
+              className="min-h-11 rounded-xl border px-2 py-2 text-xs font-medium dark:border-slate-700 sm:min-h-12 sm:px-3 sm:py-3 sm:text-sm"
             >
               A-
             </button>
             <button
               onClick={() => updateBooleanSetting("reducedMotion")}
               aria-label="Toggle reduced motion"
-              className={`min-h-12 rounded-xl border px-3 py-3 text-sm font-medium dark:border-slate-700 ${settings.reducedMotion ? "bg-[#003087] text-white" : ""}`}
+              className={`min-h-11 rounded-xl border px-2 py-2 text-xs font-medium dark:border-slate-700 sm:min-h-12 sm:px-3 sm:py-3 sm:text-sm ${settings.reducedMotion ? "bg-[#003087] text-white" : ""}`}
             >
               RM
             </button>
             <button
               onClick={() => updateBooleanSetting("readableFont")}
               aria-label="Toggle dyslexia-friendly font"
-              className={`min-h-12 rounded-xl border px-3 py-3 text-sm font-medium dark:border-slate-700 ${settings.readableFont ? "bg-[#003087] text-white" : ""}`}
+              className={`min-h-11 rounded-xl border px-2 py-2 text-xs font-medium dark:border-slate-700 sm:min-h-12 sm:px-3 sm:py-3 sm:text-sm ${settings.readableFont ? "bg-[#003087] text-white" : ""}`}
             >
               Df
             </button>
             <button
               onClick={() => updateBooleanSetting("highlightLinks")}
               aria-label="Toggle highlighted links"
-              className={`min-h-12 rounded-xl border px-3 py-3 text-sm font-medium dark:border-slate-700 ${settings.highlightLinks ? "bg-[#003087] text-white" : ""}`}
+              className={`min-h-11 rounded-xl border px-2 py-2 text-xs font-medium dark:border-slate-700 sm:min-h-12 sm:px-3 sm:py-3 sm:text-sm ${settings.highlightLinks ? "bg-[#003087] text-white" : ""}`}
             >
               🔗
             </button>
             <button
-              onClick={toggleScreenReaderHelp}
-              aria-label={isSpeaking ? "Stop screen reader help" : "Start screen reader help"}
-              className="min-h-12 rounded-xl border px-3 py-3 text-sm font-medium dark:border-slate-700"
+              onClick={() => setScreenReaderEnabled(!settings.screenReaderEnabled)}
+              aria-label={
+                settings.screenReaderEnabled ? "Disable screen reader help" : "Enable screen reader help"
+              }
+              className="min-h-11 rounded-xl border px-2 py-2 text-xs font-medium dark:border-slate-700 sm:min-h-12 sm:px-3 sm:py-3 sm:text-sm"
             >
-              {isSpeaking ? "🔇" : "🔊"}
+              {settings.screenReaderEnabled ? "🔇" : "🔊"}
             </button>
             </div>
           </div>
@@ -262,9 +318,9 @@ export default function AccessibilityToolbar() {
             type="button"
             onClick={openToolbar}
             aria-label="Open accessibility controls"
-            className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-black shadow-lg dark:bg-slate-900 dark:text-slate-100"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-black shadow-lg dark:bg-slate-900 dark:text-slate-100 sm:h-14 sm:w-14"
           >
-            <PersonStanding className="h-6 w-6" />
+            <PersonStanding className="h-5 w-5 sm:h-6 sm:w-6" />
           </button>
         )}
       </div>

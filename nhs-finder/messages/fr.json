@@ -20,6 +20,26 @@
     "appointmentBuildingPlaceholder": "Recherchez le bâtiment/service...",
     "startNavigation": "Démarrer la navigation"
   },
+  "directions": {
+    "back": "← Retour",
+    "goBack": "← Retour",
+    "goBackAria": "Retour",
+    "findingRoute": "Recherche de votre itinéraire…",
+    "missingRouteParams": "Le point de départ ou la destination est manquant. Revenez en arrière et réessayez.",
+    "noPathFound": "Aucun itinéraire trouvé entre ces emplacements.",
+    "failedToLoadPath": "Impossible de charger l'itinéraire. Veuillez réessayer.",
+    "couldNotResolvePathId": "Impossible de résoudre l'identifiant de l'itinéraire.",
+    "failedToLoadMedia": "Impossible de charger le média pour cet itinéraire.",
+    "offlineNotCached": "Vous êtes hors ligne et cet itinéraire n'avait pas encore été mis en cache.",
+    "offlineMode": "Mode hors ligne : utilisation des données et médias mis en cache.",
+    "noMediaAvailable": "Aucun média disponible pour cet itinéraire.",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "previousSlide": "Diapositive précédente",
+    "nextSlide": "Diapositive suivante",
+    "readStep": "Lire l'étape",
+    "stopReading": "Arrêter la lecture"
+  },
   "login": {
   "Welcome": "Page de connexion",
   "Username": "Nom d'utilisateur",

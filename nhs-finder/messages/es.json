@@ -19,6 +19,26 @@
     "appointmentBuildingPlaceholder": "Busca el edificio/departamento...",
     "startNavigation": "Iniciar navegación"
   },
+  "directions": {
+    "back": "← Volver",
+    "goBack": "← Volver",
+    "goBackAria": "Volver",
+    "findingRoute": "Buscando tu ruta…",
+    "missingRouteParams": "Falta el punto de inicio o el destino. Vuelve e inténtalo de nuevo.",
+    "noPathFound": "No se encontró una ruta entre estas ubicaciones.",
+    "failedToLoadPath": "No se pudo cargar la ruta. Inténtalo de nuevo.",
+    "couldNotResolvePathId": "No se pudo resolver el ID de la ruta.",
+    "failedToLoadMedia": "No se pudo cargar el contenido multimedia de esta ruta.",
+    "offlineNotCached": "Estás sin conexión y esta ruta aún no se había almacenado en caché.",
+    "offlineMode": "Modo sin conexión: usando datos y contenido multimedia almacenados en caché.",
+    "noMediaAvailable": "No hay contenido multimedia disponible para esta ruta.",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "previousSlide": "Diapositiva anterior",
+    "nextSlide": "Siguiente diapositiva",
+    "readStep": "Leer paso",
+    "stopReading": "Detener lectura"
+  },
   "login": {
   "Welcome": "Página de inicio de sesión",
   "Username": "Nombre de usuario",

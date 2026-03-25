@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import TopBar from "@/components/TopBar";
-import AccessibilityToolbar from "@/components/AccessibilityToolbar";
 import Languages from "@/components/Languages";
 import SearchDropdown from "@/components/SearchDropdown";
 import { useTranslations } from "next-intl";
@@ -233,8 +232,6 @@ export default function HomePage() {
           </button>
         </div>
       </div>
-
-      <AccessibilityToolbar />
     </main>
   );
 }

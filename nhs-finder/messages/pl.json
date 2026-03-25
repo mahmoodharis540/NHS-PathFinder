@@ -19,6 +19,26 @@
     "appointmentBuildingPlaceholder": "Wyszukaj budynek/oddział...",
     "startNavigation": "Rozpocznij nawigację"
   },
+  "directions": {
+    "back": "← Wstecz",
+    "goBack": "← Wróć",
+    "goBackAria": "Wróć",
+    "findingRoute": "Szukanie trasy…",
+    "missingRouteParams": "Brakuje punktu startowego lub celu. Wróć i spróbuj ponownie.",
+    "noPathFound": "Nie znaleziono trasy między tymi lokalizacjami.",
+    "failedToLoadPath": "Nie udało się załadować trasy. Spróbuj ponownie.",
+    "couldNotResolvePathId": "Nie udało się ustalić identyfikatora trasy.",
+    "failedToLoadMedia": "Nie udało się załadować multimediów dla tej trasy.",
+    "offlineNotCached": "Jesteś offline, a ta trasa nie została jeszcze zapisana w pamięci podręcznej.",
+    "offlineMode": "Tryb offline: używane są zapisane dane trasy i multimedia.",
+    "noMediaAvailable": "Brak multimediów dla tej trasy.",
+    "previous": "Poprzedni",
+    "next": "Następny",
+    "previousSlide": "Poprzedni slajd",
+    "nextSlide": "Następny slajd",
+    "readStep": "Czytaj krok",
+    "stopReading": "Zatrzymaj czytanie"
+  },
   "login": {
   "Welcome": "Strona logowania",
   "Username": "Nazwa użytkownika",
