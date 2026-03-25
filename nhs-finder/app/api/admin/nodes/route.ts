@@ -47,8 +47,6 @@ export async function GET(req: Request) {
         BuildingID: true,
         isEntrance: true,
         Accessibility: true,
-        Weight: true,
-        NodeImage: true,
       },
     });
 
@@ -180,8 +178,6 @@ export async function POST(req: Request) {
         BuildingID: buildingId,
         isEntrance,
         Accessibility: accessibility,
-        Weight: weight,
-        NodeImage: imagePath,
       },
       select: {
         DestinationID: true,
@@ -189,8 +185,6 @@ export async function POST(req: Request) {
         BuildingID: true,
         isEntrance: true,
         Accessibility: true,
-        Weight: true,
-        NodeImage: true,
       },
     });
 
