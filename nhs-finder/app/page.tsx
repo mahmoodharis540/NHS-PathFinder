@@ -25,16 +25,19 @@ export default function HomePage() {
   const [entrance, setEntrance] = useState<LocationItem | null>(null);
   const [destination, setDestination] = useState<LocationItem | null>(null);
   const [entranceText, setEntranceText] = useState("");
+  const [destinationText, setDestinationText] = useState("");
   const [qrMessage, setQrMessage] = useState("");
 
   useEffect(() => {
     let cancelled = false;
 
-    async function loadEntranceFromQr() {
+    async function loadLocationsFromQr() {
       const entranceId = (searchParams.get("entranceId") ?? "").trim();
       const entranceName = (searchParams.get("entrance") ?? "").trim();
+      const destinationId = (searchParams.get("destinationId") ?? "").trim();
+      const destinationName = (searchParams.get("destination") ?? "").trim();
 
-      if (!entranceId && !entranceName) {
+      if (!entranceId && !entranceName && !destinationId && !destinationName) {
         return;
       }
 
@@ -42,6 +45,7 @@ export default function HomePage() {
 
       try {
         let resolvedEntrance: LocationItem | null = null;
+        let resolvedDestination: LocationItem | null = null;
 
         if (entranceId) {
           const res = await fetch(`/api/entrances/${encodeURIComponent(entranceId)}`, {
@@ -65,12 +69,51 @@ export default function HomePage() {
           if (!resolvedEntrance) throw new Error("Entrance not found");
         }
 
-        if (!resolvedEntrance) return;
+        if (destinationId) {
+          const res = await fetch(`/api/destinations/${encodeURIComponent(destinationId)}`, {
+            cache: "no-store",
+          });
+          const text = await res.text();
+          if (!res.ok) throw new Error(text);
+          resolvedDestination = JSON.parse(text) as LocationItem;
+        } else if (destinationName) {
+          const res = await fetch(
+            `/api/destinations-search?take=35&q=${encodeURIComponent(destinationName)}`,
+            { cache: "no-store" }
+          );
+          const text = await res.text();
+          if (!res.ok) throw new Error(text);
+          const matches = JSON.parse(text) as LocationItem[];
+          resolvedDestination =
+            matches.find(
+              (item) => item.DestinationName.toLowerCase() === destinationName.toLowerCase()
+            ) ?? null;
+          if (!resolvedDestination) throw new Error("Destination not found");
+        }
 
         if (!cancelled) {
-          setEntrance(resolvedEntrance);
-          setEntranceText(resolvedEntrance.DestinationName);
-          setQrMessage(t("qrSuccess", { entrance: resolvedEntrance.DestinationName }));
+          if (resolvedEntrance) {
+            setEntrance(resolvedEntrance);
+            setEntranceText(resolvedEntrance.DestinationName);
+          }
+
+          if (resolvedDestination) {
+            setDestination(resolvedDestination);
+            setDestinationText(resolvedDestination.DestinationName);
+          }
+
+          if (resolvedEntrance && resolvedDestination) {
+            setQrMessage(
+              t("qrSuccessFull", {
+                entrance: resolvedEntrance.DestinationName,
+                destination: resolvedDestination.DestinationName,
+              })
+            );
+          } else if (resolvedEntrance) {
+            setQrMessage(t("qrSuccess", { entrance: resolvedEntrance.DestinationName }));
+          } else if (resolvedDestination) {
+            setQrMessage(t("qrDestinationSuccess", { destination: resolvedDestination.DestinationName }));
+          }
         }
       } catch {
         if (!cancelled) {
@@ -79,7 +122,7 @@ export default function HomePage() {
       }
     }
 
-    loadEntranceFromQr();
+    loadLocationsFromQr();
 
     return () => {
       cancelled = true;
@@ -150,7 +193,17 @@ export default function HomePage() {
             label={t("appointmentBuildingLabel")}
             placeholder={t("appointmentBuildingPlaceholder")}
             apiUrl="/api/destinations-search"
-            onSelect={(item) => setDestination(item)}
+            onSelect={(item) => {
+              setDestination(item);
+              setDestinationText(item.DestinationName);
+              setQrMessage("");
+            }}
+            value={destinationText}
+            onChangeText={(text) => {
+              setDestinationText(text);
+              setDestination(null);
+              setQrMessage("");
+            }}
           />
 
           {/* Accessible toggle */}

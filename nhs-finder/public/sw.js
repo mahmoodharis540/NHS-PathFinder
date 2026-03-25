@@ -1,4 +1,4 @@
-const VERSION = "v1";
+const VERSION = "v2";
 const PAGE_CACHE = `nhs-pathfinder-pages-${VERSION}`;
 const API_CACHE = `nhs-pathfinder-api-${VERSION}`;
 const MEDIA_CACHE = `nhs-pathfinder-media-${VERSION}`;
@@ -36,6 +36,7 @@ function isMediaRequest(url) {
 function isApiRequest(url) {
   return (
     url.pathname.startsWith("/api/paths") ||
+    url.pathname.startsWith("/api/destinations/") ||
     url.pathname.startsWith("/api/entrances") ||
     url.pathname.startsWith("/api/destinations-search") ||
     url.pathname.startsWith("/api/route")
