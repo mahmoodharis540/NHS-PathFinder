@@ -19,11 +19,6 @@ interface PathNode {
   endName: string | null;
 }
 
-// ─── Dijkstra (weighted shortest path) ───────────────────────────────────────
-//
-// weightMap key: "<From>,<To>" → weight integer.
-// Falls back to weight 1 when no DistanceWeight row exists for an edge,
-// so the algorithm degrades gracefully to plain BFS.
 
 function dijkstra(
   startId: number,
@@ -33,21 +28,17 @@ function dijkstra(
 ): PathNode[] | null {
   if (startId === endId) return [];
 
-  // Build adjacency list: destinationID → outgoing paths
+  
   const adj = new Map<number, PathNode[]>();
   for (const p of paths) {
     if (!adj.has(p.Start)) adj.set(p.Start, []);
     adj.get(p.Start)!.push(p);
   }
 
-  // dist: best known cumulative cost to reach a node
+
   const dist = new Map<number, number>([[startId, 0]]);
-  // prev: the path edge we used to reach each node on the best route
   const prev = new Map<number, PathNode>();
 
-  // Priority queue: [cumulativeCost, destinationID]
-  // Kept sorted after each insertion; graph sizes here are small so
-  // O(n log n) sort per iteration is fine — swap for a binary heap if needed.
   const pq: Array<[number, number]> = [[0, startId]];
 
   while (pq.length > 0) {
@@ -56,7 +47,7 @@ function dijkstra(
 
     if (node === endId) break;
 
-    // Stale entry — a cheaper path to this node was already found
+    
     if (cost > (dist.get(node) ?? Infinity)) continue;
 
     for (const path of adj.get(node) ?? []) {
@@ -74,7 +65,7 @@ function dijkstra(
 
   if (!prev.has(endId)) return null;
 
-  // Reconstruct the route by walking back through `prev`
+
   const route: PathNode[] = [];
   let cur = endId;
   while (cur !== startId) {
@@ -86,7 +77,7 @@ function dijkstra(
   return route;
 }
 
-// ─── GET /api/bfs?entrance=<name>&destination=<name> ─────────────────────────
+
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -101,7 +92,7 @@ export async function GET(req: Request) {
   }
 
   try {
-    // 1. Resolve names → DestinationIDs
+    
     const [startDest, endDest] = await Promise.all([
       prisma.destination.findFirst({
         where:  { DestinationName: entrance },
@@ -129,7 +120,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ legs: [], message: "Already there!" });
     }
 
-    // 2. Load all active paths + all distance weights in parallel
+    
     const [allPaths, allWeights] = await Promise.all([
       prisma.path.findMany({
         where: { Status: { StatusType: "Active" } },
@@ -151,13 +142,13 @@ export async function GET(req: Request) {
       }),
     ]);
 
-    // 3. Build the weight lookup map keyed by "From,To"
+    
     const weightMap = new Map<string, number>();
     for (const dw of allWeights) {
       weightMap.set(`${dw.From},${dw.To}`, dw.Weight);
     }
 
-    // 4. Normalise path records into PathNode shape
+    
     const nodes: PathNode[] = allPaths.map((p) => ({
       PathID:       p.PathID,
       PathName:     p.PathName,
@@ -171,7 +162,7 @@ export async function GET(req: Request) {
       endName:      p.Destination_Path_EndToDestination?.DestinationName   ?? null,
     }));
 
-    // 5. Run Dijkstra
+    
     const route = dijkstra(
       startDest.DestinationID,
       endDest.DestinationID,
@@ -186,8 +177,7 @@ export async function GET(req: Request) {
       );
     }
 
-    // 6. Return leg summaries — media is fetched client-side per leg
-    //    via GET /api/paths/[id]/sequence
+ 
     const legs = route.map((p) => ({
       pathId:    p.PathID,
       pathName:  p.PathName,

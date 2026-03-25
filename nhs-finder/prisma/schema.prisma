@@ -29,9 +29,9 @@ model Destination {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model Login {
-  Code String
+  Code String @unique
 
-  @@ignore
+  
 }
 
 model Media {

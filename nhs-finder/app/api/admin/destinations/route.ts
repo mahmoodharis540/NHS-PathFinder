@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { Accessibility } from "lucide-react";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,6 +16,7 @@ export async function POST(req: Request) {
     const name = String(body?.name ?? "").trim();
     const buildingIdRaw = body?.buildingId;
     const isEntrance = Number(body?.isEntrance);
+    const Accessibility = Number(body?.Accessibility);
 
     if (!name) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -30,6 +32,7 @@ export async function POST(req: Request) {
         DestinationName: true,
         BuildingID: true,
         isEntrance: true,
+        Accessibility: true,
       },
     });
 
@@ -64,12 +67,14 @@ export async function POST(req: Request) {
         DestinationName: name,
         BuildingID: buildingId,
         isEntrance: isEntrance,
+        Accessibility: Accessibility,
       },
       select: {
         DestinationID: true,
         DestinationName: true,
         BuildingID: true,
         isEntrance: true,
+        Accessibility: true,
       },
     });
 
