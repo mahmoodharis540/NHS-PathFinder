@@ -34,7 +34,8 @@
     "previousSlide": "Previous slide",
     "nextSlide": "Next slide",
     "readStep": "Read step",
-    "stopReading": "Stop reading"
+    "stopReading": "Stop reading",
+    "journeyProgress": "1"
   },
   "login": {
     "welcome": "Login Page",
