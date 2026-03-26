@@ -182,7 +182,8 @@
     "emailDraftCopied": "تم نسخ مسودة البريد إلى الحافظة.",
     "emailDraftCopyFailed": "فشل نسخ مسودة البريد.",
     "failedLoadNodes": "فشل تحميل العقد.",
-    "failedLoadConnections": "فشل تحميل الاتصالات."
+    "failedLoadConnections": "فشل تحميل الاتصالات.",
+    "connectionPreviewNote": "سيتم حفظ هذا الاتصال وسيستخدمه نظام التوجيه."
   },
   "managePaths": {
     "searchPlaceholder": "دور على المسارات...",

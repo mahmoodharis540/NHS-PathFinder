@@ -182,7 +182,8 @@
     "emailDraftCopied": "Borrador del correo copiado al portapapeles.",
     "emailDraftCopyFailed": "No se pudo copiar el borrador del correo.",
     "failedLoadNodes": "No se pudieron cargar los nodos.",
-    "failedLoadConnections": "No se pudieron cargar las conexiones."
+    "failedLoadConnections": "No se pudieron cargar las conexiones.",
+    "connectionPreviewNote": "Esta conexión se guardará y será utilizada por el sistema de rutas."
   },
   "managePaths": {
     "searchPlaceholder": "Buscar rutas...",

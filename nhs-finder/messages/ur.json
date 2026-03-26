@@ -182,7 +182,8 @@
     "emailDraftCopied": "ای میل ڈرافٹ کلپ بورڈ میں کاپی ہو گیا۔",
     "emailDraftCopyFailed": "ای میل ڈرافٹ کاپی نہیں ہو سکا۔",
     "failedLoadNodes": "نوڈز لوڈ نہیں ہو سکے۔",
-    "failedLoadConnections": "کنکشنز لوڈ نہیں ہو سکے۔"
+    "failedLoadConnections": "کنکشنز لوڈ نہیں ہو سکے۔",
+    "connectionPreviewNote": "یہ کنکشن محفوظ ہو جائے گا اور روٹنگ سسٹم اسے استعمال کرے گا۔"
   },
   "managePaths": {
     "searchPlaceholder": "راستے تلاش کریں...",
