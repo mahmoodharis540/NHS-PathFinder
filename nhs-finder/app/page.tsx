@@ -151,6 +151,11 @@ export default function HomePage() {
     if (!entrance || !destination) return;
 
     router.push(
+  `   /directions?entrance=${encodeURIComponent(
+        entrance.DestinationName
+      )}&destination=${encodeURIComponent(
+        destination.DestinationName
+      )}&accessible=${accessible}`
       `/directions?entrance=${encodeURIComponent(
         entrance.DestinationName
       )}&destination=${encodeURIComponent(destination.DestinationName)}`
