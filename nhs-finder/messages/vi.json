@@ -13,12 +13,12 @@
     "startNavigation": "Bắt đầu chỉ đường"
   },
   "login": {
-    "Welcome": "Trang đăng nhập",
-    "Username": "Tên người dùng",
-    "Password": "Mật khẩu",
-    "EnterUsername": "Nhập tên người dùng",
-    "EnterPassword": "Nhập mật khẩu",
-    "Login": "Đăng nhập"
+    "welcome": "Trang đăng nhập",
+    "username": "Tên người dùng",
+    "password": "Mật khẩu",
+    "enterUsername": "Nhập tên người dùng",
+    "enterPassword": "Nhập mật khẩu",
+    "login": "Đăng nhập"
   },
   "settings": {
     "title": "Cài đặt",

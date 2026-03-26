@@ -5,6 +5,7 @@ import FontProvider from "@/components/Font";
 import HighContrast from "@/components/HighContrastProvider";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
+import { TranslationProvider } from "@/components/TranslationProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,11 +43,11 @@ export default async function RootLayout({
         ].join(" ")}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <FontProvider>
-            <HighContrast>
-          {children}
-            </HighContrast>
-          </FontProvider>
+          <TranslationProvider>
+            <FontProvider>
+              <HighContrast>{children}</HighContrast>
+            </FontProvider>
+          </TranslationProvider>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -13,12 +13,12 @@
     "startNavigation": "Porniți navigarea"
   },
   "login": {
-    "Welcome": "Pagina de autentificare",
-    "Username": "Nume utilizator",
-    "Password": "Parolă",
-    "EnterUsername": "Introduceți numele de utilizator",
-    "EnterPassword": "Introduceți parola",
-    "Login": "Autentificare"
+    "welcome": "Pagina de autentificare",
+    "username": "Nume utilizator",
+    "password": "Parolă",
+    "enterUsername": "Introduceți numele de utilizator",
+    "enterPassword": "Introduceți parola",
+    "login": "Autentificare"
   },
   "settings": {
     "title": "Setări",

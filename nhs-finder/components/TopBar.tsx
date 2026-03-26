@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Settings } from "lucide-react";
+import { Settings, Phone, Map } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 export default function TopBar() {
@@ -18,13 +18,31 @@ export default function TopBar() {
       </Link>
 
       {/* Right side */}
-      <Link
-        href="/settings"
-        className="text-white hover:opacity-80"
-        aria-label={t("settings")}
-      >
-        <Settings className="h-6 w-6" />
-      </Link>
+      <div className="flex items-center gap-4">
+        <Link
+          href="/contact"
+          className="text-white hover:opacity-80"
+          aria-label="Contact us"
+        >
+          <Phone className="h-6 w-6" />
+        </Link>
+
+        <Link
+          href="/map"
+          className="text-white hover:opacity-80"
+          aria-label="Open map"
+        >
+          <Map className="h-6 w-6" />
+        </Link>
+
+        <Link
+          href="/settings"
+          className="text-white hover:opacity-80"
+          aria-label={t("settings")}
+        >
+          <Settings className="h-6 w-6" />
+        </Link>
+      </div>
     </header>
   );
 }

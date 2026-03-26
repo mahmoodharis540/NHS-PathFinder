@@ -1,0 +1,159 @@
+{
+  "home": {
+    "welcome": "NHS Finder وچ خوش آمدید",
+    "pathfinder": "Pathfinder ©",
+    "subtitle": "صحت دی خدمات تک تہاڈی رسائی۔",
+    "prompt": "تسی کِہڑے بلڈنگ وچ جانا چاؤندے او؟",
+    "accessibleRoute": "آسان راستہ (سیڑھیاں توں بچو)",
+    "nhsLogoAlt": "NHS لوگو",
+
+    "whereAreYouLabel": "تسی کتھے او:",
+    "whereAreYouPlaceholder": "جتھے تسی کھڑے او اوہ داخلی دروازہ لبھو...",
+
+    "appointmentBuildingLabel": "تہاڈی اپوائنٹمنٹ کِہڑی بلڈنگ وچ اے:",
+    "appointmentBuildingPlaceholder": "بلڈنگ یا شعبہ لبھو...",
+
+    "startNavigation": "نیویگیشن شروع کرو"
+  },
+
+  "login": {
+    "welcome": "لاگ ان",
+    "username": "صارف نام",
+    "password": "پاس ورڈ",
+    "enterUsername": "صارف نام درج کرو",
+    "enterPassword": "پاس ورڈ درج کرو",
+    "login": "لاگ ان کرو"
+  },
+
+  "settings": {
+    "title": "سیٹنگز",
+    "subtitle": "رسائی تے ترجیحات",
+    "back": "مین پیج تے واپس جاؤ",
+
+    "languageTitle": "زبان",
+    "languageDesc": "ایپ دی زبان منتخب کرو۔",
+    "appLanguage": "ایپ دی زبان",
+    "saveLanguage": "زبان محفوظ کرو",
+
+    "defaultBuildingTitle": "ڈیفالٹ بلڈنگ",
+    "defaultBuildingDesc": "ایپ اس بلڈنگ نوں پہلے چُن سکدی اے۔",
+    "chooseBuilding": "بلڈنگ منتخب کرو",
+    "saveDefaultBuilding": "بلڈنگ محفوظ کرو",
+
+    "accessibilityTitle": "رسائی",
+    "accessibilityDesc": "پڑھن لئی آسانی دے اختیارات۔",
+    "highContrast": "ہائی کنٹراسٹ",
+    "highContrastDesc": "واضح رنگ تے متن۔",
+    "largeText": "وڈا متن",
+    "largeTextDesc": "متن دا سائز ودھاؤ۔",
+    "reduceMotion": "حرکت گھٹاؤ",
+    "reduceMotionDesc": "اینیمیشن گھٹاؤ۔",
+
+    "resetDefaults": "ری سیٹ کرو",
+    "done": "مکمل",
+    "saved": "محفوظ ہو گیا",
+
+    "northernGeneral": "ناردرن جنرل ہسپتال",
+    "royalHallamshire": "رائل ہالامشائر ہسپتال",
+    "westonPark": "ویسٹن پارک ہسپتال",
+
+    "fontSize": "فونٹ سائز",
+    "fontSizeDesc": "متن دا سائز تبدیل کرو۔",
+    "textSizeAria": "متن دا سائز",
+    "smallest": "چھوٹا",
+    "default": "ڈیفالٹ",
+    "largest": "وڈا"
+  },
+
+  "staff": {
+    "title": "اسٹاف پورٹل",
+    "subtitle": "پاتھ مینجمنٹ سسٹم",
+    "back": "مین پیج تے واپس جاؤ",
+
+    "uploadTab": "پاتھ اپ لوڈ کرو",
+    "manageTab": "پاتھ مینج کرو",
+
+    "uploadNewPath": "نواں پاتھ اپ لوڈ کرو",
+    "uploadDescription": "ہسپتال وچ مریضاں لئی راستے اپ لوڈ کرو",
+
+    "failedLoadBuildings": "بلڈنگ لوڈ نہیں ہو سکیاں",
+    "savedDraft": "ڈرافٹ محفوظ ہو گیا",
+    "uploadedPath": "پاتھ اپ لوڈ ہو گیا",
+    "uploadFailed": "اپ لوڈ ناکام",
+
+    "pathName": "پاتھ دا نام",
+    "pathNamePlaceholder": "مثال: مین انٹری توں کارڈیالوجی",
+
+    "startPoint": "شروع پوائنٹ",
+    "startPointPlaceholder": "انٹری لبھو...",
+
+    "endPoint": "آخری پوائنٹ",
+    "endPointPlaceholder": "شعبہ لبھو...",
+
+    "accessibleRoute": "آسان راستہ",
+
+    "clickToUpload": "کلک کرو یا ڈریگ کرو",
+    "reorderBeforeUpload": "اپ لوڈ توں پہلاں ترتیب بدلو",
+
+    "fileOrder": "فائل ترتیب",
+    "topIsFirst": "اوپر = پہلا قدم",
+
+    "dragToReorder": "ڈریگ کرو",
+    "moveUp": "اوپر",
+    "moveDown": "نیچے",
+    "remove": "ہٹاؤ",
+
+    "mediaDescription": "تفصیل (اختیاری)",
+    "mediaDescriptionPlaceholder": "تفصیل لکھو...",
+
+    "uploadPath": "پاتھ اپ لوڈ کرو",
+    "saveDraft": "ڈرافٹ محفوظ کرو",
+    "saving": "محفوظ ہو رہا اے..."
+  },
+
+  "managePaths": {
+    "searchPlaceholder": "پاتھ لبھو...",
+    "filterByBuilding": "بلڈنگ دے مطابق",
+    "filterByStatus": "حالت دے مطابق",
+    "active": "فعال",
+    "draft": "ڈرافٹ",
+    "uploadedPaths": "اپ لوڈ شدہ پاتھ",
+    "edit": "ترمیم",
+    "export": "ایکسپورٹ",
+    "delete": "حذف"
+  },
+
+  "languageSelector": {
+    "language": "زبان",
+    "english": "انگریزی",
+    "egyptianArabic": "عربی (مصر)",
+    "levantineArabic": "عربی (شام)",
+    "maghrebiArabic": "عربی (مغرب)",
+    "gulfArabic": "عربی (خلیج)",
+    "mesopotamianArabic": "عربی (عراق)",
+    "slovak": "سلوواک",
+    "tigrinya": "ٹگرینیا",
+    "kurdishSorani": "کردی (سورانی)",
+    "urdu": "اردو",
+    "farsi": "فارسی",
+    "romanian": "رومانی",
+    "polish": "پولش",
+    "somali": "صومالی",
+    "bengaliSylheti": "بنگالی",
+    "turkish": "ترکی",
+    "vietnamese": "ویتنامی",
+    "albanian": "البانوی",
+    "amharic": "امہاری",
+    "french": "فرانسیسی",
+    "punjabiPakistani": "پنجابی (پاکستان)",
+    "cantonese": "کینٹونیز",
+    "kurdishBahdini": "کردی (بہدینانی)",
+    "oromo": "اورومو",
+    "spanish": "ہسپانوی"
+  },
+
+  "topBar": {
+    "staffPortal": "اسٹاف پورٹل",
+    "settings": "سیٹنگز"
+  }
+}

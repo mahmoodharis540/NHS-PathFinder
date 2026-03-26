@@ -1,9 +1,9 @@
 {
   "home": {
     "welcome": "Bienvenue sur NHS Finder",
-    "pathfinder": "Éclaireur ©",
+    "pathfinder": "Pathfinder ©",
     "subtitle": "Votre passerelle vers les services de santé.",
-    "accessibleRoute": "Itinéraire accessible (éviter les escaliers) / Activer/Désactiver l'accès",
+    "accessibleRoute": "Itinéraire accessible (éviter les escaliers)",
     "prompt": "Vers quel bâtiment souhaitez-vous aller ?",
 
     "nhsLogoAlt": "Logo NHS",
@@ -12,122 +12,149 @@
     "whereAreYouPlaceholder": "Recherchez l'entrée où vous vous trouvez...",
 
     "appointmentBuildingLabel": "Dans quel bâtiment avez-vous votre rendez-vous :",
-    "appointmentBuildingPlaceholder": "Recherchez le bâtiment/service...",
+    "appointmentBuildingPlaceholder": "Recherchez le bâtiment ou le service...",
 
     "startNavigation": "Démarrer la navigation"
   },
+
   "login": {
-  "Welcome": "Page de connexion",
-  "Username": "Nom d'utilisateur",
-  "Password": "Mot de passe",
-  "EnterUsername": "Entrez le nom d'utilisateur",
-  "EnterPassword": "Entrez le mot de passe",
-  "Login": "Se connecter"
-},
-"settings": {
-  "title": "Paramètres",
-  "subtitle": "Accessibilité et préférences",
-  "back": "Retour à la page principale",
+    "welcome": "Page de connexion",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "enterUsername": "Entrez le nom d'utilisateur",
+    "enterPassword": "Entrez le mot de passe",
+    "login": "Se connecter"
+  },
 
-  "languageTitle": "Langue",
-  "languageDesc": "Choisissez la langue utilisée dans l'application.",
-  "appLanguage": "Langue de l'application",
-  "saveLanguage": "Enregistrer la langue",
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Accessibilité et préférences",
+    "back": "Retour à la page principale",
 
-  "defaultBuildingTitle": "Bâtiment par défaut",
-  "defaultBuildingDesc": "L'application peut présélectionner ce bâtiment pour gagner du temps.",
-  "chooseBuilding": "Choisir un bâtiment",
-  "saveDefaultBuilding": "Enregistrer le bâtiment par défaut",
+    "languageTitle": "Langue",
+    "languageDesc": "Choisissez la langue utilisée dans l'application.",
+    "appLanguage": "Langue de l'application",
+    "saveLanguage": "Enregistrer la langue",
 
-  "accessibilityTitle": "Accessibilité",
-  "accessibilityDesc": "Options pour améliorer la lisibilité et réduire la fatigue.",
-  "highContrast": "Mode contraste élevé",
-  "highContrastDesc": "Couleurs plus fortes et texte plus clair pour les déficiences visuelles.",
-  "largeText": "Texte agrandi",
-  "largeTextDesc": "Augmenter la taille du texte pour une lecture plus facile.",
-  "reduceMotion": "Réduire les animations",
-  "reduceMotionDesc": "Réduire les animations pour éviter les vertiges ou l'inconfort.",
+    "defaultBuildingTitle": "Bâtiment par défaut",
+    "defaultBuildingDesc": "L'application peut présélectionner ce bâtiment pour gagner du temps.",
+    "chooseBuilding": "Choisir un bâtiment",
+    "saveDefaultBuilding": "Enregistrer le bâtiment par défaut",
 
-  "resetDefaults": "Réinitialiser par défaut",
-  "done": "Terminé",
-  "saved": "Enregistré",
+    "accessibilityTitle": "Accessibilité",
+    "accessibilityDesc": "Options pour améliorer la lisibilité et réduire la fatigue.",
+    "highContrast": "Mode contraste élevé",
+    "highContrastDesc": "Couleurs plus fortes et texte plus clair pour les déficiences visuelles.",
+    "largeText": "Texte agrandi",
+    "largeTextDesc": "Augmenter la taille du texte pour une lecture plus facile.",
+    "reduceMotion": "Réduire les animations",
+    "reduceMotionDesc": "Réduire les animations pour éviter les vertiges ou l'inconfort.",
 
-  "northernGeneral": "Hôpital Northern General",
-  "royalHallamshire": "Hôpital Royal Hallamshire",
-  "westonPark": "Hôpital Weston Park",
-  "fontSize": "Taille du texte",
-  "fontSizeDesc": "Ajustez la taille globale du texte.",
-  "textSizeAria": "Taille du texte",
-  "smallest": "Plus petit",
-  "default": "Par défaut",
-  "largest": "Plus grand"
-},
-"staff": {
-  "title": "Portail du personnel",
-  "subtitle": "Système de gestion des itinéraires",
-  "back": "Retour à la page principale",
+    "resetDefaults": "Réinitialiser",
+    "done": "Terminé",
+    "saved": "Enregistré",
 
-  "uploadTab": "Téléverser des itinéraires",
-  "manageTab": "Gérer les itinéraires",
+    "northernGeneral": "Hôpital Northern General",
+    "royalHallamshire": "Hôpital Royal Hallamshire",
+    "westonPark": "Hôpital Weston Park",
 
-  "uploadNewPath": "Téléverser un nouvel itinéraire",
-  "uploadDescription": "Téléversez des itinéraires de navigation à suivre par les patients dans les bâtiments de l'hôpital",
+    "fontSize": "Taille du texte",
+    "fontSizeDesc": "Ajustez la taille globale du texte.",
+    "textSizeAria": "Taille du texte",
+    "smallest": "Plus petit",
+    "default": "Par défaut",
+    "largest": "Plus grand"
+  },
 
-  "failedLoadBuildings": "Impossible de charger les bâtiments.",
-  "savedDraft": "Brouillon enregistré dans la base de données.",
-  "uploadedPath": "Itinéraire téléversé dans la base de données.",
-  "uploadFailed": "Échec du téléversement.",
+  "staff": {
+    "title": "Portail du personnel",
+    "subtitle": "Système de gestion des itinéraires",
+    "back": "Retour à la page principale",
 
-  "pathName": "Nom de l'itinéraire",
-  "pathNamePlaceholder": "ex. Entrée principale vers la cardiologie",
+    "uploadTab": "Téléverser des itinéraires",
+    "manageTab": "Gérer les itinéraires",
 
-  "startPoint": "Point de départ",
-  "startPointPlaceholder": "Recherchez l'entrée où vous vous trouvez...",
+    "uploadNewPath": "Téléverser un nouvel itinéraire",
+    "uploadDescription": "Téléverser des itinéraires pour les patients dans l'hôpital",
 
-  "endPoint": "Point d'arrivée",
-  "endPointPlaceholder": "Recherchez le bâtiment/service...",
+    "failedLoadBuildings": "Impossible de charger les bâtiments.",
+    "savedDraft": "Brouillon enregistré.",
+    "uploadedPath": "Itinéraire téléversé.",
+    "uploadFailed": "Échec du téléversement.",
 
-  "accessibleRoute": "Itinéraire accessible (éviter les escaliers) / AccessToggle",
+    "pathName": "Nom de l'itinéraire",
+    "pathNamePlaceholder": "Ex : Entrée principale vers cardiologie",
 
-  "clickToUpload": "Cliquez pour téléverser ou glisser-déposer",
-  "reorderBeforeUpload": "Réorganisez ensuite la liste ci-dessous avant de téléverser",
+    "startPoint": "Point de départ",
+    "startPointPlaceholder": "Recherchez l'entrée...",
 
-  "fileOrder": "Ordre des fichiers (glisser pour réorganiser)",
-  "topIsFirst": "Haut = première étape",
+    "endPoint": "Point d'arrivée",
+    "endPointPlaceholder": "Recherchez le service...",
 
-  "dragToReorder": "Glisser pour réorganiser",
-  "moveUp": "Monter",
-  "moveDown": "Descendre",
-  "remove": "supprimer",
+    "accessibleRoute": "Itinéraire accessible",
 
-  "mediaDescription": "Description du média (optionnel)",
-  "mediaDescriptionPlaceholder": "Notes optionnelles pour ces médias...",
+    "clickToUpload": "Cliquez ou glissez les fichiers",
+    "reorderBeforeUpload": "Réorganisez avant de téléverser",
 
-  "uploadPath": "Téléverser l'itinéraire",
-  "saveDraft": "Enregistrer en brouillon",
-  "saving": "Enregistrement..."
-},
-"managePaths": {
-  "searchPlaceholder": "Rechercher des itinéraires...",
-  "filterByBuilding": "Filtrer par bâtiment",
-  "filterByStatus": "Filtrer par statut",
-  "active": "Actif",
-  "draft": "Brouillon",
-  "uploadedPaths": "Itinéraires téléversés",
-  "edit": "Modifier",
-  "export": "Exporter",
-  "delete": "Supprimer"
-},
-"languageSelector": {
-  "language": "Langue",
-  "english": "Anglais",
-  "polish": "Polonais",
-  "french": "Français",
-  "spanish": "Espagnol"
-},
-"topBar": {
-  "staffPortal": "Portail du personnel",
-  "settings": "Paramètres"
-}
+    "fileOrder": "Ordre des fichiers",
+    "topIsFirst": "Haut = première étape",
 
+    "dragToReorder": "Glisser pour réorganiser",
+    "moveUp": "Monter",
+    "moveDown": "Descendre",
+    "remove": "Supprimer",
+
+    "mediaDescription": "Description (optionnel)",
+    "mediaDescriptionPlaceholder": "Ajoutez une description...",
+
+    "uploadPath": "Téléverser l'itinéraire",
+    "saveDraft": "Enregistrer le brouillon",
+    "saving": "Enregistrement..."
+  },
+
+  "managePaths": {
+    "searchPlaceholder": "Rechercher des itinéraires...",
+    "filterByBuilding": "Filtrer par bâtiment",
+    "filterByStatus": "Filtrer par statut",
+    "active": "Actif",
+    "draft": "Brouillon",
+    "uploadedPaths": "Itinéraires",
+    "edit": "Modifier",
+    "export": "Exporter",
+    "delete": "Supprimer"
+  },
+
+  "languageSelector": {
+    "language": "Langue",
+    "english": "Anglais",
+    "egyptianArabic": "Arabe (Égypte)",
+    "levantineArabic": "Arabe (Levant)",
+    "maghrebiArabic": "Arabe (Maghreb)",
+    "gulfArabic": "Arabe (Golfe)",
+    "mesopotamianArabic": "Arabe (Mésopotamien)",
+    "slovak": "Slovaque",
+    "tigrinya": "Tigrinya",
+    "kurdishSorani": "Kurde (Sorani)",
+    "urdu": "Ourdou",
+    "farsi": "Persan",
+    "romanian": "Roumain",
+    "polish": "Polonais",
+    "somali": "Somali",
+    "bengaliSylheti": "Bengali (Sylheti)",
+    "turkish": "Turc",
+    "vietnamese": "Vietnamien",
+    "albanian": "Albanais",
+    "amharic": "Amharique",
+    "french": "Français",
+    "punjabiPakistani": "Pendjabi (Pakistan)",
+    "cantonese": "Cantonais",
+    "kurdishBahdini": "Kurde (Bahdini)",
+    "oromo": "Oromo",
+    "spanish": "Espagnol"
+  },
+
+  "topBar": {
+    "staffPortal": "Portail du personnel",
+    "settings": "Paramètres"
+  }
 }

@@ -13,12 +13,12 @@
     "startNavigation": "شروع مسیر‌یابی"
   },
   "login": {
-    "Welcome": "صفحه ورود",
-    "Username": "نام کاربری",
-    "Password": "رمز عبور",
-    "EnterUsername": "نام کاربری را وارد کنید",
-    "EnterPassword": "رمز عبور را وارد کنید",
-    "Login": "ورود"
+    "welcome": "صفحه ورود",
+    "username": "نام کاربری",
+    "password": "رمز عبور",
+    "enterUsername": "نام کاربری را وارد کنید",
+    "enterPassword": "رمز عبور را وارد کنید",
+    "login": "ورود"
   },
   "settings": {
     "title": "تنظیمات",

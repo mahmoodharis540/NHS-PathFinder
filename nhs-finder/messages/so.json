@@ -13,12 +13,12 @@
     "startNavigation": "Bilow hagista"
   },
   "login": {
-    "Welcome": "Bogga gelitaanka",
-    "Username": "Magaca isticmaalaha",
-    "Password": "Furaha sirta ah",
-    "EnterUsername": "Geli magaca isticmaalaha",
-    "EnterPassword": "Geli furaha sirta ah",
-    "Login": "Gal"
+    "welcome": "Bogga gelitaanka",
+    "username": "Magaca isticmaalaha",
+    "password": "Furaha sirta ah",
+    "enterUsername": "Geli magaca isticmaalaha",
+    "enterPassword": "Geli furaha sirta ah",
+    "login": "Gal"
   },
   "settings": {
     "title": "Dejinta",

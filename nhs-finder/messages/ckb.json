@@ -13,12 +13,12 @@
     "startNavigation": "دەستپێکردنی ڕێنمایی"
   },
   "login": {
-    "Welcome": "پەڕەی چوونەژوورەوە",
-    "Username": "ناوی بەکارهێنەر",
-    "Password": "وشەی نهێنی",
-    "EnterUsername": "ناوی بەکارهێنەر بنووسە",
-    "EnterPassword": "وشەی نهێنی بنووسە",
-    "Login": "چوونەژوورەوە"
+    "welcome": "پەڕەی چوونەژوورەوە",
+    "username": "ناوی بەکارهێنەر",
+    "password": "وشەی نهێنی",
+    "enterUsername": "ناوی بەکارهێنەر بنووسە",
+    "enterPassword": "وشەی نهێنی بنووسە",
+    "login": "چوونەژوورەوە"
   },
   "settings": {
     "title": "ڕێکخستنەکان",

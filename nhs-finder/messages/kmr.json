@@ -13,12 +13,12 @@
     "startNavigation": "Destpêkirina rêberiyê"
   },
   "login": {
-    "Welcome": "Rûpelê têketinê",
-    "Username": "Navê bikarhêner",
-    "Password": "Şîfre",
-    "EnterUsername": "Navê bikarhêner binivîse",
-    "EnterPassword": "Şîfreyê binivîse",
-    "Login": "Têkeve"
+    "welcome": "Rûpelê têketinê",
+    "username": "Navê bikarhêner",
+    "password": "Şîfre",
+    "enterUsername": "Navê bikarhêner binivîse",
+    "enterPassword": "Şîfreyê binivîse",
+    "login": "Têkeve"
   },
   "settings": {
     "title": "Mîheng",

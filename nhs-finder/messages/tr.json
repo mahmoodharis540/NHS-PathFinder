@@ -13,12 +13,12 @@
     "startNavigation": "Navigasyonu başlat"
   },
   "login": {
-    "Welcome": "Giriş Sayfası",
-    "Username": "Kullanıcı adı",
-    "Password": "Şifre",
-    "EnterUsername": "Kullanıcı adını girin",
-    "EnterPassword": "Şifreyi girin",
-    "Login": "Giriş yap"
+    "welcome": "Giriş Sayfası",
+    "username": "Kullanıcı adı",
+    "password": "Şifre",
+    "enterUsername": "Kullanıcı adını girin",
+    "enterPassword": "Şifreyi girin",
+    "login": "Giriş yap"
   },
   "settings": {
     "title": "Ayarlar",

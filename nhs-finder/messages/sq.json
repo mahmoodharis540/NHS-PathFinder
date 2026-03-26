@@ -13,12 +13,12 @@
     "startNavigation": "Fillo navigimin"
   },
   "login": {
-    "Welcome": "Faqja e hyrjes",
-    "Username": "Emri i përdoruesit",
-    "Password": "Fjalëkalimi",
-    "EnterUsername": "Shkruani emrin e përdoruesit",
-    "EnterPassword": "Shkruani fjalëkalimin",
-    "Login": "Hyr"
+    "welcome": "Faqja e hyrjes",
+    "username": "Emri i përdoruesit",
+    "password": "Fjalëkalimi",
+    "enterUsername": "Shkruani emrin e përdoruesit",
+    "enterPassword": "Shkruani fjalëkalimin",
+    "login": "Hyr"
   },
   "settings": {
     "title": "Cilësimet",

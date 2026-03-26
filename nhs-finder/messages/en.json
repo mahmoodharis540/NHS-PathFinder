@@ -13,12 +13,12 @@
     "startNavigation": "Start Navigation"
   },
   "login": {
-    "Welcome": "Login Page",
-    "Username": "Username",
-    "Password": "Password",
-    "EnterUsername": "Enter Username",
-    "EnterPassword": "Enter Password",
-    "Login": "Login"
+    "welcome": "Login Page",
+    "username": "Username",
+    "password": "Password",
+    "enterUsername": "Enter Username",
+    "enterPassword": "Enter Password",
+    "login": "Login"
   },
   "settings": {
     "title": "Settings",
@@ -122,7 +122,8 @@
     "punjabiPakistani": "Punjabi (Pakistani)",
     "cantonese": "Chinese (Cantonese)",
     "kurdishBahdini": "Kurdish (Bahdini)",
-    "oromo": "Oromo"
+    "oromo": "Oromo",
+    "spanish": "Spanish"
   },
   "topBar": {
     "staffPortal": "Staff Portal",

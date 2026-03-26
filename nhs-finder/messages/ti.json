@@ -13,12 +13,12 @@
     "startNavigation": "ምምላስ ጀምር"
   },
   "login": {
-    "Welcome": "ገጽ መእተዊ",
-    "Username": "ስም ተጠቃሚ",
-    "Password": "ቃል ምስጢር",
-    "EnterUsername": "ስም ተጠቃሚ ኣእትዉ",
-    "EnterPassword": "ቃል ምስጢር ኣእትዉ",
-    "Login": "እቶ"
+    "welcome": "ገጽ መእተዊ",
+    "username": "ስም ተጠቃሚ",
+    "password": "ቃል ምስጢር",
+    "enterUsername": "ስም ተጠቃሚ ኣእትዉ",
+    "enterPassword": "ቃል ምስጢር ኣእትዉ",
+    "login": "እቶ"
   },
   "settings": {
     "title": "ቅንብራት",

@@ -4,108 +4,154 @@
     "pathfinder": "Pathfinder ©",
     "subtitle": "بوابتك للوصول إلى خدمات الرعاية الصحية.",
     "prompt": "إلى أي مبنى تريد الذهاب؟",
-    "accessibleRoute": "مسار مناسب لذوي الاحتياجات (بدون سلالم)",
+    "accessibleRoute": "مسار مناسب (بدون سلالم)",
     "nhsLogoAlt": "شعار NHS",
-    "whereAreYouLabel": "أين أنت:",
+
+    "whereAreYouLabel": "أين أنت؟",
     "whereAreYouPlaceholder": "ابحث عن المدخل الذي أنت عنده...",
-    "appointmentBuildingLabel": "في أي مبنى موعدك:",
+
+    "appointmentBuildingLabel": "في أي مبنى موعدك؟",
     "appointmentBuildingPlaceholder": "ابحث عن المبنى أو القسم...",
+
     "startNavigation": "ابدأ التنقل"
   },
+
   "login": {
-    "Welcome": "صفحة تسجيل الدخول",
-    "Username": "اسم المستخدم",
-    "Password": "كلمة المرور",
-    "EnterUsername": "أدخل اسم المستخدم",
-    "EnterPassword": "أدخل كلمة المرور",
-    "Login": "تسجيل الدخول"
+    "welcome": "تسجيل الدخول",
+    "username": "اسم المستخدم",
+    "password": "كلمة المرور",
+    "enterUsername": "أدخل اسم المستخدم",
+    "enterPassword": "أدخل كلمة المرور",
+    "login": "تسجيل الدخول"
   },
+
   "settings": {
     "title": "الإعدادات",
     "subtitle": "إمكانية الوصول والتفضيلات",
-    "back": "العودة إلى الصفحة الرئيسية",
+    "back": "العودة للرئيسية",
+
     "languageTitle": "اللغة",
-    "languageDesc": "اختر اللغة المستخدمة في التطبيق.",
+    "languageDesc": "اختر لغة التطبيق.",
     "appLanguage": "لغة التطبيق",
     "saveLanguage": "حفظ اللغة",
+
     "defaultBuildingTitle": "المبنى الافتراضي",
-    "defaultBuildingDesc": "يمكن للتطبيق اختيار هذا المبنى تلقائيًا لتوفير الوقت.",
+    "defaultBuildingDesc": "يمكن اختيار هذا المبنى تلقائيًا.",
     "chooseBuilding": "اختر المبنى",
     "saveDefaultBuilding": "حفظ المبنى",
+
     "accessibilityTitle": "إمكانية الوصول",
-    "accessibilityDesc": "خيارات لتحسين القراءة وتقليل الإجهاد.",
-    "highContrast": "وضع التباين العالي",
-    "highContrastDesc": "ألوان أوضح ونص أكثر وضوحًا لضعف البصر.",
+    "accessibilityDesc": "خيارات لتحسين القراءة.",
+    "highContrast": "تباين عالي",
+    "highContrastDesc": "ألوان أوضح لسهولة القراءة.",
     "largeText": "نص كبير",
-    "largeTextDesc": "زيادة حجم النص لسهولة القراءة.",
+    "largeTextDesc": "تكبير النص.",
     "reduceMotion": "تقليل الحركة",
-    "reduceMotionDesc": "تقليل الرسوم المتحركة لتجنب الدوخة أو الانزعاج.",
-    "resetDefaults": "إعادة الإعدادات الافتراضية",
+    "reduceMotionDesc": "تقليل الرسوم المتحركة.",
+
+    "resetDefaults": "إعادة الضبط",
     "done": "تم",
     "saved": "تم الحفظ",
+
     "northernGeneral": "مستشفى نورثرن جنرال",
     "royalHallamshire": "مستشفى رويال هالامشاير",
     "westonPark": "مستشفى ويستون بارك",
+
     "fontSize": "حجم الخط",
-    "fontSizeDesc": "تعديل حجم النص.",
+    "fontSizeDesc": "تغيير حجم النص.",
     "textSizeAria": "حجم النص",
-    "smallest": "الأصغر",
+    "smallest": "صغير",
     "default": "افتراضي",
-    "largest": "الأكبر"
+    "largest": "كبير"
   },
+
   "staff": {
     "title": "بوابة الموظفين",
-    "subtitle": "نظام إدارة المسارات",
-    "back": "العودة إلى الصفحة الرئيسية",
-    "uploadTab": "تحميل المسارات",
+    "subtitle": "إدارة المسارات",
+    "back": "العودة للرئيسية",
+
+    "uploadTab": "رفع المسارات",
     "manageTab": "إدارة المسارات",
-    "uploadNewPath": "إضافة مسار جديد",
-    "uploadDescription": "تحميل مسارات تنقل للمرضى داخل المستشفى",
-    "failedLoadBuildings": "فشل تحميل المباني.",
-    "savedDraft": "تم حفظ المسودة.",
-    "uploadedPath": "تم تحميل المسار.",
-    "uploadFailed": "فشل التحميل.",
+
+    "uploadNewPath": "إضافة مسار",
+    "uploadDescription": "إضافة مسارات للمرضى داخل المستشفى",
+
+    "failedLoadBuildings": "فشل تحميل المباني",
+    "savedDraft": "تم حفظ المسودة",
+    "uploadedPath": "تم رفع المسار",
+    "uploadFailed": "فشل الرفع",
+
     "pathName": "اسم المسار",
-    "pathNamePlaceholder": "مثال: المدخل الرئيسي إلى قسم القلب",
+    "pathNamePlaceholder": "مثال: المدخل الرئيسي إلى القلب",
+
     "startPoint": "نقطة البداية",
     "startPointPlaceholder": "ابحث عن المدخل...",
+
     "endPoint": "نقطة النهاية",
     "endPointPlaceholder": "ابحث عن القسم...",
-    "accessibleRoute": "مسار مناسب لذوي الاحتياجات",
-    "clickToUpload": "انقر أو اسحب الملفات",
-    "reorderBeforeUpload": "أعد ترتيب القائمة قبل التحميل",
+
+    "accessibleRoute": "مسار مناسب",
+
+    "clickToUpload": "اضغط أو اسحب الملفات",
+    "reorderBeforeUpload": "أعد الترتيب قبل الرفع",
+
     "fileOrder": "ترتيب الملفات",
-    "topIsFirst": "الأعلى = الخطوة الأولى",
-    "dragToReorder": "اسحب لإعادة الترتيب",
-    "moveUp": "تحريك للأعلى",
-    "moveDown": "تحريك للأسفل",
-    "remove": "إزالة",
+    "topIsFirst": "الأعلى = البداية",
+
+    "dragToReorder": "اسحب للترتيب",
+    "moveUp": "أعلى",
+    "moveDown": "أسفل",
+    "remove": "حذف",
+
     "mediaDescription": "وصف (اختياري)",
-    "mediaDescriptionPlaceholder": "أضف وصفًا...",
-    "uploadPath": "تحميل المسار",
-    "saveDraft": "حفظ كمسودة",
+    "mediaDescriptionPlaceholder": "أضف وصف...",
+
+    "uploadPath": "رفع المسار",
+    "saveDraft": "حفظ مسودة",
     "saving": "جارٍ الحفظ..."
   },
+
   "managePaths": {
     "searchPlaceholder": "ابحث عن المسارات...",
-    "filterByBuilding": "تصفية حسب المبنى",
-    "filterByStatus": "تصفية حسب الحالة",
+    "filterByBuilding": "حسب المبنى",
+    "filterByStatus": "حسب الحالة",
     "active": "نشط",
     "draft": "مسودة",
-    "uploadedPaths": "المسارات المضافة",
+    "uploadedPaths": "المسارات",
     "edit": "تعديل",
     "export": "تصدير",
     "delete": "حذف"
   },
+
   "languageSelector": {
     "language": "اللغة",
     "english": "الإنجليزية",
-    "arabic": "العربية",
+    "egyptianArabic": "العربية (مصرية)",
+    "levantineArabic": "العربية (شامية)",
+    "maghrebiArabic": "العربية (مغاربية)",
+    "gulfArabic": "العربية (خليجية)",
+    "mesopotamianArabic": "العربية (عراقية)",
+    "slovak": "السلوفاكية",
+    "tigrinya": "التغرينية",
+    "kurdishSorani": "الكردية (سوراني)",
     "urdu": "الأردية",
+    "farsi": "الفارسية",
+    "romanian": "الرومانية",
     "polish": "البولندية",
+    "somali": "الصومالية",
+    "bengaliSylheti": "البنغالية (سيلهتي)",
+    "turkish": "التركية",
+    "vietnamese": "الفيتنامية",
+    "albanian": "الألبانية",
+    "amharic": "الأمهرية",
     "french": "الفرنسية",
+    "punjabiPakistani": "البنجابية",
+    "cantonese": "الكانتونية",
+    "kurdishBahdini": "الكردية (بهدينانية)",
+    "oromo": "الأورومية",
     "spanish": "الإسبانية"
   },
+
   "topBar": {
     "staffPortal": "بوابة الموظفين",
     "settings": "الإعدادات"

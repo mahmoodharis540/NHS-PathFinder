@@ -11,10 +11,12 @@ type Item = {
 
 function useDebouncedValue<T>(value: T, delayMs: number) {
   const [debounced, setDebounced] = useState(value);
+
   useEffect(() => {
     const t = setTimeout(() => setDebounced(value), delayMs);
     return () => clearTimeout(t);
   }, [value, delayMs]);
+
   return debounced;
 }
 
@@ -23,17 +25,14 @@ export default function SearchDropdown({
   placeholder,
   apiUrl,
   onSelect,
-
   value,
   onChangeText,
-
   labelClassName,
 }: {
   label: string;
   placeholder: string;
-  apiUrl: string; 
+  apiUrl: string;
   onSelect?: (item: Item) => void;
-
   value?: string;
   onChangeText?: (text: string) => void;
   labelClassName?: string;
@@ -46,7 +45,9 @@ export default function SearchDropdown({
 
   useEffect(() => {
     const run = async () => {
-      const res = await fetch(`${apiUrl}?take=35&q=${encodeURIComponent(debounced)}`);
+      const res = await fetch(
+        `${apiUrl}?take=35&q=${encodeURIComponent(debounced)}`
+      );
       const text = await res.text();
       if (!res.ok) throw new Error(text);
       setResults(JSON.parse(text));
@@ -59,9 +60,11 @@ export default function SearchDropdown({
 
   return (
     <div className="w-full max-w-lg">
-      <label className={`block text-sm mb-2 ${labelClassName ?? "text-white"}`}>{label}</label>
+      <label className={`block mb-2 ${labelClassName ?? "text-white"}`}>
+        {label}
+      </label>
 
-      <div className="relative bg-white rounded-2xl shadow-md p-3">
+      <div className="relative bg-white rounded-2xl shadow-md hover:shadow-lg transition p-3 focus-within:ring-2 focus-within:ring-blue-500">
         <input
           value={displayValue}
           onChange={(e) => {
@@ -72,7 +75,7 @@ export default function SearchDropdown({
           }}
           onFocus={() => setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 150)}
-          className="w-full rounded-xl px-4 py-3 text-sm text-black border border-gray-200 focus:outline-none"
+          className="w-full rounded-xl px-4 py-3 text-black bg-transparent focus:outline-none"
           placeholder={placeholder}
         />
 
@@ -82,7 +85,7 @@ export default function SearchDropdown({
               <button
                 key={r.DestinationID}
                 type="button"
-                className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50"
+                className="w-full text-left px-4 py-2 hover:bg-gray-50"
                 onMouseDown={(ev) => ev.preventDefault()}
                 onClick={() => {
                   setQuery(r.DestinationName);

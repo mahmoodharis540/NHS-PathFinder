@@ -13,12 +13,12 @@
     "startNavigation": "Spustiť navigáciu"
   },
   "login": {
-    "Welcome": "Prihlasovacia stránka",
-    "Username": "Používateľské meno",
-    "Password": "Heslo",
-    "EnterUsername": "Zadajte používateľské meno",
-    "EnterPassword": "Zadajte heslo",
-    "Login": "Prihlásiť sa"
+    "welcome": "Prihlasovacia stránka",
+    "username": "Používateľské meno",
+    "password": "Heslo",
+    "enterUsername": "Zadajte používateľské meno",
+    "enterPassword": "Zadajte heslo",
+    "login": "Prihlásiť sa"
   },
   "settings": {
     "title": "Nastavenia",

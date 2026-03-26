@@ -13,12 +13,12 @@
     "startNavigation": "አቅጣጫ ጀምር"
   },
   "login": {
-    "Welcome": "የመግቢያ ገጽ",
-    "Username": "የተጠቃሚ ስም",
-    "Password": "የይለፍ ቃል",
-    "EnterUsername": "የተጠቃሚ ስም ያስገቡ",
-    "EnterPassword": "የይለፍ ቃል ያስገቡ",
-    "Login": "ግባ"
+    "welcome": "የመግቢያ ገጽ",
+    "username": "የተጠቃሚ ስም",
+    "password": "የይለፍ ቃል",
+    "enterUsername": "የተጠቃሚ ስም ያስገቡ",
+    "enterPassword": "የይለፍ ቃል ያስገቡ",
+    "login": "ግባ"
   },
   "settings": {
     "title": "ቅንብሮች",
@@ -122,7 +122,8 @@
     "punjabiPakistani": "ፑንጃቢ (ፓኪስታን)",
     "cantonese": "ቻይንኛ (ካንቶኒዝ)",
     "kurdishBahdini": "ኩርድኛ (ባህዲኒ)",
-    "oromo": "ኦሮሞ"
+    "oromo": "ኦሮሞ",
+    "spanish": "ስፓኒሽ"
   },
   "topBar": {
     "staffPortal": "የሰራተኞች ፖርታል",

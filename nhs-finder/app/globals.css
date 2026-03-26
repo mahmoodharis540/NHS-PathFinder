@@ -121,9 +121,6 @@
     @apply border-border outline-ring/50;
   }
 
-  /* ✅ IMPORTANT CHANGE:
-     Don't force body bg/text here — let layout/page control it.
-     This prevents theme tokens from overriding your Tailwind page styles. */
   body {
     @apply antialiased;
   }
@@ -158,7 +155,6 @@ html.high-contrast textarea {
   border: 1px solid #ffff00 !important;
 }
 
-
 html.reduce-motion *,
 html.reduce-motion *::before,
 html.reduce-motion *::after {
@@ -167,7 +163,39 @@ html.reduce-motion *::after {
   transition-duration: 0.001ms !important;
   scroll-behavior: auto !important;
 }
-p, li, span, label, a, td, th, blockquote,
-input, select, textarea, button {
+
+p,
+li,
+span,
+label,
+a,
+td,
+th,
+blockquote,
+input,
+select,
+textarea,
+button {
   font-size: var(--nhs-text-size, 16px);
+}
+
+h1 {
+  font-size: calc(var(--nhs-text-size, 16px) * 2);
+}
+
+h2 {
+  font-size: calc(var(--nhs-text-size, 16px) * 1.6);
+}
+
+h3 {
+  font-size: calc(var(--nhs-text-size, 16px) * 1.35);
+}
+
+h4 {
+  font-size: calc(var(--nhs-text-size, 16px) * 1.2);
+}
+
+h5,
+h6 {
+  font-size: calc(var(--nhs-text-size, 16px) * 1.1);
 }

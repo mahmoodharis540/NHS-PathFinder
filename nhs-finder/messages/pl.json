@@ -1,133 +1,159 @@
 {
   "home": {
     "welcome": "Witamy w NHS Finder",
-    "pathfinder": "Pionier ©",
+    "pathfinder": "Pathfinder ©",
     "subtitle": "Twoja brama do usług opieki zdrowotnej.",
     "prompt": "Do którego budynku chcesz się udać?",
-    "accessibleRoute": "Dostępna trasa (omijaj schody) / Przełącznik dostępu",
+    "accessibleRoute": "Dostępna trasa (bez schodów)",
     "nhsLogoAlt": "Logo NHS",
 
     "whereAreYouLabel": "Gdzie się znajdujesz?",
     "whereAreYouPlaceholder": "Wyszukaj wejście, przy którym się znajdujesz...",
 
     "appointmentBuildingLabel": "W którym budynku masz wizytę?",
-    "appointmentBuildingPlaceholder": "Wyszukaj budynek/oddział...",
+    "appointmentBuildingPlaceholder": "Wyszukaj budynek lub oddział...",
 
     "startNavigation": "Rozpocznij nawigację"
   },
+
   "login": {
-  "Welcome": "Strona logowania",
-  "Username": "Nazwa użytkownika",
-  "Password": "Hasło",
-  "EnterUsername": "Wpisz nazwę użytkownika",
-  "EnterPassword": "Wpisz hasło",
-  "Login": "Zaloguj się"
-},
-"settings": {
-  "title": "Ustawienia",
-  "subtitle": "Dostępność i preferencje",
-  "back": "Powrót do strony głównej",
+    "welcome": "Logowanie",
+    "username": "Nazwa użytkownika",
+    "password": "Hasło",
+    "enterUsername": "Wpisz nazwę użytkownika",
+    "enterPassword": "Wpisz hasło",
+    "login": "Zaloguj się"
+  },
 
-  "languageTitle": "Język",
-  "languageDesc": "Wybierz język używany w aplikacji.",
-  "appLanguage": "Język aplikacji",
-  "saveLanguage": "Zapisz język",
+  "settings": {
+    "title": "Ustawienia",
+    "subtitle": "Dostępność i preferencje",
+    "back": "Powrót do strony głównej",
 
-  "defaultBuildingTitle": "Domyślny budynek",
-  "defaultBuildingDesc": "Aplikacja może wstępnie wybrać ten budynek, aby przyspieszyć proces.",
-  "chooseBuilding": "Wybierz budynek",
-  "saveDefaultBuilding": "Zapisz domyślny budynek",
+    "languageTitle": "Język",
+    "languageDesc": "Wybierz język używany w aplikacji.",
+    "appLanguage": "Język aplikacji",
+    "saveLanguage": "Zapisz język",
 
-  "accessibilityTitle": "Dostępność",
-  "accessibilityDesc": "Opcje poprawiające czytelność i zmniejszające zmęczenie.",
-  "highContrast": "Tryb wysokiego kontrastu",
-  "highContrastDesc": "Mocniejsze kolory i wyraźniejszy tekst dla osób z problemami wzroku.",
-  "largeText": "Duży tekst",
-  "largeTextDesc": "Zwiększ rozmiar tekstu dla łatwiejszego czytania.",
-  "reduceMotion": "Ogranicz animacje",
-  "reduceMotionDesc": "Zmniejsz animacje, aby ograniczyć zawroty głowy lub dyskomfort.",
+    "defaultBuildingTitle": "Domyślny budynek",
+    "defaultBuildingDesc": "Aplikacja może wstępnie wybrać ten budynek, aby przyspieszyć proces.",
+    "chooseBuilding": "Wybierz budynek",
+    "saveDefaultBuilding": "Zapisz domyślny budynek",
 
-  "resetDefaults": "Przywróć ustawienia domyślne",
-  "done": "Gotowe",
-  "saved": "Zapisano",
+    "accessibilityTitle": "Dostępność",
+    "accessibilityDesc": "Opcje poprawiające czytelność i zmniejszające zmęczenie.",
+    "highContrast": "Tryb wysokiego kontrastu",
+    "highContrastDesc": "Mocniejsze kolory i wyraźniejszy tekst dla osób z problemami wzroku.",
+    "largeText": "Duży tekst",
+    "largeTextDesc": "Zwiększ rozmiar tekstu dla łatwiejszego czytania.",
+    "reduceMotion": "Ogranicz animacje",
+    "reduceMotionDesc": "Zmniejsz animacje, aby ograniczyć zawroty głowy lub dyskomfort.",
 
-  "northernGeneral": "Szpital Northern General",
-  "royalHallamshire": "Szpital Royal Hallamshire",
-  "westonPark": "Szpital Weston Park",
-  "fontSize": "Rozmiar tekstu",
-  "fontSizeDesc": "Dostosuj ogólny rozmiar tekstu.",
-  "textSizeAria": "Rozmiar tekstu",
-  "smallest": "Najmniejszy",
-  "default": "Domyślny",
-  "largest": "Największy"
+    "resetDefaults": "Przywróć ustawienia domyślne",
+    "done": "Gotowe",
+    "saved": "Zapisano",
 
-},
-"staff": {
-  "title": "Portal personelu",
-  "subtitle": "System zarządzania trasami",
-  "back": "Powrót do strony głównej",
+    "northernGeneral": "Szpital Northern General",
+    "royalHallamshire": "Szpital Royal Hallamshire",
+    "westonPark": "Szpital Weston Park",
 
-  "uploadTab": "Dodaj trasy",
-  "manageTab": "Zarządzaj trasami",
+    "fontSize": "Rozmiar tekstu",
+    "fontSizeDesc": "Dostosuj ogólny rozmiar tekstu.",
+    "textSizeAria": "Rozmiar tekstu",
+    "smallest": "Najmniejszy",
+    "default": "Domyślny",
+    "largest": "Największy"
+  },
 
-  "uploadNewPath": "Dodaj nową trasę",
-  "uploadDescription": "Dodawaj trasy nawigacji, które pacjenci mogą śledzić w budynkach szpitala",
+  "staff": {
+    "title": "Portal personelu",
+    "subtitle": "System zarządzania trasami",
+    "back": "Powrót do strony głównej",
 
-  "failedLoadBuildings": "Nie udało się wczytać budynków.",
-  "savedDraft": "Szkic zapisano w bazie danych.",
-  "uploadedPath": "Trasę zapisano w bazie danych.",
-  "uploadFailed": "Nie udało się przesłać.",
+    "uploadTab": "Dodaj trasy",
+    "manageTab": "Zarządzaj trasami",
 
-  "pathName": "Nazwa trasy",
-  "pathNamePlaceholder": "np. Wejście główne do kardiologii",
+    "uploadNewPath": "Dodaj nową trasę",
+    "uploadDescription": "Dodawaj trasy nawigacji dla pacjentów w szpitalu",
 
-  "startPoint": "Punkt startowy",
-  "startPointPlaceholder": "Wyszukaj wejście, przy którym się znajdujesz...",
+    "failedLoadBuildings": "Nie udało się wczytać budynków.",
+    "savedDraft": "Szkic zapisano.",
+    "uploadedPath": "Trasa została dodana.",
+    "uploadFailed": "Nie udało się przesłać.",
 
-  "endPoint": "Punkt docelowy",
-  "endPointPlaceholder": "Wyszukaj budynek/oddział...",
+    "pathName": "Nazwa trasy",
+    "pathNamePlaceholder": "Np. wejście główne do kardiologii",
 
-  "accessibleRoute": "Trasa dostępna (bez schodów) / AccessToggle",
+    "startPoint": "Punkt startowy",
+    "startPointPlaceholder": "Wyszukaj wejście...",
 
-  "clickToUpload": "Kliknij, aby dodać pliki lub przeciągnij i upuść",
-  "reorderBeforeUpload": "Następnie zmień kolejność listy poniżej przed przesłaniem",
+    "endPoint": "Punkt docelowy",
+    "endPointPlaceholder": "Wyszukaj oddział...",
 
-  "fileOrder": "Kolejność plików (przeciągnij, aby zmienić)",
-  "topIsFirst": "Góra = pierwszy krok",
+    "accessibleRoute": "Trasa dostępna",
 
-  "dragToReorder": "Przeciągnij, aby zmienić kolejność",
-  "moveUp": "Przesuń w górę",
-  "moveDown": "Przesuń w dół",
-  "remove": "usuń",
+    "clickToUpload": "Kliknij lub przeciągnij pliki",
+    "reorderBeforeUpload": "Zmień kolejność przed przesłaniem",
 
-  "mediaDescription": "Opis multimediów (opcjonalnie)",
-  "mediaDescriptionPlaceholder": "Opcjonalne notatki do tych plików...",
+    "fileOrder": "Kolejność plików",
+    "topIsFirst": "Góra = pierwszy krok",
 
-  "uploadPath": "Dodaj trasę",
-  "saveDraft": "Zapisz jako szkic",
-  "saving": "Zapisywanie..."
-},
-"managePaths": {
-  "searchPlaceholder": "Szukaj tras...",
-  "filterByBuilding": "Filtruj według budynku",
-  "filterByStatus": "Filtruj według statusu",
-  "active": "Aktywna",
-  "draft": "Szkic",
-  "uploadedPaths": "Przesłane trasy",
-  "edit": "Edytuj",
-  "export": "Eksportuj",
-  "delete": "Usuń"
-},
-"languageSelector": {
-  "language": "Język",
-  "english": "Angielski",
-  "polish": "Polski",
-  "french": "Francuski",
-  "spanish": "Hiszpański"
-},
-"topBar": {
-  "staffPortal": "Portal personelu",
-  "settings": "Ustawienia"
-}
+    "dragToReorder": "Przeciągnij, aby zmienić kolejność",
+    "moveUp": "Przesuń w górę",
+    "moveDown": "Przesuń w dół",
+    "remove": "Usuń",
 
+    "mediaDescription": "Opis (opcjonalnie)",
+    "mediaDescriptionPlaceholder": "Dodaj opis...",
+
+    "uploadPath": "Dodaj trasę",
+    "saveDraft": "Zapisz szkic",
+    "saving": "Zapisywanie..."
+  },
+
+  "managePaths": {
+    "searchPlaceholder": "Szukaj tras...",
+    "filterByBuilding": "Filtruj według budynku",
+    "filterByStatus": "Filtruj według statusu",
+    "active": "Aktywna",
+    "draft": "Szkic",
+    "uploadedPaths": "Trasy",
+    "edit": "Edytuj",
+    "export": "Eksportuj",
+    "delete": "Usuń"
+  },
+
+  "languageSelector": {
+    "language": "Język",
+    "english": "Angielski",
+    "egyptianArabic": "Arabski (Egipt)",
+    "levantineArabic": "Arabski (Lewant)",
+    "maghrebiArabic": "Arabski (Maghreb)",
+    "gulfArabic": "Arabski (Zatoka)",
+    "mesopotamianArabic": "Arabski (Mezopotamia)",
+    "slovak": "Słowacki",
+    "tigrinya": "Tigrinia",
+    "kurdishSorani": "Kurdyjski (Sorani)",
+    "urdu": "Urdu",
+    "farsi": "Perski",
+    "romanian": "Rumuński",
+    "polish": "Polski",
+    "somali": "Somalijski",
+    "bengaliSylheti": "Bengalski (Sylheti)",
+    "turkish": "Turecki",
+    "vietnamese": "Wietnamski",
+    "albanian": "Albański",
+    "amharic": "Amharski",
+    "french": "Francuski",
+    "punjabiPakistani": "Pendżabski (Pakistan)",
+    "cantonese": "Kantoński",
+    "kurdishBahdini": "Kurdyjski (Bahdini)",
+    "oromo": "Oromo",
+    "spanish": "Hiszpański"
+  },
+
+  "topBar": {
+    "staffPortal": "Portal personelu",
+    "settings": "Ustawienia"
+  }
 }
