@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { Volume2, VolumeX } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { PathSummary, MediaItem } from "@/types/paths";
 
 function isVideo(src: string) {
@@ -9,6 +11,7 @@ function isVideo(src: string) {
 }
 
 export default function DirectionsPage() {
+  const t = useTranslations("directions");
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -23,12 +26,61 @@ export default function DirectionsPage() {
   const [path, setPath] = useState<PathSummary | null>(null);
   const [sequence, setSequence] = useState<MediaItem[]>([]);
   const [slideIndex, setSlideIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading]     = useState(true);
+  const [error, setError]         = useState<string | null>(null);
+  const [isOffline, setIsOffline] = useState(false);
+  const [speechSupported, setSpeechSupported] = useState(false);
+  const [isReadingStep, setIsReadingStep] = useState(false);
+  const currentUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  const currentStepText = String(sequence[slideIndex]?.mediaDesc ?? "").trim();
+
+  useEffect(() => {
+    setSpeechSupported(typeof window !== "undefined" && "speechSynthesis" in window);
+  }, []);
+
+  useEffect(() => {
+    if (!speechSupported) return;
+
+    window.speechSynthesis.cancel();
+    currentUtteranceRef.current = null;
+    setIsReadingStep(false);
+  }, [slideIndex, speechSupported]);
+
+  useEffect(() => {
+    return () => {
+      if (!speechSupported) return;
+      window.speechSynthesis.cancel();
+    };
+  }, [speechSupported]);
+
+  useEffect(() => {
+    const syncOnlineState = () => setIsOffline(!navigator.onLine);
+
+    syncOnlineState();
+    window.addEventListener("online", syncOnlineState);
+    window.addEventListener("offline", syncOnlineState);
+
+    return () => {
+      window.removeEventListener("online", syncOnlineState);
+      window.removeEventListener("offline", syncOnlineState);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!("caches" in window)) return;
+    if (!entrance || !destination) return;
+
+    const pathSearchUrl = `/api/paths?entrance=${encodeURIComponent(entrance)}&destination=${encodeURIComponent(destination)}`;
+
+    caches.open("nhs-pathfinder-api-v1").then((cache) => {
+      cache.add(pathSearchUrl).catch(() => undefined);
+    });
+  }, [entrance, destination]);
 
   useEffect(() => {
     if (!entrance || !destination) {
-      setError("Missing start or destination. Please go back and try again.");
+      setError(t("missingRouteParams"));
       setLoading(false);
       return;
     }
@@ -51,18 +103,17 @@ export default function DirectionsPage() {
       })
       .then(({ paths }) => {
         if (!paths?.length) {
-          setError("No path found between these locations.");
+          setError(t("noPathFound"));
           return;
         }
         setPath(paths[0]);
       })
       .catch((err) => {
         console.error("Failed to load path:", err);
-        setError("Failed to load path. Please try again.");
+        setError(t("failedToLoadPath"));
       })
       .finally(() => setLoading(false));
-  }, [entrance, destination]);
-
+  }, [entrance, destination, t]);
   useEffect(() => {
     if (!path) return;
 
@@ -73,7 +124,7 @@ export default function DirectionsPage() {
     console.log("Resolved PathID:", pathId);
 
     if (!pathId) {
-      setError("Could not resolve path ID.");
+      setError(t("couldNotResolvePathId"));
       return;
     }
 
@@ -93,18 +144,66 @@ export default function DirectionsPage() {
           mediaSequence
         );
         setSequence(mediaSequence ?? []);
+
+        if (!("caches" in window)) return;
+
+        const mediaUrls = (mediaSequence ?? [])
+          .map((item: MediaItem) => String(item.media ?? item.Media ?? item.url ?? ""))
+          .filter(Boolean)
+          .map((src: string) => new URL(src, window.location.origin).toString());
+
+        caches.open("nhs-pathfinder-api-v1").then((cache) => {
+          cache.add(seqUrl).catch(() => undefined);
+        });
+
+        caches.open("nhs-pathfinder-media-v1").then((cache) => {
+          mediaUrls.forEach((src: string) => {
+            cache.add(src).catch(() => undefined);
+          });
+        });
       })
       .catch((err) => {
         console.error("Failed to load sequence:", err);
-        setError("Failed to load media for this path.");
+        setError(
+          navigator.onLine
+            ? t("failedToLoadMedia")
+            : t("offlineNotCached")
+        );
       });
-  }, [path]);
+  }, [path, t]);
 
   const prev = () =>
     setSlideIndex((i) => (i - 1 + sequence.length) % sequence.length);
 
   const next = () =>
     setSlideIndex((i) => (i + 1) % sequence.length);
+
+  function toggleStepSpeech() {
+    if (!speechSupported || !currentStepText) return;
+
+    if (window.speechSynthesis.speaking || isReadingStep) {
+      window.speechSynthesis.cancel();
+      currentUtteranceRef.current = null;
+      setIsReadingStep(false);
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(currentStepText);
+    utterance.rate = 0.95;
+    utterance.onstart = () => setIsReadingStep(true);
+    utterance.onend = () => {
+      currentUtteranceRef.current = null;
+      setIsReadingStep(false);
+    };
+    utterance.onerror = () => {
+      currentUtteranceRef.current = null;
+      setIsReadingStep(false);
+    };
+
+    currentUtteranceRef.current = utterance;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  }
 
   if (loading) {
     return (
@@ -114,7 +213,7 @@ export default function DirectionsPage() {
             className="w-10 h-10 rounded-full border-4 border-white/20 animate-spin"
             style={{ borderTopColor: "#fff" }}
           />
-          <p className="text-sm">Finding your route…</p>
+          <p className="text-sm">{t("findingRoute")}</p>
         </div>
       </div>
     );
@@ -128,7 +227,7 @@ export default function DirectionsPage() {
           onClick={() => router.push("/")}
           className="px-6 py-3 rounded-lg bg-white text-[#003087] font-semibold hover:bg-gray-100 transition-colors"
         >
-          ← Go Back
+          {t("goBack")}
         </button>
       </div>
     );
@@ -185,7 +284,7 @@ export default function DirectionsPage() {
       <div className="relative flex-1 overflow-hidden bg-black">
         {sequence.length === 0 && (
           <div className="absolute inset-0 flex items-center justify-center text-white/40">
-            <p className="m-0 text-base">No media available for this path.</p>
+            <p className="m-0 text-base">{t("noMediaAvailable")}</p>
           </div>
         )}
 
@@ -219,9 +318,31 @@ export default function DirectionsPage() {
 
             {String(item.mediaDesc ?? "") && (
               <div className="absolute bottom-0 left-0 right-0 px-6 pt-8 pb-24 bg-gradient-to-t from-black/80 to-transparent">
-                <p className="m-0 text-sm text-white/70 max-w-xl">
-                  {String(item.mediaDesc ?? "")}
-                </p>
+                <div className="flex max-w-2xl flex-col items-start gap-3">
+                  <p className="m-0 text-sm text-white/80">
+                    {String(item.mediaDesc ?? "")}
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={toggleStepSpeech}
+                    aria-label={isReadingStep ? "Stop reading this instruction" : "Read this instruction"}
+                    disabled={!speechSupported || !currentStepText || i !== slideIndex}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-[#003087] px-4 py-2 text-sm font-medium text-white shadow-lg hover:bg-[#00256a] disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {isReadingStep && i === slideIndex ? (
+                      <>
+                        <VolumeX className="h-5 w-5" />
+                        <span>{t("stopReading")}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Volume2 className="h-5 w-5" />
+                        <span>{t("readStep")}</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -230,8 +351,8 @@ export default function DirectionsPage() {
         {sequence.length > 1 && (
           <button
             onClick={prev}
-            title="Previous"
-            aria-label="Previous slide"
+            title={t("previous")}
+            aria-label={t("previousSlide")}
             className="absolute left-4 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-12 h-12 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-sm border border-white/20 text-white text-xl cursor-pointer transition-colors duration-150"
           >
             ←
@@ -241,8 +362,8 @@ export default function DirectionsPage() {
         {sequence.length > 1 && (
           <button
             onClick={next}
-            title="Next"
-            aria-label="Next slide"
+            title={t("next")}
+            aria-label={t("nextSlide")}
             className="absolute right-4 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-12 h-12 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-sm border border-white/20 text-white text-xl cursor-pointer transition-colors duration-150"
           >
             →

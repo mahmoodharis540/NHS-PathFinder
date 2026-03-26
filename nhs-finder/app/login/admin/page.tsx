@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Settings } from "lucide-react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 
 import ManagePathsSection from "@/components/ManagePathsSection";
-import AdminSearchDropdown from "@/components/AdminSearchDropdown";
 import AdminBuildingSelect from "@/components/AdminBuildingSelect";
 
 type Building = {
@@ -15,40 +13,57 @@ type Building = {
   BuildingName: string;
 };
 
-type ExistingMediaItem = {
-  MediaID: number;
-  Media: string;
-  MediaDesc?: string | null;
+type NodeSummary = {
+  DestinationID: number;
+  DestinationName: string;
+  BuildingID: number;
+  isEntrance: number;
+  Accessibility: number | null;
+  NodeImage: string | null;
+  connectionCount: number;
+  connectedNodes: string[];
 };
 
-type EditingPath = {
-  id: number;
-  pathName: string;
-  buildingId: number;
-  building?: string;
-  startId?: number;
-  endId?: number;
-  startName: string;
-  endName: string;
-  statusId?: number;
-  statusType: string;
-  accessToggle: number;
-  date?: string;
-  description?: string;
-  media?: ExistingMediaItem[];
+type ExistingConnection = {
+  id: string;
+  fromId: number;
+  toId: number;
+  fromName: string;
+  toName: string;
+  accessible: boolean;
+  weight: number | null;
+  source: "existing";
 };
 
-function moveItem<T>(arr: T[], from: number, to: number) {
-  const copy = [...arr];
-  const [item] = copy.splice(from, 1);
-  copy.splice(to, 0, item);
-  return copy;
+type DraftConnection = {
+  id: string;
+  fromId: number;
+  toId: number;
+  fromName: string;
+  toName: string;
+  accessible: boolean;
+  weight: number;
+  source: "draft";
+};
+
+type PathApiRow = {
+  PathID?: number;
+  AccessToggle?: number;
+  Weight?: number | null;
+  BuildingID?: number;
+  Destination_Path_StartToDestination?: {
+    DestinationID?: number;
+    DestinationName?: string;
+  };
+  Destination_Path_EndToDestination?: {
+    DestinationID?: number;
+    DestinationName?: string;
+  };
+};
+
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback;
 }
-
-type SimpleVoice = {
-  name: string;
-  lang: string;
-};
 
 export default function StaffPortalPage() {
   const router = useRouter();
@@ -59,146 +74,51 @@ export default function StaffPortalPage() {
 
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [loadingBuildings, setLoadingBuildings] = useState(false);
+  const [buildingId, setBuildingId] = useState("");
 
-  const [buildingId, setBuildingId] = useState<string>("");
-  const [pathName, setPathName] = useState("");
-  const [startName, setStartName] = useState("");
-  const [endName, setEndName] = useState("");
-  const [description, setDescription] = useState("");
-  const [accessible, setAccessible] = useState(false);
+  const [buildingNodes, setBuildingNodes] = useState<NodeSummary[]>([]);
+  const [loadingNodes, setLoadingNodes] = useState(false);
+  const [nodesError, setNodesError] = useState("");
+  const [nodesRefreshKey, setNodesRefreshKey] = useState(0);
 
-  const [files, setFiles] = useState<File[]>([]);
-  const [existingMedia, setExistingMedia] = useState<ExistingMediaItem[]>([]);
-  const [removedMediaIds, setRemovedMediaIds] = useState<number[]>([]);
+  const [existingConnections, setExistingConnections] = useState<ExistingConnection[]>([]);
+  const [draftConnections, setDraftConnections] = useState<DraftConnection[]>([]);
+  const [loadingConnections, setLoadingConnections] = useState(false);
+  const [connectionsError, setConnectionsError] = useState("");
 
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [nodeName, setNodeName] = useState("");
+  const [nodeAccessible, setNodeAccessible] = useState(false);
+  const [nodeIsEntrance, setNodeIsEntrance] = useState(false);
+  const [nodeImage, setNodeImage] = useState<File | null>(null);
+  const [isSavingNode, setIsSavingNode] = useState(false);
 
-  const [isSaving, setIsSaving] = useState(false);
-  const [message, setMessage] = useState<string>("");
+  const [fromNodeId, setFromNodeId] = useState("");
+  const [toNodeId, setToNodeId] = useState("");
+  const [connectionWeight, setConnectionWeight] = useState("");
+  const [connectionAccessible, setConnectionAccessible] = useState(false);
+  const [qrEntranceId, setQrEntranceId] = useState("");
+  const [qrDestinationId, setQrDestinationId] = useState("");
+  const [patientName, setPatientName] = useState("");
+  const [patientEmail, setPatientEmail] = useState("");
+  const [appointmentTime, setAppointmentTime] = useState("");
+  const [publicBaseUrl, setPublicBaseUrl] = useState("");
 
-  const [dragIndex, setDragIndex] = useState<number | null>(null);
-  const [existingDragIndex, setExistingDragIndex] = useState<number | null>(null);
-
-  const [isSpeaking, setIsSpeaking] = useState(false);
-
-  const speechSupported = useMemo(() => {
-    return typeof window !== "undefined" && "speechSynthesis" in window;
-  }, []);
-
-  const ttsLanguages = useMemo(
-    () => [
-      { value: "en-GB", label: "English (UK)" },
-      { value: "en-US", label: "English (US)" },
-      { value: "pl-PL", label: "Polski (PL)" },
-      { value: "fr-FR", label: "Français (FR)" },
-      { value: "es-ES", label: "Español (ES)" },
-    ],
-    []
-  );
-
-  const [ttsLang, setTtsLang] = useState<string>("en-GB");
-  const [voices, setVoices] = useState<SimpleVoice[]>([]);
-  const [selectedVoiceName, setSelectedVoiceName] = useState<string>("");
-
-  const refreshVoices = () => {
-    if (typeof window === "undefined") return;
-    const raw = window.speechSynthesis.getVoices?.() ?? [];
-    const mapped: SimpleVoice[] = raw.map((v) => ({ name: v.name, lang: v.lang }));
-    setVoices(mapped);
-  };
-
-  useEffect(() => {
-    if (!speechSupported) return;
-
-    refreshVoices();
-
-    const handler = () => refreshVoices();
-    window.speechSynthesis.onvoiceschanged = handler;
-
-    return () => {
-      window.speechSynthesis.onvoiceschanged = null;
-    };
-  }, [speechSupported]);
-
-  const voicesForLang = useMemo(() => {
-    const langLower = ttsLang.toLowerCase();
-    return voices.filter((v) => v.lang?.toLowerCase() === langLower);
-  }, [voices, ttsLang]);
-
-  useEffect(() => {
-    if (!speechSupported) return;
-
-    if (selectedVoiceName && voicesForLang.some((v) => v.name === selectedVoiceName)) return;
-
-    if (voicesForLang.length > 0) {
-      setSelectedVoiceName(voicesForLang[0].name);
-      return;
-    }
-
-    const base = ttsLang.split("-")[0]?.toLowerCase();
-    const baseMatch = voices.find((v) => (v.lang ?? "").toLowerCase().startsWith(base));
-    if (baseMatch) {
-      setSelectedVoiceName(baseMatch.name);
-    } else if (voices.length > 0) {
-      setSelectedVoiceName(voices[0].name);
-    } else {
-      setSelectedVoiceName("");
-    }
-  }, [speechSupported, ttsLang, voicesForLang, voices, selectedVoiceName]);
-
-  const stopSpeaking = () => {
-    if (typeof window === "undefined") return;
-    try {
-      window.speechSynthesis.cancel();
-    } finally {
-      setIsSpeaking(false);
-    }
-  };
-
-  const speakDescription = () => {
-    if (!speechSupported) return;
-
-    const text = description.trim();
-    if (!text) return;
-
-    stopSpeaking();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = ttsLang;
-    utterance.rate = 0.9;
-    utterance.pitch = 1;
-
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-
-    const rawVoices = window.speechSynthesis.getVoices?.() ?? [];
-    const chosen = rawVoices.find((v) => v.name === selectedVoiceName);
-    if (chosen) utterance.voice = chosen;
-
-    window.speechSynthesis.speak(utterance);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-      }
-    };
-  }, []);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const loadBuildings = async () => {
       setLoadingBuildings(true);
       setMessage("");
+
       try {
         const res = await fetch("/api/buildings");
         const text = await res.text();
         if (!res.ok) throw new Error(text);
-        const data: Building[] = JSON.parse(text);
+
+        const data = JSON.parse(text) as Building[];
         setBuildings(Array.isArray(data) ? data : []);
-      } catch (e: any) {
-        setMessage(e?.message ?? t("failedLoadBuildings"));
+      } catch (error: unknown) {
+        setMessage(getErrorMessage(error, t("failedLoadBuildings")));
       } finally {
         setLoadingBuildings(false);
       }
@@ -208,150 +128,297 @@ export default function StaffPortalPage() {
   }, [t]);
 
   useEffect(() => {
-    if (!editingPath) return;
+    setFromNodeId("");
+    setToNodeId("");
+    setDraftConnections([]);
+    setQrEntranceId("");
+    setQrDestinationId("");
+    setPatientName("");
+    setPatientEmail("");
+    setAppointmentTime("");
+  }, [buildingId]);
 
-    setBuildingId(String(editingPath.buildingId ?? ""));
-    setPathName(editingPath.pathName ?? "");
-    setStartName(editingPath.startName ?? "");
-    setEndName(editingPath.endName ?? "");
-    setAccessible(Number(editingPath.accessToggle) === 1);
-    setDescription(editingPath.description ?? "");
-    setExistingMedia(editingPath.media ?? []);
-    setRemovedMediaIds([]);
-    setFiles([]);
-    setTab("upload");
-    stopSpeaking();
-  }, [editingPath]);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setPublicBaseUrl(process.env.NEXT_PUBLIC_APP_URL || window.location.origin);
+  }, []);
 
-  const clearForm = () => {
-    setBuildingId("");
-    setPathName("");
-    setStartName("");
-    setEndName("");
-    setDescription("");
-    setAccessible(false);
-    setFiles([]);
-    setExistingMedia([]);
-    setRemovedMediaIds([]);
-    setEditingPath(null);
-    stopSpeaking();
-  };
+  useEffect(() => {
+    let cancelled = false;
 
-  const canSubmit = useMemo(() => {
-    if (editingPath) {
-      return (
-        pathName.trim().length > 0 &&
-        startName.trim().length > 0 &&
-        endName.trim().length > 0 &&
-        !isSaving
-      );
+    async function loadNodes() {
+      if (!buildingId) {
+        setLoadingNodes(false);
+        setBuildingNodes([]);
+        setNodesError("");
+        return;
+      }
+
+      setLoadingNodes(true);
+      setNodesError("");
+
+      try {
+        const res = await fetch(`/api/admin/nodes?buildingId=${encodeURIComponent(buildingId)}`, {
+          cache: "no-store",
+        });
+        const text = await res.text();
+        if (!res.ok) throw new Error(text);
+
+        const data = JSON.parse(text) as NodeSummary[];
+        if (!cancelled) {
+          setBuildingNodes(Array.isArray(data) ? data : []);
+        }
+      } catch (error: unknown) {
+        if (!cancelled) {
+          setBuildingNodes([]);
+          setNodesError(getErrorMessage(error, t("failedLoadNodes")));
+        }
+      } finally {
+        if (!cancelled) setLoadingNodes(false);
+      }
     }
 
-    return (
-      pathName.trim().length > 0 &&
-      startName.trim().length > 0 &&
-      endName.trim().length > 0 &&
-      files.length > 0 &&
-      !isSaving
-    );
-  }, [editingPath, pathName, startName, endName, files.length, isSaving]);
+    loadNodes();
 
-  const openFilePicker = () => fileInputRef.current?.click();
+    return () => {
+      cancelled = true;
+    };
+  }, [buildingId, nodesRefreshKey, t]);
 
-  const addFiles = (incoming: FileList | File[]) => {
-    const next = Array.from(incoming);
-    setFiles((prev) => [...prev, ...next]);
-  };
+  useEffect(() => {
+    let cancelled = false;
 
-  const removeFile = (idx: number) => {
-    setFiles((prev) => prev.filter((_, i) => i !== idx));
-  };
-
-  const moveUp = (idx: number) => {
-    if (idx <= 0) return;
-    setFiles((prev) => moveItem(prev, idx, idx - 1));
-  };
-
-  const moveDown = (idx: number) => {
-    if (idx >= files.length - 1) return;
-    setFiles((prev) => moveItem(prev, idx, idx + 1));
-  };
-
-  const removeExistingMedia = (idx: number) => {
-    setExistingMedia((prev) => {
-      const item = prev[idx];
-      if (item) {
-        setRemovedMediaIds((old) => [...old, item.MediaID]);
+    async function loadConnections() {
+      if (!buildingId) {
+        setLoadingConnections(false);
+        setExistingConnections([]);
+        setConnectionsError("");
+        return;
       }
-      return prev.filter((_, i) => i !== idx);
-    });
-  };
 
-  const moveExistingMediaUp = (idx: number) => {
-    if (idx <= 0) return;
-    setExistingMedia((prev) => moveItem(prev, idx, idx - 1));
-  };
+      setLoadingConnections(true);
+      setConnectionsError("");
 
-  const moveExistingMediaDown = (idx: number) => {
-    if (idx >= existingMedia.length - 1) return;
-    setExistingMedia((prev) => moveItem(prev, idx, idx + 1));
-  };
+      try {
+        const res = await fetch("/api/paths", { cache: "no-store" });
+        const text = await res.text();
+        if (!res.ok) throw new Error(text);
 
-  const submit = async (statusType: "Active" | "Draft") => {
+        const parsed = JSON.parse(text) as { paths?: PathApiRow[] };
+        const paths = Array.isArray(parsed.paths) ? parsed.paths : [];
+
+        const mapped = paths
+          .filter((item) => String(item.BuildingID ?? "") === buildingId)
+          .map((item) => {
+            const startId = item.Destination_Path_StartToDestination?.DestinationID;
+            const endId = item.Destination_Path_EndToDestination?.DestinationID;
+            const startName = item.Destination_Path_StartToDestination?.DestinationName;
+            const endName = item.Destination_Path_EndToDestination?.DestinationName;
+
+            if (
+              typeof item.PathID !== "number" ||
+              typeof startId !== "number" ||
+              typeof endId !== "number" ||
+              !startName ||
+              !endName
+            ) {
+              return null;
+            }
+
+            return {
+              id: String(item.PathID),
+              fromId: startId,
+              toId: endId,
+              fromName: startName,
+              toName: endName,
+              accessible: Number(item.AccessToggle) === 1,
+              weight: typeof item.Weight === "number" ? item.Weight : null,
+              source: "existing" as const,
+            };
+          })
+          .filter((item): item is ExistingConnection => item !== null);
+
+        if (!cancelled) {
+          setExistingConnections(mapped);
+        }
+      } catch (error: unknown) {
+        if (!cancelled) {
+          setExistingConnections([]);
+          setConnectionsError(getErrorMessage(error, t("failedLoadConnections")));
+        }
+      } finally {
+        if (!cancelled) setLoadingConnections(false);
+      }
+    }
+
+    loadConnections();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [buildingId, nodesRefreshKey, t]);
+
+  const allConnections = useMemo(() => {
+    return [...draftConnections, ...existingConnections];
+  }, [draftConnections, existingConnections]);
+
+  const entranceNodes = useMemo(
+    () => buildingNodes.filter((node) => node.isEntrance === 1),
+    [buildingNodes]
+  );
+
+  const locationNodes = useMemo(
+    () => buildingNodes.filter((node) => node.isEntrance !== 1),
+    [buildingNodes]
+  );
+
+  const selectedQrEntrance =
+    entranceNodes.find((node) => String(node.DestinationID) === qrEntranceId) ?? null;
+  const selectedQrDestination =
+    locationNodes.find((node) => String(node.DestinationID) === qrDestinationId) ?? null;
+
+  const generatedRouteUrl =
+    publicBaseUrl && selectedQrEntrance && selectedQrDestination
+      ? `${publicBaseUrl}/?entranceId=${selectedQrEntrance.DestinationID}&destinationId=${selectedQrDestination.DestinationID}`
+      : "";
+
+  const generatedQrUrl = generatedRouteUrl
+    ? `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(generatedRouteUrl)}`
+    : "";
+
+  const generatedEmailSubject =
+    selectedQrDestination
+      ? t("routeEmailSubject", { destination: selectedQrDestination.DestinationName })
+      : "";
+
+  const generatedEmailBody =
+    selectedQrEntrance && selectedQrDestination
+      ? t("routeEmailBody", {
+          patientName: patientName.trim() || t("patientFallbackName"),
+          entrance: selectedQrEntrance.DestinationName,
+          destination: selectedQrDestination.DestinationName,
+          appointmentTime: appointmentTime.trim() || t("appointmentTimeFallback"),
+          link: generatedRouteUrl,
+        })
+      : "";
+
+  const mailtoLink =
+    patientEmail && generatedRouteUrl
+      ? `mailto:${encodeURIComponent(patientEmail)}?subject=${encodeURIComponent(generatedEmailSubject)}&body=${encodeURIComponent(generatedEmailBody)}`
+      : "";
+
+  const clipboardEmailDraft =
+    generatedEmailSubject && generatedEmailBody
+      ? `${generatedEmailSubject}\n\n${generatedEmailBody}`
+      : "";
+
+  const submitNode = async () => {
     setMessage("");
-    setIsSaving(true);
+    setNodesError("");
+
+    if (!buildingId) {
+      setNodesError(t("nodeBuildingRequired"));
+      return;
+    }
+
+    if (!nodeName.trim()) {
+      setNodesError(t("nodeNameRequired"));
+      return;
+    }
+
+    setIsSavingNode(true);
 
     try {
-      const fd = new FormData();
+      const form = new FormData();
+      form.append("name", nodeName.trim());
+      form.append("buildingId", buildingId);
+      form.append("isEntrance", nodeIsEntrance ? "1" : "0");
+      form.append("accessibility", nodeAccessible ? "1" : "0");
 
-      if (buildingId) fd.append("buildingId", buildingId);
+      if (nodeImage) {
+        form.append("image", nodeImage);
+      }
 
-      fd.append("pathName", pathName.trim());
-      fd.append("startName", startName.trim());
-      fd.append("endName", endName.trim());
-      fd.append("description", description.trim());
-      fd.append("statusType", statusType);
-      fd.append("accessToggle", accessible ? "1" : "0");
-
-      const d = new Date();
-      const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
-        d.getDate()
-      ).padStart(2, "0")}`;
-      fd.append("date", date);
-
-      fd.append(
-        "existingMediaOrder",
-        JSON.stringify(existingMedia.map((m) => m.MediaID))
-      );
-      fd.append("removedMediaIds", JSON.stringify(removedMediaIds));
-
-      for (const f of files) fd.append("files", f);
-
-      const url = editingPath ? `/api/manage/${editingPath.id}` : "/api/admin/path";
-      const method = editingPath ? "PATCH" : "POST";
-
-      const res = await fetch(url, {
-        method,
-        body: fd,
+      const res = await fetch("/api/admin/nodes", {
+        method: "POST",
+        body: form,
       });
 
       const text = await res.text();
       if (!res.ok) throw new Error(text);
 
-      setMessage(
-        editingPath
-          ? "Path updated successfully."
-          : statusType === "Draft"
-          ? t("savedDraft")
-          : t("uploadedPath")
-      );
-
-      clearForm();
-      setTab("manage");
-    } catch (e: any) {
-      setMessage(e?.message ?? (editingPath ? "Update failed." : t("uploadFailed")));
+      setNodeName("");
+      setNodeAccessible(false);
+      setNodeIsEntrance(false);
+      setNodeImage(null);
+      setMessage(t("nodeCreated"));
+      setNodesRefreshKey((value) => value + 1);
+    } catch (error: unknown) {
+      setNodesError(getErrorMessage(error, t("nodeCreateFailed")));
     } finally {
-      setIsSaving(false);
+      setIsSavingNode(false);
+    }
+  };
+
+  const addConnectionPreview = () => {
+    setMessage("");
+    setConnectionsError("");
+
+    if (!buildingId) {
+      setConnectionsError(t("connectionBuildingRequired"));
+      return;
+    }
+
+    if (!fromNodeId || !toNodeId) {
+      setConnectionsError(t("connectionNodesRequired"));
+      return;
+    }
+
+    if (fromNodeId === toNodeId) {
+      setConnectionsError(t("connectionDistinctNodesRequired"));
+      return;
+    }
+
+    if (!connectionWeight.trim() || Number(connectionWeight) < 0) {
+      setConnectionsError(t("connectionWeightInvalid"));
+      return;
+    }
+
+    const fromNode = buildingNodes.find((node) => String(node.DestinationID) === fromNodeId);
+    const toNode = buildingNodes.find((node) => String(node.DestinationID) === toNodeId);
+
+    if (!fromNode || !toNode) {
+      setConnectionsError(t("connectionNodesRequired"));
+      return;
+    }
+
+    const draft: DraftConnection = {
+      id: `draft-${Date.now()}`,
+      fromId: fromNode.DestinationID,
+      toId: toNode.DestinationID,
+      fromName: fromNode.DestinationName,
+      toName: toNode.DestinationName,
+      accessible: connectionAccessible,
+      weight: Number(connectionWeight),
+      source: "draft",
+    };
+
+    setDraftConnections((current) => [draft, ...current]);
+    setFromNodeId("");
+    setToNodeId("");
+    setConnectionWeight("");
+    setConnectionAccessible(false);
+    setMessage(t("connectionPreviewAdded"));
+  };
+
+  const copyEmailDraft = async () => {
+    if (!clipboardEmailDraft) return;
+
+    try {
+      await navigator.clipboard.writeText(clipboardEmailDraft);
+      setMessage(t("emailDraftCopied"));
+    } catch {
+      setMessage(t("emailDraftCopyFailed"));
     }
   };
 
@@ -374,9 +441,6 @@ export default function StaffPortalPage() {
           </div>
         </div>
 
-        <Link href="/settings" className="bg-white text-[#003087] p-2 rounded-full hover:bg-gray-100 transition">
-          <Settings className="h-5 w-5" />
-        </Link>
       </div>
 
       <div className="px-8 mt-6">
@@ -402,25 +466,14 @@ export default function StaffPortalPage() {
       </div>
 
       {tab === "upload" && (
-        <div className="px-8 mt-6">
+        <div className="px-8 mt-6 pb-10">
           <div className="bg-white rounded-xl shadow-sm p-8">
-            <h2 className="text-xl font-semibold mb-2">
-              {editingPath ? "Edit Path" : t("uploadNewPath")}
-            </h2>
-
-            <p className="text-gray-500 mb-6">
-              {editingPath ? "Update the selected path details below." : t("uploadDescription")}
-            </p>
+            <h2 className="text-xl font-semibold mb-2">{t("graphEditorTitle")}</h2>
+            <p className="text-gray-500 mb-6">{t("graphEditorDescription")}</p>
 
             {message && (
               <div className="mb-4 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-800 whitespace-pre-wrap">
                 {message}
-              </div>
-            )}
-
-            {editingPath && (
-              <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900">
-                Editing path ID: {editingPath.id}
               </div>
             )}
 
@@ -429,370 +482,414 @@ export default function StaffPortalPage() {
               value={buildingId}
               onChange={setBuildingId}
               disabled={loadingBuildings}
-              onBuildingCreated={(b) => setBuildings((prev) => [b, ...prev])}
+              onBuildingCreated={(building) => setBuildings((current) => [building, ...current])}
             />
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">{t("pathName")}</label>
-              <input
-                value={pathName}
-                onChange={(e) => setPathName(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
-                placeholder={t("pathNamePlaceholder")}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <AdminSearchDropdown
-                  label={t("startPoint")}
-                  placeholder={t("startPointPlaceholder")}
-                  apiUrl="/api/entrances"
-                  buildingId={buildingId}
-                  isEntrance={1}
-                  value={startName}
-                  onChangeText={setStartName}
-                  labelClassName="text-gray-900"
-                />
+            <div className="mb-6 rounded-xl border border-gray-200 bg-gray-50 p-4">
+              <div className="mb-4">
+                <h3 className="text-sm font-semibold text-gray-900">{t("addNodeTitle")}</h3>
+                <p className="text-sm text-gray-600">{t("addNodeDescription")}</p>
               </div>
 
-              <div>
-                <AdminSearchDropdown
-                  label={t("endPoint")}
-                  placeholder={t("endPointPlaceholder")}
-                  apiUrl="/api/destinations-search"
-                  buildingId={buildingId}
-                  isEntrance={0}
-                  value={endName}
-                  onChangeText={setEndName}
-                  labelClassName="text-gray-900"
-                />
-              </div>
-            </div>
-
-            <div className="mb-6 flex items-center gap-3">
-              <input
-                id="accessible"
-                type="checkbox"
-                checked={accessible}
-                onChange={(e) => setAccessible(e.target.checked)}
-                className="h-4 w-4"
-              />
-              <label htmlFor="accessible" className="text-sm">
-                {t("accessibleRoute")}
-              </label>
-            </div>
-
-            {editingPath && existingMedia.length > 0 && (
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium">Current media</p>
-                  <p className="text-xs text-gray-500">Top item shows first</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">{t("nodeNameLabel")}</label>
+                  <input
+                    value={nodeName}
+                    onChange={(e) => setNodeName(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
+                    placeholder={t("nodeNamePlaceholder")}
+                  />
                 </div>
 
+                <div>
+                  <label className="block text-sm font-medium mb-2">{t("nodeImageLabel")}</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setNodeImage(e.target.files?.[0] ?? null)}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm bg-white"
+                  />
+                  {nodeImage && <p className="mt-2 text-xs text-gray-500">{nodeImage.name}</p>}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">{t("nodeTypeLabel")}</label>
+                  <select
+                    value={nodeIsEntrance ? "1" : "0"}
+                    onChange={(e) => setNodeIsEntrance(e.target.value === "1")}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm bg-white"
+                  >
+                    <option value="0">{t("nodeTypeLocation")}</option>
+                    <option value="1">{t("nodeTypeEntrance")}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="mt-4 flex items-center gap-3">
+                <input
+                  id="nodeAccessible"
+                  type="checkbox"
+                  checked={nodeAccessible}
+                  onChange={(e) => setNodeAccessible(e.target.checked)}
+                  className="h-4 w-4"
+                />
+                <label htmlFor="nodeAccessible" className="text-sm">
+                  {t("nodeAccessibleLabel")}
+                </label>
+              </div>
+
+              <div className="mt-4">
+                <button
+                  type="button"
+                  onClick={submitNode}
+                  disabled={isSavingNode}
+                  className="rounded-lg bg-[#003087] px-4 py-2 text-sm font-medium text-white hover:bg-[#00256a] disabled:opacity-60"
+                >
+                  {isSavingNode ? t("savingNode") : t("createNodeButton")}
+                </button>
+              </div>
+            </div>
+
+            <div className="mb-6 rounded-xl border border-gray-200 bg-gray-50 p-4">
+              <div className="mb-4">
+                <h3 className="text-sm font-semibold text-gray-900">{t("connectionsTitle")}</h3>
+                <p className="text-sm text-gray-600">{t("connectionsDescription")}</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">{t("fromNodeLabel")}</label>
+                  <select
+                    value={fromNodeId}
+                    onChange={(e) => setFromNodeId(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm bg-white"
+                  >
+                    <option value="">{t("selectNodePlaceholder")}</option>
+                    {buildingNodes.map((node) => (
+                      <option key={`from-${node.DestinationID}`} value={String(node.DestinationID)}>
+                        {node.DestinationName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">{t("toNodeLabel")}</label>
+                  <select
+                    value={toNodeId}
+                    onChange={(e) => setToNodeId(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm bg-white"
+                  >
+                    <option value="">{t("selectNodePlaceholder")}</option>
+                    {buildingNodes.map((node) => (
+                      <option key={`to-${node.DestinationID}`} value={String(node.DestinationID)}>
+                        {node.DestinationName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">{t("connectionWeightLabel")}</label>
+                  <input
+                    value={connectionWeight}
+                    onChange={(e) => setConnectionWeight(e.target.value)}
+                    type="number"
+                    min="0"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
+                    placeholder={t("connectionWeightPlaceholder")}
+                  />
+                </div>
+              </div>
+
+              <div className="mt-4 flex items-center gap-3">
+                <input
+                  id="connectionAccessible"
+                  type="checkbox"
+                  checked={connectionAccessible}
+                  onChange={(e) => setConnectionAccessible(e.target.checked)}
+                  className="h-4 w-4"
+                />
+                <label htmlFor="connectionAccessible" className="text-sm">
+                  {t("connectionAccessibleLabel")}
+                </label>
+              </div>
+
+              <div className="mt-4">
+                <button
+                  type="button"
+                  onClick={addConnectionPreview}
+                  className="rounded-lg bg-[#003087] px-4 py-2 text-sm font-medium text-white hover:bg-[#00256a]"
+                >
+                  {t("addConnectionButton")}
+                </button>
+              </div>
+            </div>
+
+            <div className="mb-6 rounded-xl border border-gray-200 bg-gray-50 p-4">
+              <div className="flex flex-col gap-1 mb-4">
+                <h3 className="text-sm font-semibold text-gray-900">{t("nodesOverviewTitle")}</h3>
+                <p className="text-sm text-gray-600">{t("nodesOverviewDescription")}</p>
+              </div>
+
+              {!buildingId && <p className="text-sm text-gray-500">{t("selectBuildingForNodes")}</p>}
+              {buildingId && loadingNodes && <p className="text-sm text-gray-500">{t("loadingNodes")}</p>}
+              {buildingId && nodesError && (
+                <p className="mt-3 text-sm text-red-600 whitespace-pre-wrap">{nodesError}</p>
+              )}
+              {buildingId && !loadingNodes && !nodesError && buildingNodes.length === 0 && (
+                <p className="text-sm text-gray-500">{t("noNodesForBuilding")}</p>
+              )}
+
+              {buildingId && !loadingNodes && buildingNodes.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {buildingNodes.map((node) => (
+                    <div key={node.DestinationID} className="rounded-lg border border-gray-200 bg-white px-4 py-3">
+                      {node.NodeImage && (
+                        <Image
+                          src={node.NodeImage}
+                          alt={node.DestinationName}
+                          width={600}
+                          height={240}
+                          className="mb-3 h-32 w-full rounded-lg object-cover"
+                        />
+                      )}
+
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="font-medium text-gray-900">{node.DestinationName}</p>
+                          <p className="text-xs text-gray-400">ID: {node.DestinationID}</p>
+                          <p className="text-xs text-gray-500">
+                            {node.isEntrance === 1 ? t("entranceNode") : t("locationNode")}
+                          </p>
+                        </div>
+
+                        <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
+                          {node.connectionCount} {node.connectionCount === 1 ? t("connectionSingle") : t("connectionPlural")}
+                        </span>
+                      </div>
+
+                      <div className="mt-3 text-xs text-gray-600">
+                        <div>
+                          <span className="font-medium">{t("nodeAccessibilitySummary")} </span>
+                          {node.Accessibility === 1 ? t("nodeAccessibleValue") : t("nodeNotAccessibleValue")}
+                        </div>
+                      </div>
+
+                      <p className="mt-3 text-xs font-medium uppercase tracking-wide text-gray-500">
+                        {t("connectedNodesLabel")}
+                      </p>
+                      <p className="mt-1 text-sm text-gray-700">
+                        {node.connectedNodes.length > 0 ? node.connectedNodes.join(", ") : t("noNodeConnections")}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+              <div className="flex flex-col gap-1 mb-4">
+                <h3 className="text-sm font-semibold text-gray-900">{t("connectionsListTitle")}</h3>
+                <p className="text-sm text-gray-600">{t("connectionsListDescription")}</p>
+              </div>
+
+              {!buildingId && <p className="text-sm text-gray-500">{t("selectBuildingForConnections")}</p>}
+              {buildingId && loadingConnections && (
+                <p className="text-sm text-gray-500">{t("loadingConnections")}</p>
+              )}
+              {buildingId && connectionsError && (
+                <p className="mt-3 text-sm text-red-600 whitespace-pre-wrap">{connectionsError}</p>
+              )}
+              {buildingId && !loadingConnections && !connectionsError && allConnections.length === 0 && (
+                <p className="text-sm text-gray-500">{t("noConnectionsYet")}</p>
+              )}
+
+              {buildingId && !loadingConnections && allConnections.length > 0 && (
                 <div className="space-y-3">
-                  {existingMedia.map((item, idx) => {
-                    const isVideo = /\.(mp4|webm|ogg|mov)$/i.test(item.Media);
-
-                    return (
-                      <div
-                        key={item.MediaID}
-                        draggable
-                        onDragStart={() => setExistingDragIndex(idx)}
-                        onDragOver={(e) => {
-                          e.preventDefault();
-                          e.dataTransfer.dropEffect = "move";
-                        }}
-                        onDrop={(e) => {
-                          e.preventDefault();
-                          if (existingDragIndex === null || existingDragIndex === idx) return;
-                          setExistingMedia((prev) => moveItem(prev, existingDragIndex, idx));
-                          setExistingDragIndex(null);
-                        }}
-                        onDragEnd={() => setExistingDragIndex(null)}
-                        className="rounded-lg border border-gray-200 p-3 bg-white"
-                      >
-                        <div className="flex items-center justify-between gap-3 mb-3">
-                          <div className="flex items-center gap-3 min-w-0">
-                            <span className="text-gray-400 select-none">☰</span>
-                            <span className="text-gray-500 w-6 text-right select-none">{idx + 1}.</span>
-                            <span className="text-xs text-gray-500 truncate">
-                              Media ID: {item.MediaID}
-                            </span>
-                          </div>
-
-                          <div className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() => moveExistingMediaUp(idx)}
-                              className="px-2 py-1 rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-40"
-                              disabled={idx === 0}
-                            >
-                              ↑
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => moveExistingMediaDown(idx)}
-                              className="px-2 py-1 rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-40"
-                              disabled={idx === existingMedia.length - 1}
-                            >
-                              ↓
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => removeExistingMedia(idx)}
-                              className="text-red-600 hover:underline"
-                            >
-                              Remove
-                            </button>
-                          </div>
+                  {allConnections.map((connection) => (
+                    <div key={connection.id} className="rounded-lg border border-gray-200 bg-white px-4 py-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="font-medium text-gray-900">
+                            {connection.fromName} <span className="text-gray-400">→</span> {connection.toName}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {connection.source === "draft" ? t("connectionDraftTag") : t("connectionExistingTag")}
+                          </p>
                         </div>
 
-                        {isVideo ? (
-                          <video
-                            src={item.Media}
-                            controls
-                            className="w-full rounded-lg max-h-56 bg-black"
-                          />
-                        ) : (
-                          <img
-                            src={item.Media}
-                            alt={item.MediaDesc ?? "Uploaded media"}
-                            className="w-full rounded-lg max-h-56 object-cover"
-                          />
-                        )}
-
-                        <p className="mt-2 text-xs text-gray-600 break-all">{item.Media}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              multiple
-              accept="image/*,video/*"
-              className="hidden"
-              onChange={(e) => {
-                if (e.target.files) addFiles(e.target.files);
-                e.currentTarget.value = "";
-              }}
-            />
-
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={openFilePicker}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") openFilePicker();
-              }}
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={(e) => {
-                e.preventDefault();
-                if (e.dataTransfer.files) addFiles(e.dataTransfer.files);
-              }}
-              className="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center text-gray-500 mb-4 cursor-pointer hover:bg-gray-50 transition"
-            >
-              <p className="text-3xl mb-2">📁</p>
-              <p className="text-sm">
-                {editingPath
-                  ? "Add new media files to append after the current media."
-                  : t("clickToUpload")}
-              </p>
-              <p className="text-xs mt-1">{t("reorderBeforeUpload")}</p>
-            </div>
-
-            {files.length > 0 && (
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium">New media to upload</p>
-                  <p className="text-xs text-gray-500">{t("topIsFirst")}</p>
-                </div>
-
-                <div className="space-y-2">
-                  {files.map((f, idx) => (
-                    <div
-                      key={`${f.name}-${f.size}-${idx}`}
-                      draggable
-                      onDragStart={() => setDragIndex(idx)}
-                      onDragOver={(e) => {
-                        e.preventDefault();
-                        e.dataTransfer.dropEffect = "move";
-                      }}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        if (dragIndex === null || dragIndex === idx) return;
-                        setFiles((prev) => moveItem(prev, dragIndex, idx));
-                        setDragIndex(null);
-                      }}
-                      onDragEnd={() => setDragIndex(null)}
-                      className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm bg-white border-gray-200"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <span className="text-gray-400 select-none">☰</span>
-                        <span className="text-gray-500 w-6 text-right select-none">{idx + 1}.</span>
-                        <div className="min-w-0">
-                          <div className="truncate">{f.name}</div>
-                          <div className="text-xs text-gray-400">{Math.round(f.size / 1024)} KB</div>
-                        </div>
+                        <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700">
+                          {connection.accessible ? t("nodeAccessibleValue") : t("nodeNotAccessibleValue")}
+                        </span>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => moveUp(idx)}
-                          className="px-2 py-1 rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-40"
-                          disabled={idx === 0}
-                        >
-                          ↑
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => moveDown(idx)}
-                          className="px-2 py-1 rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-40"
-                          disabled={idx === files.length - 1}
-                        >
-                          ↓
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => removeFile(idx)}
-                          className="text-red-600 hover:underline ml-2"
-                        >
-                          {t("remove")}
-                        </button>
+                      <div className="mt-3 text-sm text-gray-700">
+                        <span className="font-medium">{t("connectionWeightSummary")} </span>
+                        {connection.weight ?? t("connectionWeightPending")}
                       </div>
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
-
-            <div className="mb-6">
-              <label className="block text-sm font-medium mb-2">{t("mediaDescription")}</label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm min-h-[100px]"
-                placeholder={t("mediaDescriptionPlaceholder")}
-              />
-
-              <div className="mt-3 space-y-3">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">TTS language</label>
-                    <select
-                      value={ttsLang}
-                      onChange={(e) => setTtsLang(e.target.value)}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white"
-                      disabled={!speechSupported}
-                    >
-                      {ttsLanguages.map((l) => (
-                        <option key={l.value} value={l.value}>
-                          {l.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Voice</label>
-                    <select
-                      value={selectedVoiceName}
-                      onChange={(e) => setSelectedVoiceName(e.target.value)}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white"
-                      disabled={!speechSupported || voices.length === 0}
-                    >
-                      {voicesForLang.length > 0 ? (
-                        voicesForLang.map((v) => (
-                          <option key={`${v.lang}-${v.name}`} value={v.name}>
-                            {v.name}
-                          </option>
-                        ))
-                      ) : (
-                        <option value="">
-                          No voices found for {ttsLang} (try another language)
-                        </option>
-                      )}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="flex gap-3 flex-wrap">
-                  <button
-                    type="button"
-                    onClick={speakDescription}
-                    disabled={!speechSupported || description.trim().length === 0}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                      !speechSupported || description.trim().length === 0
-                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                        : "bg-green-600 text-white hover:bg-green-700"
-                    }`}
-                  >
-                    🔊 Read description
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={stopSpeaking}
-                    disabled={!speechSupported || !isSpeaking}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                      !speechSupported || !isSpeaking
-                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                        : "bg-gray-600 text-white hover:bg-gray-700"
-                    }`}
-                  >
-                    ⏹ Stop
-                  </button>
-
-                  {!speechSupported && (
-                    <p className="text-xs text-gray-500 self-center">
-                      TTS not supported in this browser.
-                    </p>
-                  )}
-                </div>
-              </div>
+              )}
             </div>
 
-            <div className="flex gap-4">
-              <button
-                disabled={!canSubmit}
-                onClick={() => submit("Active")}
-                className={`flex-1 py-3 rounded-lg text-sm font-medium transition ${
-                  canSubmit ? "bg-[#003087] text-white hover:bg-blue-800" : "bg-gray-200 text-gray-500 cursor-not-allowed"
-                }`}
-              >
-                {isSaving ? t("saving") : editingPath ? "Save changes" : t("uploadPath")}
-              </button>
+            <div className="mt-6 rounded-xl border border-gray-200 bg-gray-50 p-4">
+              <div className="flex flex-col gap-1 mb-4">
+                <h3 className="text-sm font-semibold text-gray-900">{t("qrEmailTitle")}</h3>
+                <p className="text-sm text-gray-600">{t("qrEmailDescription")}</p>
+              </div>
 
-              <button
-                disabled={!canSubmit}
-                onClick={() => submit("Draft")}
-                className={`flex-1 py-3 rounded-lg text-sm transition ${
-                  canSubmit
-                    ? "bg-gray-100 border border-gray-300 hover:bg-gray-200"
-                    : "bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed"
-                }`}
-              >
-                {isSaving ? t("saving") : editingPath ? "Save as draft" : t("saveDraft")}
-              </button>
+              {!buildingId && <p className="text-sm text-gray-500">{t("qrEmailSelectBuilding")}</p>}
+
+              {buildingId && (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">{t("qrEntranceLabel")}</label>
+                      <select
+                        value={qrEntranceId}
+                        onChange={(e) => setQrEntranceId(e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm bg-white"
+                      >
+                        <option value="">{t("selectNodePlaceholder")}</option>
+                        {entranceNodes.map((node) => (
+                          <option key={`qr-entrance-${node.DestinationID}`} value={String(node.DestinationID)}>
+                            {node.DestinationName}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">{t("qrDestinationLabel")}</label>
+                      <select
+                        value={qrDestinationId}
+                        onChange={(e) => setQrDestinationId(e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm bg-white"
+                      >
+                        <option value="">{t("selectNodePlaceholder")}</option>
+                        {locationNodes.map((node) => (
+                          <option key={`qr-destination-${node.DestinationID}`} value={String(node.DestinationID)}>
+                            {node.DestinationName}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium mb-2">{t("patientNameLabel")}</label>
+                      <input
+                        value={patientName}
+                        onChange={(e) => setPatientName(e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
+                        placeholder={t("patientNamePlaceholder")}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">{t("patientEmailLabel")}</label>
+                      <input
+                        value={patientEmail}
+                        onChange={(e) => setPatientEmail(e.target.value)}
+                        type="email"
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
+                        placeholder={t("patientEmailPlaceholder")}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">{t("appointmentTimeLabel")}</label>
+                      <input
+                        value={appointmentTime}
+                        onChange={(e) => setAppointmentTime(e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
+                        placeholder={t("appointmentTimePlaceholder")}
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium mb-2">{t("generatedRouteUrlLabel")}</label>
+                      <input
+                        readOnly
+                        value={generatedRouteUrl}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm bg-gray-100 text-gray-700"
+                        placeholder={t("generatedRouteUrlPlaceholder")}
+                      />
+                    </div>
+                  </div>
+
+                  {generatedQrUrl && (
+                    <div className="mt-4 flex flex-col items-start gap-4 md:flex-row md:items-center">
+                      <div className="rounded-xl border border-gray-200 bg-white p-3">
+                        <Image
+                          src={generatedQrUrl}
+                          alt={t("qrPreviewAlt")}
+                          width={240}
+                          height={240}
+                          unoptimized
+                          className="h-40 w-40 rounded-lg"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-3">
+                        <a
+                          href={generatedQrUrl}
+                          download="patient-route-qr.png"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="rounded-lg bg-[#003087] px-4 py-2 text-sm font-medium text-white hover:bg-[#00256a] text-center"
+                        >
+                          {t("downloadQrButton")}
+                        </a>
+
+                        <a
+                          href={generatedRouteUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 text-center"
+                        >
+                          {t("openRouteButton")}
+                        </a>
+
+                        <a
+                          href={mailtoLink || "#"}
+                          onClick={(event) => {
+                            if (!mailtoLink) event.preventDefault();
+                          }}
+                          className={`rounded-lg px-4 py-2 text-sm font-medium text-center ${
+                            mailtoLink
+                              ? "bg-black text-white hover:bg-gray-800"
+                              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          }`}
+                        >
+                          {t("emailPatientButton")}
+                        </a>
+
+                        <button
+                          type="button"
+                          onClick={copyEmailDraft}
+                          disabled={!clipboardEmailDraft}
+                          className={`rounded-lg px-4 py-2 text-sm font-medium text-center ${
+                            clipboardEmailDraft
+                              ? "bg-white border border-gray-300 text-gray-900 hover:bg-gray-100"
+                              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          }`}
+                        >
+                          {t("copyEmailDraftButton")}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>
       )}
 
-      {tab === "manage" && (
-        <ManagePathsSection
-          onEditPath={(path: EditingPath) => {
-            setMessage("");
-            setEditingPath(path);
-            setTab("upload");
-          }}
-        />
-      )}
+      {tab === "manage" && <ManagePathsSection />}
     </div>
   );
 }

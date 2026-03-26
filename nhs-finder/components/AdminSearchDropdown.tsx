@@ -9,6 +9,10 @@ type Item = {
   isEntrance: number;
 };
 
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback;
+}
+
 function useDebouncedValue<T>(value: T, delayMs: number) {
   const [debounced, setDebounced] = useState(value);
   useEffect(() => {
@@ -55,17 +59,25 @@ export default function AdminSearchDropdown({
       setLoading(true);
       setErr("");
       try {
-        const res = await fetch(`${apiUrl}?take=35&q=${encodeURIComponent(debounced)}`, {
+        const params = new URLSearchParams({
+          take: "35",
+          q: debounced,
+        });
+
+        if (buildingId) params.set("buildingId", buildingId);
+        params.set("isEntrance", String(isEntrance));
+
+        const res = await fetch(`${apiUrl}?${params.toString()}`, {
           cache: "no-store",
         });
         const text = await res.text();
         if (!res.ok) throw new Error(text);
         const data = JSON.parse(text) as Item[];
         if (!cancelled) setResults(Array.isArray(data) ? data : []);
-      } catch (e: any) {
+      } catch (error: unknown) {
         if (!cancelled) {
           setResults([]);
-          setErr(e?.message ?? "Failed to load results");
+          setErr(getErrorMessage(error, "Failed to load results"));
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -76,7 +88,7 @@ export default function AdminSearchDropdown({
     return () => {
       cancelled = true;
     };
-  }, [apiUrl, debounced]);
+  }, [apiUrl, buildingId, debounced, isEntrance]);
 
   const exactMatch = useMemo(() => {
     const lower = trimmed.toLowerCase();
@@ -122,8 +134,8 @@ export default function AdminSearchDropdown({
       });
 
       setOpen(false);
-    } catch (e: any) {
-      setErr(e?.message ?? "Failed to create destination");
+    } catch (error: unknown) {
+      setErr(getErrorMessage(error, "Failed to create destination"));
     } finally {
       setCreating(false);
     }
@@ -133,7 +145,7 @@ export default function AdminSearchDropdown({
     <div className="w-full max-w-lg">
       <label className={`block text-sm mb-2 ${labelClassName ?? "text-gray-900"}`}>{label}</label>
 
-      <div className="relative bg-white rounded-2xl shadow-md p-3">
+      <div className="relative rounded-2xl bg-white p-3 shadow-md dark:bg-slate-900">
         <input
           value={value}
           onChange={(e) => {
@@ -142,13 +154,19 @@ export default function AdminSearchDropdown({
           }}
           onFocus={() => setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 150)}
-          className="w-full rounded-xl px-4 py-3 text-sm text-black border border-gray-200 focus:outline-none"
+          className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-900 focus:outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
           placeholder={placeholder}
         />
 
+        {!buildingId && (
+          <p className="mt-2 px-1 text-xs text-amber-700 dark:text-amber-300">
+            Select a building first to keep node choices linked to the correct hospital map.
+          </p>
+        )}
+
         {open && (
-          <div className="absolute left-0 right-0 z-20 mt-2 rounded-xl bg-white text-black border border-gray-200 shadow-sm overflow-hidden">
-            <div className="px-3 py-2 border-b border-gray-100">
+          <div className="absolute left-0 right-0 z-20 mt-2 overflow-hidden rounded-xl border border-gray-200 bg-white text-gray-900 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
+            <div className="border-b border-gray-100 px-3 py-2 dark:border-slate-700">
               <button
                 type="button"
                 onMouseDown={(ev) => ev.preventDefault()}
@@ -164,25 +182,25 @@ export default function AdminSearchDropdown({
               </button>
 
               {!buildingId && (
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="mt-2 text-xs text-gray-500 dark:text-slate-400">
                   No building selected — this new point will be attached to the first building in the database.
                 </p>
               )}
 
-              {err && <p className="text-xs text-red-600 mt-2 whitespace-pre-wrap">{err}</p>}
+              {err && <p className="mt-2 whitespace-pre-wrap text-xs text-red-600 dark:text-red-400">{err}</p>}
             </div>
 
             <div className="max-h-64 overflow-auto">
-              {loading && <div className="px-4 py-3 text-sm text-gray-500">Loading...</div>}
+              {loading && <div className="px-4 py-3 text-sm text-gray-500 dark:text-slate-400">Loading...</div>}
               {!loading && results.length === 0 && (
-                <div className="px-4 py-3 text-sm text-gray-500">No matches.</div>
+                <div className="px-4 py-3 text-sm text-gray-500 dark:text-slate-400">No matches.</div>
               )}
 
               {results.map((r) => (
                 <button
                   key={r.DestinationID}
                   type="button"
-                  className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50"
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 dark:hover:bg-slate-800"
                   onMouseDown={(ev) => ev.preventDefault()}
                   onClick={() => {
                     onChangeText(r.DestinationName);
@@ -190,7 +208,10 @@ export default function AdminSearchDropdown({
                     setOpen(false);
                   }}
                 >
-                  {r.DestinationName}
+                  <div className="font-medium">{r.DestinationName}</div>
+                  <div className="text-xs text-gray-500 dark:text-slate-400">
+                    {r.isEntrance === 1 ? "Entrance node" : "Location node"}
+                  </div>
                 </button>
               ))}
             </div>
@@ -200,4 +221,3 @@ export default function AdminSearchDropdown({
     </div>
   );
 }
-

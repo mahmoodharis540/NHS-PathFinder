@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:import:sqlite": "node scripts/import-sqlite-to-postgres.mjs"
   },
   "dependencies": {
     "@google-cloud/translate": "^9.3.0",

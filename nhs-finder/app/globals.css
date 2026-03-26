@@ -123,7 +123,96 @@
 
   body {
     @apply antialiased;
+    background-color: var(--background);
+    color: var(--foreground);
   }
+}
+
+html,
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease;
+}
+
+html:not(.reduce-motion) a,
+html:not(.reduce-motion) button,
+html:not(.reduce-motion) input,
+html:not(.reduce-motion) select,
+html:not(.reduce-motion) textarea {
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease;
+}
+
+html:not(.reduce-motion) a:hover,
+html:not(.reduce-motion) button:hover {
+  transform: translateY(-1px);
+}
+
+html.dark .bg-gray-100 {
+  background-color: #0f172a !important;
+}
+
+html.dark .bg-white {
+  background-color: #111827 !important;
+}
+
+html.dark .bg-gray-200 {
+  background-color: #1f2937 !important;
+}
+
+html.dark .bg-gray-50 {
+  background-color: #0f172a !important;
+}
+
+html.dark .text-gray-900 {
+  color: #f8fafc !important;
+}
+
+html.dark .text-black {
+  color: #f8fafc !important;
+}
+
+html.dark .text-gray-600 {
+  color: #cbd5e1 !important;
+}
+
+html.dark .text-gray-400 {
+  color: #94a3b8 !important;
+}
+
+html.dark .text-gray-500,
+html.dark .text-gray-700,
+html.dark .text-gray-800 {
+  color: #cbd5e1 !important;
+}
+
+html.dark .border-gray-200,
+html.dark .border-gray-300 {
+  border-color: #334155 !important;
+}
+
+html.dark .shadow-sm,
+html.dark .shadow-lg {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+}
+
+html.dark select,
+html.dark input,
+html.dark textarea {
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+html.dark .hover\:bg-gray-50:hover {
+  background-color: #1e293b !important;
 }
 
 /* -----------------------------
