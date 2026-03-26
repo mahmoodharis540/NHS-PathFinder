@@ -6,6 +6,10 @@ type PathRow = {
   PathName: string;
   Date: string;
   AccessToggle: number;
+  BuildingID: number;
+  Start: number;
+  End: number;
+  StatusID: number;
   Building?: { BuildingName: string } | null;
   Status?: { StatusType: string } | null;
   Destination_Path_StartToDestination?: { DestinationName: string } | null;
@@ -27,6 +31,12 @@ export async function GET() {
     const formatted = (paths as unknown as PathRow[]).map((p) => ({
       id: p.PathID,
       name: p.PathName,
+
+      buildingId: p.BuildingID,
+      startId: p.Start,
+      endId: p.End,
+      statusId: p.StatusID,
+
       building: p.Building?.BuildingName ?? "Unknown",
       start: p.Destination_Path_StartToDestination?.DestinationName ?? "Unknown",
       end: p.Destination_Path_EndToDestination?.DestinationName ?? "Unknown",
@@ -38,6 +48,9 @@ export async function GET() {
     return NextResponse.json(formatted);
   } catch (err) {
     console.error(err);
-    return NextResponse.json("Failed to load paths", { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to load paths" },
+      { status: 500 }
+    );
   }
 }

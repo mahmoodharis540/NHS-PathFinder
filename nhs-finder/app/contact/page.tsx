@@ -80,7 +80,7 @@ export default function ContactUsPage() {
       {/* Content */}
       <main className="mx-auto max-w-6xl px-6 py-10">
         <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
-          {/* Left: Form card */}
+          {/*
           <section className="rounded-2xl bg-white shadow-sm ring-1 ring-black/5">
             <div className="p-7">
               <div className="flex items-start gap-3">
@@ -211,6 +211,7 @@ export default function ContactUsPage() {
               </form>
             </div>
           </section>
+          */}
 
           {/* Right column */}
           <aside className="space-y-8">
@@ -229,33 +230,32 @@ export default function ContactUsPage() {
                   title="Outpatient Queries"
                   phone="+44 20 1234 5679"
                 />
-                <ContactRow 
-                    title="Critical Care" 
-                    phone="+44 20 1234 5680" 
+                <ContactRow
+                  title="Critical Care"
+                  phone="+44 20 1234 5680"
                 />
                 <ContactRow
-                    title="General Intensive Therapy Unit"
-                    phone="+44 20 1234 5681"
+                  title="General Intensive Therapy Unit"
+                  phone="+44 20 1234 5681"
                 />
                 <ContactRow
-                    title="Hyper Acute Stroke Unit"
-                    phone="+44 20 1234 5682"
+                  title="Hyper Acute Stroke Unit"
+                  phone="+44 20 1234 5682"
                 />
                 <ContactRow
-                    title="Diagnostic Cardiology Department"
-                    phone="+44 20 1234 5683"
+                  title="Diagnostic Cardiology Department"
+                  phone="+44 20 1234 5683"
                 />
                 <ContactRow
-                    title="Emergency Care"
-                    phone="+44 20 1234 5684"
-                    variant="danger"
+                  title="Emergency Care"
+                  phone="+44 20 1234 5684"
+                  variant="danger"
                 />
                 <ContactRow
-                    title="Emergency Line"
-                    phone="999"
-                    variant="danger"
+                  title="Emergency Line"
+                  phone="999"
+                  variant="danger"
                 />
-                
               </div>
             </section>
 
@@ -284,9 +284,7 @@ export default function ContactUsPage() {
                 <InfoRow
                   icon={<Clock className="h-5 w-5 text-white" />}
                   title="Support Hours"
-                  lines={[
-                    "Mon - Fri: 9:30 AM - 4:00 PM",
-                  ]}
+                  lines={["Mon - Fri: 9:30 AM - 4:00 PM"]}
                 />
               </div>
             </section>

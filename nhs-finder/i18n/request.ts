@@ -1,12 +1,44 @@
 import { getRequestConfig } from "next-intl/server";
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 
-const locales = ["en", "es", "fr", "pl"] as const;
+const locales = [
+  "en",
+  "ar-EG",
+  "ar-LB",
+  "ar-MA",
+  "ar-AE",
+  "ar-IQ",
+  "sk",
+  "ti",
+  "ckb",
+  "ur",
+  "fa",
+  "ro",
+  "pl",
+  "so",
+  "bn",
+  "tr",
+  "vi",
+  "sq",
+  "am",
+  "fr",
+  "pa-Arab-PK",
+  "yue",
+  "kmr",
+  "om",
+  "es",
+  "ku-Arab-IQ"
+] as const;
+
 type Locale = (typeof locales)[number];
 
 export default getRequestConfig(async () => {
-  const headersList = await headers();
-  const locale = (headersList.get("x-locale") ?? "en") as Locale;
+  const cookieStore = await cookies();
+  const requested = cookieStore.get("NEXT_LOCALE")?.value;
+
+  const locale: Locale = locales.includes(requested as Locale)
+    ? (requested as Locale)
+    : "en";
 
   return {
     locale,

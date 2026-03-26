@@ -121,12 +121,98 @@
     @apply border-border outline-ring/50;
   }
 
-  /* ✅ IMPORTANT CHANGE:
-     Don't force body bg/text here — let layout/page control it.
-     This prevents theme tokens from overriding your Tailwind page styles. */
   body {
     @apply antialiased;
+    background-color: var(--background);
+    color: var(--foreground);
   }
+}
+
+html,
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease;
+}
+
+html:not(.reduce-motion) a,
+html:not(.reduce-motion) button,
+html:not(.reduce-motion) input,
+html:not(.reduce-motion) select,
+html:not(.reduce-motion) textarea {
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease;
+}
+
+html:not(.reduce-motion) a:hover,
+html:not(.reduce-motion) button:hover {
+  transform: translateY(-1px);
+}
+
+html.dark .bg-gray-100 {
+  background-color: #0f172a !important;
+}
+
+html.dark .bg-white {
+  background-color: #111827 !important;
+}
+
+html.dark .bg-gray-200 {
+  background-color: #1f2937 !important;
+}
+
+html.dark .bg-gray-50 {
+  background-color: #0f172a !important;
+}
+
+html.dark .text-gray-900 {
+  color: #f8fafc !important;
+}
+
+html.dark .text-black {
+  color: #f8fafc !important;
+}
+
+html.dark .text-gray-600 {
+  color: #cbd5e1 !important;
+}
+
+html.dark .text-gray-400 {
+  color: #94a3b8 !important;
+}
+
+html.dark .text-gray-500,
+html.dark .text-gray-700,
+html.dark .text-gray-800 {
+  color: #cbd5e1 !important;
+}
+
+html.dark .border-gray-200,
+html.dark .border-gray-300 {
+  border-color: #334155 !important;
+}
+
+html.dark .shadow-sm,
+html.dark .shadow-lg {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+}
+
+html.dark select,
+html.dark input,
+html.dark textarea {
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+html.dark .hover\:bg-gray-50:hover {
+  background-color: #1e293b !important;
 }
 
 /* -----------------------------
@@ -158,16 +244,113 @@ html.high-contrast textarea {
   border: 1px solid #ffff00 !important;
 }
 
-
 html.reduce-motion *,
 html.reduce-motion *::before,
-html.reduce-motion *::after {
-  animation-duration: 0.001ms !important;
-  animation-iteration-count: 1 !important;
-  transition-duration: 0.001ms !important;
+html.reduce-motion *::after,
+body.reduce-motion *,
+body.reduce-motion *::before,
+body.reduce-motion *::after {
+  animation: none !important;
+  transition: none !important;
   scroll-behavior: auto !important;
 }
-p, li, span, label, a, td, th, blockquote,
-input, select, textarea, button {
+
+html.reduce-motion,
+body.reduce-motion {
+  scroll-behavior: auto !important;
+}
+
+html.readable-font,
+html.readable-font body,
+body.readable-font,
+body.readable-font input,
+body.readable-font select,
+body.readable-font textarea,
+body.readable-font button,
+html.readable-font input,
+html.readable-font select,
+html.readable-font textarea,
+html.readable-font button {
+  font-family:
+    "Verdana",
+    "Trebuchet MS",
+    "Arial",
+    sans-serif !important;
+  letter-spacing: 0.04em;
+  word-spacing: 0.08em;
+  line-height: 1.6;
+}
+
+html.readable-font *,
+body.readable-font * {
+  font-family:
+    "Verdana",
+    "Trebuchet MS",
+    "Arial",
+    sans-serif !important;
+  letter-spacing: 0.04em !important;
+  word-spacing: 0.08em !important;
+  line-height: 1.6 !important;
+}
+
+html.highlight-links a,
+html.highlight-links [role="link"],
+body.highlight-links a,
+body.highlight-links [role="link"] {
+  background: #ffeb3b !important;
+  color: #111827 !important;
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+  text-underline-offset: 2px !important;
+  border-radius: 0.2rem;
+  box-shadow: 0 0 0 2px #f59e0b !important;
+  padding-inline: 0.2rem;
+}
+
+html.highlight-links a:hover,
+html.highlight-links [role="link"]:hover,
+html.highlight-links a:focus-visible,
+html.highlight-links [role="link"]:focus-visible,
+body.highlight-links a:hover,
+body.highlight-links [role="link"]:hover,
+body.highlight-links a:focus-visible,
+body.highlight-links [role="link"]:focus-visible {
+  background: #fde047 !important;
+  color: #000000 !important;
+}
+
+p,
+li,
+span,
+label,
+a,
+td,
+th,
+blockquote,
+input,
+select,
+textarea,
+button {
   font-size: var(--nhs-text-size, 16px);
+}
+
+h1 {
+  font-size: calc(var(--nhs-text-size, 16px) * 2);
+}
+
+h2 {
+  font-size: calc(var(--nhs-text-size, 16px) * 1.6);
+}
+
+h3 {
+  font-size: calc(var(--nhs-text-size, 16px) * 1.35);
+}
+
+h4 {
+  font-size: calc(var(--nhs-text-size, 16px) * 1.2);
+}
+
+h5,
+h6 {
+  font-size: calc(var(--nhs-text-size, 16px) * 1.1);
 }
