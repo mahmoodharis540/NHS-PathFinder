@@ -333,16 +333,17 @@ export default function StaffPortalPage() {
     setIsSavingConnection(true);
 
     try {
+      const formData = new FormData();
+      formData.append("fromId",     String(fromNode.DestinationID));
+      formData.append("toId",       String(toNode.DestinationID));
+      formData.append("weight",     connectionWeight);
+      formData.append("accessible", connectionAccessible ? "1" : "0");
+      formData.append("buildingId", buildingId);
+  
+
       const res = await fetch("/api/admin/connections", {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({
-          fromId:     fromNode.DestinationID,
-          toId:       toNode.DestinationID,
-          weight:     Number(connectionWeight),
-          accessible: connectionAccessible,
-          buildingId: Number(buildingId),
-        }),
+        method: "POST",
+        body:   formData,
       });
 
       const text = await res.text();
