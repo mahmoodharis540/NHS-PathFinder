@@ -10,6 +10,7 @@ import SettingsButton from "@/components/SettingsButton";
 import AccessibilityToolbar from "@/components/AccessibilityToolbar";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
+import { TranslationProvider } from "@/components/TranslationProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

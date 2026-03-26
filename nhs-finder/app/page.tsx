@@ -7,6 +7,8 @@ import TopBar from "@/components/TopBar";
 import Languages from "@/components/Languages";
 import SearchDropdown from "@/components/SearchDropdown";
 import { useTranslations } from "next-intl";
+import useGoogleTranslatedText from "@/components/useGoogleTranslatedText";
+import { useTranslationMode } from "@/components/TranslationProvider";
 
 type LocationItem = {
   DestinationID: number;
@@ -128,15 +130,29 @@ export default function HomePage() {
     };
   }, [searchParams, t]);
 
+  const pathfinderText = useGoogleTranslatedText(t("pathfinder"));
+  const subtitleText = useGoogleTranslatedText(t("subtitle"));
+  const promptText = useGoogleTranslatedText(t("prompt"));
+  const whereAreYouLabel = useGoogleTranslatedText(t("whereAreYouLabel"));
+  const whereAreYouPlaceholder = useGoogleTranslatedText(
+    t("whereAreYouPlaceholder")
+  );
+  const appointmentLabel = useGoogleTranslatedText(
+    t("appointmentBuildingLabel")
+  );
+  const appointmentPlaceholder = useGoogleTranslatedText(
+    t("appointmentBuildingPlaceholder")
+  );
+  const accessibleRouteText = useGoogleTranslatedText(t("accessibleRoute"));
+  const startNavigationText = useGoogleTranslatedText(t("startNavigation"));
+
   const handleStartNavigation = () => {
     if (!entrance || !destination) return;
 
     router.push(
       `/directions?entrance=${encodeURIComponent(
-        entrance.DestinationName   // ← was entrance.name
-      )}&destination=${encodeURIComponent(
-        destination.DestinationName // ← was destination.name
-      )}`
+        entrance.DestinationName
+      )}&destination=${encodeURIComponent(destination.DestinationName)}`
     );
   };
 
@@ -158,10 +174,16 @@ export default function HomePage() {
             priority
           />
 
-          <h1 className="text-2xl font-bold mt-6">{t("pathfinder")}</h1>
+          <h1 className="font-bold mt-6">{pathfinderText}</h1>
 
-          <p className="text-sm italic mt-2 mb-4">{t("subtitle")}</p>
-          <p>{t("prompt")}</p>
+          <p className="italic mt-2 mb-4">{subtitleText}</p>
+          <p>{promptText}</p>
+
+          {mode === "google" && (
+            <p className="mt-3 text-xs opacity-80">
+              Automatically translated by Google Translate
+            </p>
+          )}
         </div>
 
         <div className="w-full flex flex-col items-center gap-6 max-w-md">
@@ -172,8 +194,8 @@ export default function HomePage() {
           )}
 
           <SearchDropdown
-            label={t("whereAreYouLabel")}
-            placeholder={t("whereAreYouPlaceholder")}
+            label={whereAreYouLabel}
+            placeholder={whereAreYouPlaceholder}
             apiUrl="/api/entrances"
             onSelect={(item) => {
               setEntrance(item);
@@ -189,8 +211,8 @@ export default function HomePage() {
           />
 
           <SearchDropdown
-            label={t("appointmentBuildingLabel")}
-            placeholder={t("appointmentBuildingPlaceholder")}
+            label={appointmentLabel}
+            placeholder={appointmentPlaceholder}
             apiUrl="/api/destinations-search"
             onSelect={(item) => {
               setDestination(item);
@@ -205,7 +227,6 @@ export default function HomePage() {
             }}
           />
 
-          {/* Accessible toggle */}
           <div className="mb-6 flex items-center gap-3">
             <input
               id="accessible"
@@ -214,9 +235,7 @@ export default function HomePage() {
               onChange={(e) => setAccessible(e.target.checked)}
               className="h-4 w-4"
             />
-            <label htmlFor="accessible" className="text-sm">
-              {t("accessibleRoute")}
-            </label>
+            <label htmlFor="accessible">{accessibleRouteText}</label>
           </div>
 
           <button
@@ -228,7 +247,7 @@ export default function HomePage() {
                 : "bg-gray-400 text-gray-700 cursor-not-allowed"
             }`}
           >
-            {t("startNavigation")}
+            {startNavigationText}
           </button>
         </div>
       </div>

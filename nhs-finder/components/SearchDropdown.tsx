@@ -11,10 +11,12 @@ type Item = {
 
 function useDebouncedValue<T>(value: T, delayMs: number) {
   const [debounced, setDebounced] = useState(value);
+
   useEffect(() => {
     const t = setTimeout(() => setDebounced(value), delayMs);
     return () => clearTimeout(t);
   }, [value, delayMs]);
+
   return debounced;
 }
 
@@ -23,17 +25,14 @@ export default function SearchDropdown({
   placeholder,
   apiUrl,
   onSelect,
-
   value,
   onChangeText,
-
   labelClassName,
 }: {
   label: string;
   placeholder: string;
-  apiUrl: string; 
+  apiUrl: string;
   onSelect?: (item: Item) => void;
-
   value?: string;
   onChangeText?: (text: string) => void;
   labelClassName?: string;
@@ -46,7 +45,9 @@ export default function SearchDropdown({
 
   useEffect(() => {
     const run = async () => {
-      const res = await fetch(`${apiUrl}?take=35&q=${encodeURIComponent(debounced)}`);
+      const res = await fetch(
+        `${apiUrl}?take=35&q=${encodeURIComponent(debounced)}`
+      );
       const text = await res.text();
       if (!res.ok) throw new Error(text);
       setResults(JSON.parse(text));
@@ -59,7 +60,9 @@ export default function SearchDropdown({
 
   return (
     <div className="w-full max-w-lg">
-      <label className={`block text-sm mb-2 ${labelClassName ?? "text-white"}`}>{label}</label>
+      <label className={`block mb-2 ${labelClassName ?? "text-white"}`}>
+        {label}
+      </label>
 
       <div className="relative rounded-2xl bg-white p-3 shadow-md dark:bg-slate-900">
         <input

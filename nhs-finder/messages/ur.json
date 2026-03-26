@@ -1,0 +1,159 @@
+{
+  "home": {
+    "welcome": "NHS Finder میں خوش آمدید",
+    "pathfinder": "Pathfinder ©",
+    "subtitle": "صحت کی سہولیات تک آپ کی رسائی کا ذریعہ۔",
+    "prompt": "آپ کس عمارت میں جانا چاہتے ہیں؟",
+    "accessibleRoute": "آسان راستہ (سیڑھیوں کے بغیر)",
+    "nhsLogoAlt": "NHS لوگو",
+
+    "whereAreYouLabel": "آپ کہاں ہیں:",
+    "whereAreYouPlaceholder": "اپنے موجودہ داخلی دروازے کو تلاش کریں...",
+
+    "appointmentBuildingLabel": "آپ کی اپائنٹمنٹ کس عمارت میں ہے:",
+    "appointmentBuildingPlaceholder": "عمارت یا شعبہ تلاش کریں...",
+
+    "startNavigation": "رہنمائی شروع کریں"
+  },
+
+  "login": {
+    "welcome": "لاگ ان صفحہ",
+    "username": "صارف نام",
+    "password": "پاس ورڈ",
+    "enterUsername": "صارف نام درج کریں",
+    "enterPassword": "پاس ورڈ درج کریں",
+    "login": "لاگ ان کریں"
+  },
+
+  "settings": {
+    "title": "ترتیبات",
+    "subtitle": "رسائی اور ترجیحات",
+    "back": "مرکزی صفحہ پر واپس جائیں",
+
+    "languageTitle": "زبان",
+    "languageDesc": "ایپ میں استعمال ہونے والی زبان منتخب کریں۔",
+    "appLanguage": "ایپ کی زبان",
+    "saveLanguage": "زبان محفوظ کریں",
+
+    "defaultBuildingTitle": "ڈیفالٹ عمارت",
+    "defaultBuildingDesc": "ایپ اس عمارت کو خودکار طور پر منتخب کر سکتی ہے۔",
+    "chooseBuilding": "عمارت منتخب کریں",
+    "saveDefaultBuilding": "عمارت محفوظ کریں",
+
+    "accessibilityTitle": "رسائی",
+    "accessibilityDesc": "پڑھنے میں آسانی کے لیے اختیارات۔",
+    "highContrast": "ہائی کنٹراسٹ موڈ",
+    "highContrastDesc": "کمزور نظر کے لیے واضح رنگ اور متن۔",
+    "largeText": "بڑا متن",
+    "largeTextDesc": "متن کا سائز بڑھائیں۔",
+    "reduceMotion": "حرکت کم کریں",
+    "reduceMotionDesc": "چکر یا تکلیف سے بچنے کے لیے حرکت کم کریں۔",
+
+    "resetDefaults": "ڈیفالٹ پر ری سیٹ کریں",
+    "done": "مکمل",
+    "saved": "محفوظ ہو گیا",
+
+    "northernGeneral": "ناردرن جنرل ہسپتال",
+    "royalHallamshire": "رائل ہالامشائر ہسپتال",
+    "westonPark": "ویسٹن پارک ہسپتال",
+
+    "fontSize": "فونٹ کا سائز",
+    "fontSizeDesc": "متن کا سائز تبدیل کریں۔",
+    "textSizeAria": "متن کا سائز",
+    "smallest": "سب سے چھوٹا",
+    "default": "ڈیفالٹ",
+    "largest": "سب سے بڑا"
+  },
+
+  "staff": {
+    "title": "اسٹاف پورٹل",
+    "subtitle": "راستہ مینجمنٹ سسٹم",
+    "back": "مرکزی صفحہ پر جائیں",
+
+    "uploadTab": "راستے اپلوڈ کریں",
+    "manageTab": "راستے مینج کریں",
+
+    "uploadNewPath": "نیا راستہ شامل کریں",
+    "uploadDescription": "مریضوں کے لیے راستے اپلوڈ کریں",
+
+    "failedLoadBuildings": "عمارتیں لوڈ نہیں ہو سکیں۔",
+    "savedDraft": "ڈرافٹ محفوظ ہو گیا۔",
+    "uploadedPath": "راستہ اپلوڈ ہو گیا۔",
+    "uploadFailed": "اپلوڈ ناکام ہو گیا۔",
+
+    "pathName": "راستے کا نام",
+    "pathNamePlaceholder": "مثال: مرکزی دروازہ سے کارڈیالوجی",
+
+    "startPoint": "آغاز",
+    "startPointPlaceholder": "داخلہ تلاش کریں...",
+
+    "endPoint": "اختتام",
+    "endPointPlaceholder": "شعبہ تلاش کریں...",
+
+    "accessibleRoute": "آسان راستہ",
+
+    "clickToUpload": "کلک کریں یا فائل کھینچیں",
+    "reorderBeforeUpload": "اپلوڈ سے پہلے ترتیب دیں",
+
+    "fileOrder": "فائلوں کی ترتیب",
+    "topIsFirst": "اوپر = پہلا قدم",
+
+    "dragToReorder": "ترتیب کے لیے کھینچیں",
+    "moveUp": "اوپر لے جائیں",
+    "moveDown": "نیچے لے جائیں",
+    "remove": "حذف کریں",
+
+    "mediaDescription": "تفصیل (اختیاری)",
+    "mediaDescriptionPlaceholder": "تفصیل شامل کریں...",
+
+    "uploadPath": "راستہ اپلوڈ کریں",
+    "saveDraft": "ڈرافٹ محفوظ کریں",
+    "saving": "محفوظ کیا جا رہا ہے..."
+  },
+
+  "managePaths": {
+    "searchPlaceholder": "راستے تلاش کریں...",
+    "filterByBuilding": "عمارت کے مطابق فلٹر کریں",
+    "filterByStatus": "حالت کے مطابق فلٹر کریں",
+    "active": "فعال",
+    "draft": "ڈرافٹ",
+    "uploadedPaths": "اپلوڈ شدہ راستے",
+    "edit": "ترمیم",
+    "export": "ایکسپورٹ",
+    "delete": "حذف کریں"
+  },
+
+  "languageSelector": {
+    "language": "زبان",
+    "english": "انگریزی",
+    "egyptianArabic": "عربی (مصر)",
+    "levantineArabic": "عربی (شام)",
+    "maghrebiArabic": "عربی (مغرب)",
+    "gulfArabic": "عربی (خلیج)",
+    "mesopotamianArabic": "عربی (عراق)",
+    "slovak": "سلوواک",
+    "tigrinya": "ٹگرینیا",
+    "kurdishSorani": "کردی (سورانی)",
+    "urdu": "اردو",
+    "farsi": "فارسی",
+    "romanian": "رومانی",
+    "polish": "پولش",
+    "somali": "صومالی",
+    "bengaliSylheti": "بنگالی",
+    "turkish": "ترکی",
+    "vietnamese": "ویتنامی",
+    "albanian": "البانوی",
+    "amharic": "امہاری",
+    "french": "فرانسیسی",
+    "punjabiPakistani": "پنجابی (پاکستان)",
+    "cantonese": "کینٹونیز",
+    "kurdishBahdini": "کردی (بہدینانی)",
+    "oromo": "اورومو",
+    "spanish": "ہسپانوی"
+  },
+
+  "topBar": {
+    "staffPortal": "اسٹاف پورٹل",
+    "settings": "ترتیبات"
+  }
+}

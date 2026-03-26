@@ -121,9 +121,6 @@
     @apply border-border outline-ring/50;
   }
 
-  /* ✅ IMPORTANT CHANGE:
-     Don't force body bg/text here — let layout/page control it.
-     This prevents theme tokens from overriding your Tailwind page styles. */
   body {
     @apply antialiased;
     background-color: var(--background);
@@ -247,7 +244,6 @@ html.high-contrast textarea {
   border: 1px solid #ffff00 !important;
 }
 
-
 html.reduce-motion *,
 html.reduce-motion *::before,
 html.reduce-motion *::after {
@@ -257,62 +253,38 @@ html.reduce-motion *::after {
   scroll-behavior: auto !important;
 }
 
-html.readable-font,
-html.readable-font body,
-html.readable-font body *,
-html.readable-font button,
-html.readable-font input,
-html.readable-font select,
-html.readable-font textarea,
-html.readable-font label,
-html.readable-font p,
-html.readable-font span,
-html.readable-font li,
-html.readable-font h1,
-html.readable-font h2,
-html.readable-font h3,
-html.readable-font h4,
-html.readable-font h5,
-html.readable-font h6 {
-  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif !important;
-  letter-spacing: 0.045em !important;
-  word-spacing: 0.12em !important;
-  line-height: 1.7 !important;
-  font-weight: 600 !important;
-}
-
-html.readable-font input::placeholder,
-html.readable-font textarea::placeholder {
-  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif !important;
-  letter-spacing: 0.045em !important;
-  word-spacing: 0.12em !important;
-}
-
-html.highlight-links a,
-html.highlight-links [data-highlight-link="true"] {
-  display: inline-block;
-  background-color: #fff176 !important;
-  color: #111827 !important;
-  text-decoration: underline !important;
-  text-underline-offset: 0.16em;
-  text-decoration-thickness: 2px;
-  padding: 0.08em 0.22em !important;
-  border-radius: 0.35rem;
-  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.35);
-  font-weight: 800 !important;
-}
-
-html.highlight-links a:hover,
-html.highlight-links [data-highlight-link="true"]:hover {
-  background-color: #fde047 !important;
-  opacity: 1 !important;
-}
-
-html.highlight-links a:visited,
-html.highlight-links [data-highlight-link="true"]:visited {
-  color: #111827 !important;
-}
-p, li, span, label, a, td, th, blockquote,
-input, select, textarea, button {
+p,
+li,
+span,
+label,
+a,
+td,
+th,
+blockquote,
+input,
+select,
+textarea,
+button {
   font-size: var(--nhs-text-size, 16px);
+}
+
+h1 {
+  font-size: calc(var(--nhs-text-size, 16px) * 2);
+}
+
+h2 {
+  font-size: calc(var(--nhs-text-size, 16px) * 1.6);
+}
+
+h3 {
+  font-size: calc(var(--nhs-text-size, 16px) * 1.35);
+}
+
+h4 {
+  font-size: calc(var(--nhs-text-size, 16px) * 1.2);
+}
+
+h5,
+h6 {
+  font-size: calc(var(--nhs-text-size, 16px) * 1.1);
 }

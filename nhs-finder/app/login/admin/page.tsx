@@ -70,6 +70,7 @@ export default function StaffPortalPage() {
   const t = useTranslations("staff");
 
   const [tab, setTab] = useState<"upload" | "manage">("upload");
+  const [editingPath, setEditingPath] = useState<EditingPath | null>(null);
 
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [loadingBuildings, setLoadingBuildings] = useState(false);

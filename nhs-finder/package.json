@@ -12,6 +12,7 @@
     "db:import:sqlite": "node scripts/import-sqlite-to-postgres.mjs"
   },
   "dependencies": {
+    "@google-cloud/translate": "^9.3.0",
     "@prisma/adapter-better-sqlite3": "^7.4.0",
     "@prisma/client": "^6.19.2",
     "@radix-ui/react-dropdown-menu": "^2.1.16",

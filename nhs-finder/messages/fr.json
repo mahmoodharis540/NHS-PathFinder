@@ -1,9 +1,9 @@
 {
   "home": {
     "welcome": "Bienvenue sur NHS Finder",
-    "pathfinder": "Éclaireur ©",
+    "pathfinder": "Pathfinder ©",
     "subtitle": "Votre passerelle vers les services de santé.",
-    "accessibleRoute": "Itinéraire accessible (éviter les escaliers) / Activer/Désactiver l'accès",
+    "accessibleRoute": "Itinéraire accessible (éviter les escaliers)",
     "prompt": "Vers quel bâtiment souhaitez-vous aller ?",
 
     "nhsLogoAlt": "Logo NHS",
@@ -16,6 +16,153 @@
     "qrSuccessFull": "Le point de départ est défini sur {entrance} et le rendez-vous sur {destination}.",
     "qrInvalid": "Ce code QR ne correspond pas a une entree valide.",
 
+    "appointmentBuildingLabel": "Dans quel bâtiment avez-vous votre rendez-vous :",
+    "appointmentBuildingPlaceholder": "Recherchez le bâtiment ou le service...",
+
+    "startNavigation": "Démarrer la navigation"
+  },
+
+  "login": {
+    "welcome": "Page de connexion",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "enterUsername": "Entrez le nom d'utilisateur",
+    "enterPassword": "Entrez le mot de passe",
+    "login": "Se connecter"
+  },
+
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Accessibilité et préférences",
+    "back": "Retour à la page principale",
+
+    "languageTitle": "Langue",
+    "languageDesc": "Choisissez la langue utilisée dans l'application.",
+    "appLanguage": "Langue de l'application",
+    "saveLanguage": "Enregistrer la langue",
+
+    "defaultBuildingTitle": "Bâtiment par défaut",
+    "defaultBuildingDesc": "L'application peut présélectionner ce bâtiment pour gagner du temps.",
+    "chooseBuilding": "Choisir un bâtiment",
+    "saveDefaultBuilding": "Enregistrer le bâtiment par défaut",
+
+    "accessibilityTitle": "Accessibilité",
+    "accessibilityDesc": "Options pour améliorer la lisibilité et réduire la fatigue.",
+    "highContrast": "Mode contraste élevé",
+    "highContrastDesc": "Couleurs plus fortes et texte plus clair pour les déficiences visuelles.",
+    "largeText": "Texte agrandi",
+    "largeTextDesc": "Augmenter la taille du texte pour une lecture plus facile.",
+    "reduceMotion": "Réduire les animations",
+    "reduceMotionDesc": "Réduire les animations pour éviter les vertiges ou l'inconfort.",
+
+    "resetDefaults": "Réinitialiser",
+    "done": "Terminé",
+    "saved": "Enregistré",
+
+    "northernGeneral": "Hôpital Northern General",
+    "royalHallamshire": "Hôpital Royal Hallamshire",
+    "westonPark": "Hôpital Weston Park",
+
+    "fontSize": "Taille du texte",
+    "fontSizeDesc": "Ajustez la taille globale du texte.",
+    "textSizeAria": "Taille du texte",
+    "smallest": "Plus petit",
+    "default": "Par défaut",
+    "largest": "Plus grand"
+  },
+
+  "staff": {
+    "title": "Portail du personnel",
+    "subtitle": "Système de gestion des itinéraires",
+    "back": "Retour à la page principale",
+
+    "uploadTab": "Téléverser des itinéraires",
+    "manageTab": "Gérer les itinéraires",
+
+    "uploadNewPath": "Téléverser un nouvel itinéraire",
+    "uploadDescription": "Téléverser des itinéraires pour les patients dans l'hôpital",
+
+    "failedLoadBuildings": "Impossible de charger les bâtiments.",
+    "savedDraft": "Brouillon enregistré.",
+    "uploadedPath": "Itinéraire téléversé.",
+    "uploadFailed": "Échec du téléversement.",
+
+    "pathName": "Nom de l'itinéraire",
+    "pathNamePlaceholder": "Ex : Entrée principale vers cardiologie",
+
+    "startPoint": "Point de départ",
+    "startPointPlaceholder": "Recherchez l'entrée...",
+
+    "endPoint": "Point d'arrivée",
+    "endPointPlaceholder": "Recherchez le service...",
+
+    "accessibleRoute": "Itinéraire accessible",
+
+    "clickToUpload": "Cliquez ou glissez les fichiers",
+    "reorderBeforeUpload": "Réorganisez avant de téléverser",
+
+    "fileOrder": "Ordre des fichiers",
+    "topIsFirst": "Haut = première étape",
+
+    "dragToReorder": "Glisser pour réorganiser",
+    "moveUp": "Monter",
+    "moveDown": "Descendre",
+    "remove": "Supprimer",
+
+    "mediaDescription": "Description (optionnel)",
+    "mediaDescriptionPlaceholder": "Ajoutez une description...",
+
+    "uploadPath": "Téléverser l'itinéraire",
+    "saveDraft": "Enregistrer le brouillon",
+    "saving": "Enregistrement..."
+  },
+
+  "managePaths": {
+    "searchPlaceholder": "Rechercher des itinéraires...",
+    "filterByBuilding": "Filtrer par bâtiment",
+    "filterByStatus": "Filtrer par statut",
+    "active": "Actif",
+    "draft": "Brouillon",
+    "uploadedPaths": "Itinéraires",
+    "edit": "Modifier",
+    "export": "Exporter",
+    "delete": "Supprimer"
+  },
+
+  "languageSelector": {
+    "language": "Langue",
+    "english": "Anglais",
+    "egyptianArabic": "Arabe (Égypte)",
+    "levantineArabic": "Arabe (Levant)",
+    "maghrebiArabic": "Arabe (Maghreb)",
+    "gulfArabic": "Arabe (Golfe)",
+    "mesopotamianArabic": "Arabe (Mésopotamien)",
+    "slovak": "Slovaque",
+    "tigrinya": "Tigrinya",
+    "kurdishSorani": "Kurde (Sorani)",
+    "urdu": "Ourdou",
+    "farsi": "Persan",
+    "romanian": "Roumain",
+    "polish": "Polonais",
+    "somali": "Somali",
+    "bengaliSylheti": "Bengali (Sylheti)",
+    "turkish": "Turc",
+    "vietnamese": "Vietnamien",
+    "albanian": "Albanais",
+    "amharic": "Amharique",
+    "french": "Français",
+    "punjabiPakistani": "Pendjabi (Pakistan)",
+    "cantonese": "Cantonais",
+    "kurdishBahdini": "Kurde (Bahdini)",
+    "oromo": "Oromo",
+    "spanish": "Espagnol"
+  },
+
+  "topBar": {
+    "staffPortal": "Portail du personnel",
+    "settings": "Paramètres"
+  }
+}
     "appointmentBuildingLabel": "Où est votre rendez-vous :",
     "appointmentBuildingPlaceholder": "Recherchez le bâtiment/service...",
     "startNavigation": "Démarrer la navigation"
