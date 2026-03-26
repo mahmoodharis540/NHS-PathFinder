@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -162,7 +162,6 @@ export default function StaffPortalPage() {
   useEffect(() => {
     setFromNodeId("");
     setToNodeId("");
-    setDraftConnections([]);
     setQrEntranceId("");
     setQrDestinationId("");
     setPatientName("");

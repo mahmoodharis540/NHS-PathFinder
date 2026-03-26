@@ -692,7 +692,7 @@ export default function StaffPortalPage() {
         </div>
       )}
 
-      {tab === "manage" && <ManagePathsSection />}
+      {tab === "manage" && <ManagePathsSection onEditPath={() => undefined} />}
     </div>
   );
 }
