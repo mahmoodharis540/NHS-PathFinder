@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -34,18 +34,6 @@ type ExistingConnection = {
   toName: string;
   accessible: boolean;
   weight: number | null;
-  source: "existing";
-};
-
-type DraftConnection = {
-  id: string;
-  fromId: number;
-  toId: number;
-  fromName: string;
-  toName: string;
-  accessible: boolean;
-  weight: number;
-  source: "draft";
 };
 
 type PathApiRow = {
@@ -83,7 +71,6 @@ export default function StaffPortalPage() {
   const [nodesRefreshKey, setNodesRefreshKey] = useState(0);
 
   const [existingConnections, setExistingConnections] = useState<ExistingConnection[]>([]);
-  const [draftConnections, setDraftConnections] = useState<DraftConnection[]>([]);
   const [loadingConnections, setLoadingConnections] = useState(false);
   const [connectionsError, setConnectionsError] = useState("");
 
@@ -92,11 +79,13 @@ export default function StaffPortalPage() {
   const [nodeIsEntrance, setNodeIsEntrance] = useState(false);
   const [nodeImage, setNodeImage] = useState<File | null>(null);
   const [isSavingNode, setIsSavingNode] = useState(false);
+  const [isSavingConnection, setIsSavingConnection] = useState(false);
 
   const [fromNodeId, setFromNodeId] = useState("");
   const [toNodeId, setToNodeId] = useState("");
   const [connectionWeight, setConnectionWeight] = useState("");
   const [connectionAccessible, setConnectionAccessible] = useState(false);
+  const [connectionFiles, setConnectionFiles] = useState<File[]>([]);
 
   const [message, setMessage] = useState("");
 
@@ -125,7 +114,6 @@ export default function StaffPortalPage() {
   useEffect(() => {
     setFromNodeId("");
     setToNodeId("");
-    setDraftConnections([]);
   }, [buildingId]);
 
   useEffect(() => {
@@ -218,7 +206,6 @@ export default function StaffPortalPage() {
               toName: endName,
               accessible: Number(item.AccessToggle) === 1,
               weight: typeof item.Weight === "number" ? item.Weight : null,
-              source: "existing" as const,
             };
           })
           .filter((item): item is ExistingConnection => item !== null);
@@ -243,9 +230,7 @@ export default function StaffPortalPage() {
     };
   }, [buildingId, nodesRefreshKey, t]);
 
-  const allConnections = useMemo(() => {
-    return [...draftConnections, ...existingConnections];
-  }, [draftConnections, existingConnections]);
+  const allConnections = existingConnections;
 
   const submitNode = async () => {
     setMessage("");
@@ -295,7 +280,7 @@ export default function StaffPortalPage() {
     }
   };
 
-  const addConnectionPreview = () => {
+  const saveConnection = async () => {
     setMessage("");
     setConnectionsError("");
 
@@ -320,30 +305,51 @@ export default function StaffPortalPage() {
     }
 
     const fromNode = buildingNodes.find((node) => String(node.DestinationID) === fromNodeId);
-    const toNode = buildingNodes.find((node) => String(node.DestinationID) === toNodeId);
+    const toNode   = buildingNodes.find((node) => String(node.DestinationID) === toNodeId);
 
     if (!fromNode || !toNode) {
       setConnectionsError(t("connectionNodesRequired"));
       return;
     }
 
-    const draft: DraftConnection = {
-      id: `draft-${Date.now()}`,
-      fromId: fromNode.DestinationID,
-      toId: toNode.DestinationID,
-      fromName: fromNode.DestinationName,
-      toName: toNode.DestinationName,
-      accessible: connectionAccessible,
-      weight: Number(connectionWeight),
-      source: "draft",
-    };
+    setIsSavingConnection(true);
 
-    setDraftConnections((current) => [draft, ...current]);
-    setFromNodeId("");
-    setToNodeId("");
-    setConnectionWeight("");
-    setConnectionAccessible(false);
-    setMessage(t("connectionPreviewAdded"));
+    try {
+      const formData = new FormData();
+      formData.append("fromId",     String(fromNode.DestinationID));
+      formData.append("toId",       String(toNode.DestinationID));
+      formData.append("weight",     connectionWeight);
+      formData.append("accessible", connectionAccessible ? "1" : "0");
+      formData.append("buildingId", buildingId);
+      connectionFiles.forEach((f) => formData.append("files", f));
+
+      const res = await fetch("/api/admin/connections", {
+        method: "POST",
+        body:   formData,
+      });
+
+      const text = await res.text();
+      if (!res.ok) {
+        let detail = text;
+        try { detail = JSON.parse(text)?.details ?? JSON.parse(text)?.error ?? text; } catch { /* raw text fallback */ }
+        throw new Error(detail);
+      }
+
+      setFromNodeId("");
+      setToNodeId("");
+      setConnectionWeight("");
+      setConnectionAccessible(false);
+      setConnectionFiles([]);
+
+      // Refresh node connection counts + existing connections list
+      setNodesRefreshKey((k) => k + 1);
+      setMessage(t("connectionPreviewAdded"));
+
+    } catch (error: unknown) {
+      setConnectionsError(getErrorMessage(error, "Failed to save connection"));
+    } finally {
+      setIsSavingConnection(false);
+    }
   };
 
   return (
@@ -543,15 +549,35 @@ export default function StaffPortalPage() {
                 </label>
               </div>
 
+              <div className="mt-4">
+                <label className="block text-sm font-medium mb-2">
+                  Media files <span className="text-gray-400 font-normal">(images / videos — optional)</span>
+                </label>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*,video/*"
+                  onChange={(e) => setConnectionFiles(Array.from(e.target.files ?? []))}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm bg-white"
+                />
+                {connectionFiles.length > 0 && (
+                  <p className="mt-1 text-xs text-gray-500">
+                    {connectionFiles.length} file{connectionFiles.length !== 1 ? "s" : ""} selected:{" "}
+                    {connectionFiles.map((f) => f.name).join(", ")}
+                  </p>
+                )}
+              </div>
+
               <p className="mt-4 text-xs text-gray-500">{t("connectionPreviewNote")}</p>
 
               <div className="mt-4">
                 <button
                   type="button"
-                  onClick={addConnectionPreview}
-                  className="rounded-lg bg-[#003087] px-4 py-2 text-sm font-medium text-white hover:bg-[#00256a]"
+                  onClick={saveConnection}
+                  disabled={isSavingConnection}
+                  className="rounded-lg bg-[#003087] px-4 py-2 text-sm font-medium text-white hover:bg-[#00256a] disabled:opacity-60"
                 >
-                  {t("addConnectionButton")}
+                  {isSavingConnection ? t("savingNode") : t("addConnectionButton")}
                 </button>
               </div>
             </div>
@@ -645,7 +671,7 @@ export default function StaffPortalPage() {
                             {connection.fromName} <span className="text-gray-400">→</span> {connection.toName}
                           </p>
                           <p className="text-xs text-gray-500 mt-1">
-                            {connection.source === "draft" ? t("connectionDraftTag") : t("connectionExistingTag")}
+                            {t("connectionExistingTag")}
                           </p>
                         </div>
 

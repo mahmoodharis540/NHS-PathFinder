@@ -6,9 +6,8 @@ export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  // Next.js 15+ — params is a Promise and must be awaited
   const { id } = await params;
-  const pathId = parseInt(id, 10);
+  const pathId  = parseInt(id, 10);
 
   if (isNaN(pathId)) {
     return Response.json({ error: "Invalid path ID" }, { status: 400 });
@@ -16,7 +15,7 @@ export async function GET(
 
   try {
     const path = await prisma.path.findUnique({
-      where: { PathID: pathId },
+      where:   { PathID: pathId },
       include: {
         PSequence: {
           include: { Media_PSequence_MediaIDToMedia: true },
@@ -37,24 +36,32 @@ export async function GET(
 
     const orderedMedia: Array<{
       pSequenceId: number;
-      mediaId: number;
-      media: string;
-      mediaDesc: string;
+      mediaId:     number;
+      media:       string;
+      mediaDesc:   string;
     }> = [];
 
     const startNode    = path.PSequence;
     const startMediaId = startNode.MediaID;
-    let current        = startNode;
+    let   current      = startNode;
     const visited      = new Set<number>();
 
     while (current && !visited.has(current.MediaID)) {
       visited.add(current.MediaID);
-      orderedMedia.push({
-        pSequenceId: current.PSequenceID,
-        mediaId:     current.MediaID,
-        media:       current.Media_PSequence_MediaIDToMedia.Media,
-        mediaDesc:   current.Media_PSequence_MediaIDToMedia.MediaDesc,
-      });
+
+      const mediaPath = current.Media_PSequence_MediaIDToMedia.Media;
+
+      // Skip placeholder sentinel rows — they have no real file on disk.
+      // The directions page already handles an empty mediaSequence gracefully
+      // by showing "No media for this path segment."
+      if (mediaPath !== "/placeholder") {
+        orderedMedia.push({
+          pSequenceId: current.PSequenceID,
+          mediaId:     current.MediaID,
+          media:       mediaPath,
+          mediaDesc:   current.Media_PSequence_MediaIDToMedia.MediaDesc,
+        });
+      }
 
       if (
         current.Next === 0 ||
