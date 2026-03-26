@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Volume2, VolumeX } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { PathSummary, MediaItem } from "@/types/paths";
+import { useTranslationMode } from "@/components/TranslationProvider";
+import { getEffectiveLanguage, getTranslatedText, pickBestVoice, waitForVoices } from "@/lib/runtimeTranslation";
 
 function isVideo(src: string) {
   return /\.(mp4|webm|ogg|mov)$/i.test(src);
@@ -12,6 +14,8 @@ function isVideo(src: string) {
 
 export default function DirectionsPage() {
   const t = useTranslations("directions");
+  const locale = useLocale();
+  const { mode, targetLanguage } = useTranslationMode();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -31,13 +35,38 @@ export default function DirectionsPage() {
   const [isOffline, setIsOffline] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
   const [isReadingStep, setIsReadingStep] = useState(false);
+  const [translatedStepText, setTranslatedStepText] = useState("");
   const currentUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   const currentStepText = String(sequence[slideIndex]?.mediaDesc ?? "").trim();
+  const effectiveLanguage = getEffectiveLanguage(locale, mode, targetLanguage);
+  const displayedStepText = translatedStepText || currentStepText;
 
   useEffect(() => {
     setSpeechSupported(typeof window !== "undefined" && "speechSynthesis" in window);
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!currentStepText) {
+      setTranslatedStepText("");
+      return;
+    }
+
+    const run = async () => {
+      const nextText = await getTranslatedText(currentStepText, effectiveLanguage);
+      if (!cancelled) {
+        setTranslatedStepText(nextText);
+      }
+    };
+
+    run();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currentStepText, effectiveLanguage]);
 
   useEffect(() => {
     if (!speechSupported) return;
@@ -45,7 +74,7 @@ export default function DirectionsPage() {
     window.speechSynthesis.cancel();
     currentUtteranceRef.current = null;
     setIsReadingStep(false);
-  }, [slideIndex, speechSupported]);
+  }, [slideIndex, speechSupported, displayedStepText]);
 
   useEffect(() => {
     return () => {
@@ -178,7 +207,7 @@ export default function DirectionsPage() {
   const next = () =>
     setSlideIndex((i) => (i + 1) % sequence.length);
 
-  function toggleStepSpeech() {
+  async function toggleStepSpeech() {
     if (!speechSupported || !currentStepText) return;
 
     if (window.speechSynthesis.speaking || isReadingStep) {
@@ -188,8 +217,16 @@ export default function DirectionsPage() {
       return;
     }
 
-    const utterance = new SpeechSynthesisUtterance(currentStepText);
+    const textToSpeak = await getTranslatedText(currentStepText, effectiveLanguage);
+    await waitForVoices();
+
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
     utterance.rate = 0.95;
+    utterance.lang = effectiveLanguage;
+    const voice = pickBestVoice(effectiveLanguage);
+    if (voice) {
+      utterance.voice = voice;
+    }
     utterance.onstart = () => setIsReadingStep(true);
     utterance.onend = () => {
       currentUtteranceRef.current = null;
@@ -227,7 +264,7 @@ export default function DirectionsPage() {
           onClick={() => router.push("/")}
           className="px-6 py-3 rounded-lg bg-white text-[#003087] font-semibold hover:bg-gray-100 transition-colors"
         >
-          {t("goBack")}
+          Back
         </button>
       </div>
     );
@@ -239,10 +276,10 @@ export default function DirectionsPage() {
         <div className="flex items-center justify-between px-6 py-4">
           <button
             onClick={() => router.push("/")}
-            aria-label="Go back"
-            className="flex items-center gap-2 text-sm text-white/80 hover:text-white transition-colors cursor-pointer bg-transparent border-none"
+            aria-label="Back"
+            className="flex items-center justify-start text-xl text-white/80 hover:text-white transition-colors cursor-pointer bg-transparent border-none"
           >
-            ← Back
+            ←
           </button>
 
           <div className="text-center">
@@ -265,7 +302,7 @@ export default function DirectionsPage() {
             <div
               className="h-2.5 w-full overflow-hidden rounded-full bg-white/15"
               role="progressbar"
-              aria-label="Journey progress"
+              aria-label={t("journeyProgress")}
               aria-valuemin={0}
               aria-valuemax={sequence.length}
               aria-valuenow={slideIndex + 1}
@@ -310,7 +347,7 @@ export default function DirectionsPage() {
             ) : (
               <img
                 src={String(item.media ?? "")}
-                alt={String(item.mediaDesc ?? "")}
+                alt={i === slideIndex ? displayedStepText : String(item.mediaDesc ?? "")}
                 loading="lazy"
                 className="max-w-full max-h-full object-contain select-none"
               />
@@ -320,14 +357,14 @@ export default function DirectionsPage() {
               <div className="absolute bottom-0 left-0 right-0 px-6 pt-8 pb-24 bg-gradient-to-t from-black/80 to-transparent">
                 <div className="flex max-w-2xl flex-col items-start gap-3">
                   <p className="m-0 text-sm text-white/80">
-                    {String(item.mediaDesc ?? "")}
+                    {i === slideIndex ? displayedStepText : String(item.mediaDesc ?? "")}
                   </p>
 
                   <button
                     type="button"
                     onClick={toggleStepSpeech}
                     aria-label={isReadingStep ? "Stop reading this instruction" : "Read this instruction"}
-                    disabled={!speechSupported || !currentStepText || i !== slideIndex}
+                    disabled={!speechSupported || !displayedStepText || i !== slideIndex}
                     className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-[#003087] px-4 py-2 text-sm font-medium text-white shadow-lg hover:bg-[#00256a] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {isReadingStep && i === slideIndex ? (

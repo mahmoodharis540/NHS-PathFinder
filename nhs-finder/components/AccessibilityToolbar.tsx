@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import { useTranslationMode } from "@/components/TranslationProvider";
+import { getEffectiveLanguage, getTranslatedText, pickBestVoice, waitForVoices } from "@/lib/runtimeTranslation";
 import { PersonStanding } from "lucide-react";
 
 const STORAGE_KEY = "nhs_pathfinder_settings_v1";
@@ -20,6 +22,7 @@ type AppSettings = {
 
 export default function AccessibilityToolbar() {
   const pathname = usePathname();
+  const { mode, targetLanguage } = useTranslationMode();
   const [fontSize, setFontSize] = useState(16);
   const [speechSupported, setSpeechSupported] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -170,15 +173,29 @@ export default function AccessibilityToolbar() {
     return rawText.slice(0, 1800);
   }
 
-  function speakCurrentPage() {
+  async function speakCurrentPage() {
     if (!speechSupported) {
       setAnnouncement("Screen reader speech is not supported in this browser.");
       return;
     }
 
+    const baseLanguage =
+      typeof document !== "undefined"
+        ? document.documentElement.lang || navigator.language || "en"
+        : "en";
+    const effectiveLanguage = getEffectiveLanguage(baseLanguage, mode, targetLanguage);
+    const readableText = getReadablePageText();
+    const textToSpeak = await getTranslatedText(readableText, effectiveLanguage);
+    await waitForVoices();
+
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(getReadablePageText());
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
     utterance.rate = 0.95;
+    utterance.lang = effectiveLanguage;
+    const voice = pickBestVoice(effectiveLanguage);
+    if (voice) {
+      utterance.voice = voice;
+    }
     utterance.onstart = () => {
       setIsSpeaking(true);
       setAnnouncement("Screen reader speech started.");

@@ -65,12 +65,32 @@ function getErrorMessage(error: unknown, fallback: string) {
   return error instanceof Error ? error.message : fallback;
 }
 
+function fallbackCopyText(text: string) {
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "true");
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  textarea.style.top = "0";
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+
+  let success = false;
+  try {
+    success = document.execCommand("copy");
+  } finally {
+    document.body.removeChild(textarea);
+  }
+
+  return success;
+}
+
 export default function StaffPortalPage() {
   const router = useRouter();
   const t = useTranslations("staff");
 
   const [tab, setTab] = useState<"upload" | "manage">("upload");
-  const [editingPath, setEditingPath] = useState<EditingPath | null>(null);
 
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [loadingBuildings, setLoadingBuildings] = useState(false);
@@ -104,6 +124,11 @@ export default function StaffPortalPage() {
   const [publicBaseUrl, setPublicBaseUrl] = useState("");
 
   const [message, setMessage] = useState("");
+
+  const handleEditPath = (_pathData: unknown) => {
+    setMessage("");
+    setTab("upload");
+  };
 
   useEffect(() => {
     const loadBuildings = async () => {
@@ -286,20 +311,24 @@ export default function StaffPortalPage() {
     ? `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(generatedRouteUrl)}`
     : "";
 
-  const generatedEmailSubject =
-    selectedQrDestination
-      ? t("routeEmailSubject", { destination: selectedQrDestination.DestinationName })
-      : "";
+  const generatedEmailSubject = selectedQrDestination
+    ? `Your route to ${selectedQrDestination.DestinationName}`
+    : "";
 
   const generatedEmailBody =
     selectedQrEntrance && selectedQrDestination
-      ? t("routeEmailBody", {
-          patientName: patientName.trim() || t("patientFallbackName"),
-          entrance: selectedQrEntrance.DestinationName,
-          destination: selectedQrDestination.DestinationName,
-          appointmentTime: appointmentTime.trim() || t("appointmentTimeFallback"),
-          link: generatedRouteUrl,
-        })
+      ? [
+          `Dear ${patientName.trim() || "Patient"},`,
+          "",
+          `Your appointment is at ${appointmentTime.trim() || "the scheduled time"} in ${selectedQrDestination.DestinationName}.`,
+          `Your recommended starting entrance is ${selectedQrEntrance.DestinationName}.`,
+          "",
+          "Open the route here:",
+          generatedRouteUrl,
+          "",
+          "Kind regards,",
+          "NHS Pathfinder",
+        ].join("\n")
       : "";
 
   const mailtoLink =
@@ -415,11 +444,15 @@ export default function StaffPortalPage() {
     if (!clipboardEmailDraft) return;
 
     try {
-      await navigator.clipboard.writeText(clipboardEmailDraft);
-      setMessage(t("emailDraftCopied"));
-    } catch {
-      setMessage(t("emailDraftCopyFailed"));
-    }
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(clipboardEmailDraft);
+        setMessage(t("emailDraftCopied"));
+        return;
+      }
+    } catch {}
+
+    const copied = fallbackCopyText(clipboardEmailDraft);
+    setMessage(copied ? t("emailDraftCopied") : t("emailDraftCopyFailed"));
   };
 
   return (
@@ -889,7 +922,7 @@ export default function StaffPortalPage() {
         </div>
       )}
 
-      {tab === "manage" && <ManagePathsSection />}
+      {tab === "manage" && <ManagePathsSection onEditPath={handleEditPath} />}
     </div>
   );
 }

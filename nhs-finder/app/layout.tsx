@@ -48,23 +48,25 @@ export default async function RootLayout({
         ].join(" ")}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <ServiceWorkerRegistration />
-          <ThemeProvider>
-            <FontProvider>
-              <HighContrast>
-                {children}
-                <div className="pointer-events-none fixed right-2 top-2 z-[70] flex items-center gap-2 sm:right-4 sm:top-4 sm:gap-3">
-                  <div className="pointer-events-auto">
-                    <ThemeToggleButton />
+          <TranslationProvider>
+            <ServiceWorkerRegistration />
+            <ThemeProvider>
+              <FontProvider>
+                <HighContrast>
+                  {children}
+                  <div className="pointer-events-none fixed right-2 top-2 z-[70] flex items-center gap-2 sm:right-4 sm:top-4 sm:gap-3">
+                    <div className="pointer-events-auto">
+                      <ThemeToggleButton />
+                    </div>
+                    <div className="pointer-events-auto">
+                      <SettingsButton />
+                    </div>
                   </div>
-                  <div className="pointer-events-auto">
-                    <SettingsButton />
-                  </div>
-                </div>
-                <AccessibilityToolbar />
-              </HighContrast>
-            </FontProvider>
-          </ThemeProvider>
+                  <AccessibilityToolbar />
+                </HighContrast>
+              </FontProvider>
+            </ThemeProvider>
+          </TranslationProvider>
         </NextIntlClientProvider>
       </body>
     </html>

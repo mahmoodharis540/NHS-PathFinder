@@ -246,11 +246,77 @@ html.high-contrast textarea {
 
 html.reduce-motion *,
 html.reduce-motion *::before,
-html.reduce-motion *::after {
-  animation-duration: 0.001ms !important;
-  animation-iteration-count: 1 !important;
-  transition-duration: 0.001ms !important;
+html.reduce-motion *::after,
+body.reduce-motion *,
+body.reduce-motion *::before,
+body.reduce-motion *::after {
+  animation: none !important;
+  transition: none !important;
   scroll-behavior: auto !important;
+}
+
+html.reduce-motion,
+body.reduce-motion {
+  scroll-behavior: auto !important;
+}
+
+html.readable-font,
+html.readable-font body,
+body.readable-font,
+body.readable-font input,
+body.readable-font select,
+body.readable-font textarea,
+body.readable-font button,
+html.readable-font input,
+html.readable-font select,
+html.readable-font textarea,
+html.readable-font button {
+  font-family:
+    "Verdana",
+    "Trebuchet MS",
+    "Arial",
+    sans-serif !important;
+  letter-spacing: 0.04em;
+  word-spacing: 0.08em;
+  line-height: 1.6;
+}
+
+html.readable-font *,
+body.readable-font * {
+  font-family:
+    "Verdana",
+    "Trebuchet MS",
+    "Arial",
+    sans-serif !important;
+  letter-spacing: 0.04em !important;
+  word-spacing: 0.08em !important;
+  line-height: 1.6 !important;
+}
+
+html.highlight-links a,
+html.highlight-links [role="link"],
+body.highlight-links a,
+body.highlight-links [role="link"] {
+  background: #ffeb3b !important;
+  color: #111827 !important;
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+  text-underline-offset: 2px !important;
+  border-radius: 0.2rem;
+  box-shadow: 0 0 0 2px #f59e0b !important;
+  padding-inline: 0.2rem;
+}
+
+html.highlight-links a:hover,
+html.highlight-links [role="link"]:hover,
+html.highlight-links a:focus-visible,
+html.highlight-links [role="link"]:focus-visible,
+body.highlight-links a:hover,
+body.highlight-links [role="link"]:hover,
+body.highlight-links a:focus-visible,
+body.highlight-links [role="link"]:focus-visible {
+  background: #fde047 !important;
+  color: #000000 !important;
 }
 
 p,

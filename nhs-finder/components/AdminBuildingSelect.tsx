@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 
 type Building = {
   BuildingID: number;
@@ -24,6 +25,7 @@ export default function AdminBuildingSelect({
   onBuildingCreated: (b: Building) => void;
   disabled?: boolean;
 }) {
+  const t = useTranslations("staff");
   const [newName, setNewName] = useState("");
   const [creating, setCreating] = useState(false);
   const [err, setErr] = useState("");
@@ -54,7 +56,7 @@ export default function AdminBuildingSelect({
       onChange(String(created.BuildingID));
       setNewName("");
     } catch (error: unknown) {
-      setErr(getErrorMessage(error, "Failed to create building"));
+      setErr(getErrorMessage(error, t("failedCreateBuilding")));
     } finally {
       setCreating(false);
     }
@@ -62,7 +64,7 @@ export default function AdminBuildingSelect({
 
   return (
     <div className="mb-4">
-      <label className="block text-sm font-medium mb-2">Select Building</label>
+      <label className="block text-sm font-medium mb-2">{t("selectBuildingLabel")}</label>
 
       <select
         value={value}
@@ -70,7 +72,7 @@ export default function AdminBuildingSelect({
         disabled={disabled}
         className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
       >
-        <option value="">{disabled ? "Loading buildings..." : "Choose a building (optional)"}</option>
+        <option value="">{disabled ? t("loadingBuildingsOption") : t("chooseBuildingOptional")}</option>
         {buildings.map((b) => (
           <option key={b.BuildingID} value={String(b.BuildingID)}>
             {b.BuildingName}
@@ -83,7 +85,7 @@ export default function AdminBuildingSelect({
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           className="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm"
-          placeholder='Add new building e.g. "New Radiography Building"'
+          placeholder={t("addBuildingPlaceholder")}
         />
         <button
           type="button"
@@ -93,7 +95,7 @@ export default function AdminBuildingSelect({
             canCreate ? "bg-[#003087] text-white hover:bg-blue-800" : "bg-gray-200 text-gray-500 cursor-not-allowed"
           }`}
         >
-          {creating ? "Adding..." : "Add"}
+          {creating ? t("addingBuildingButton") : t("addBuildingButton")}
         </button>
       </div>
 

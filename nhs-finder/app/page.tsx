@@ -22,6 +22,7 @@ export default function HomePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [accessible, setAccessible] = useState(false);
+  const { mode } = useTranslationMode();
 
   const [entrance, setEntrance] = useState<LocationItem | null>(null);
   const [destination, setDestination] = useState<LocationItem | null>(null);

@@ -44,19 +44,19 @@ function LoginPage() {
         <Languages />
       </div>
       <div className="flex flex-col items-center justify-center text-center min-h-screen px-4">
-        <h1 className="text-2xl m-4">{t("Welcome")}</h1>
+        <h1 className="text-2xl m-4">{t("welcome")}</h1>
 
         <form
           onSubmit={loginFunc}
           className="rounded border border-gray-300 bg-white p-4 text-black dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
         >
           <label htmlFor="pass">
-            <b>{t("Password")}</b>
+            <b>{t("password")}</b>
           </label>
           <input
             className="m-2 border border-gray-300 p-1 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
             type="password"
-            placeholder={t("EnterPassword")}
+            placeholder={t("enterPassword")}
             name="pass"
             required
           />
@@ -70,7 +70,7 @@ function LoginPage() {
             className="bg-blue-600 text-white border border-black px-4 py-2 rounded-md m-2"
             type="submit"
           >
-            {t("Login")}
+            {t("login")}
           </button>
         </form>
       </div>

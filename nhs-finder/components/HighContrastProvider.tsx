@@ -17,10 +17,14 @@ export default function HighContrastProvider({ children }: { children: React.Rea
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         const settings = raw ? (JSON.parse(raw) as AppSettings) : {};
-        document.documentElement.classList.toggle("high-contrast", !!settings.highContrast);
-        document.documentElement.classList.toggle("reduce-motion", !!settings.reducedMotion);
-        document.documentElement.classList.toggle("readable-font", !!settings.readableFont);
-        document.documentElement.classList.toggle("highlight-links", !!settings.highlightLinks);
+        const targets = [document.documentElement, document.body].filter(Boolean) as HTMLElement[];
+
+        for (const target of targets) {
+          target.classList.toggle("high-contrast", !!settings.highContrast);
+          target.classList.toggle("reduce-motion", !!settings.reducedMotion);
+          target.classList.toggle("readable-font", !!settings.readableFont);
+          target.classList.toggle("highlight-links", !!settings.highlightLinks);
+        }
       } catch {}
     }
 
