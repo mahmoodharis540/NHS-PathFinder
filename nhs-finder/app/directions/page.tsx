@@ -6,26 +6,26 @@ import { useSearchParams, useRouter } from "next/navigation";
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface BfsLeg {
-  pathId:    number;
-  pathName:  string;
-  start:     number;
-  end:       number;
+  pathId: number;
+  pathName: string;
+  start: number;
+  end: number;
   startName: string | null;
-  endName:   string | null;
+  endName: string | null;
 }
 
 interface MediaItem {
   pSequenceId: number;
-  mediaId:     number;
-  media:       string;
-  mediaDesc:   string;
+  mediaId: number;
+  media: string;
+  mediaDesc: string;
 }
 
 interface RouteLeg {
-  pathId:    number;
+  pathId: number;
   startName: string;
-  endName:   string;
-  media:     MediaItem[];
+  endName: string;
+  media: MediaItem[];
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -38,26 +38,27 @@ function isVideo(src: string) {
 
 function DirectionsInner() {
   const searchParams = useSearchParams();
-  const router       = useRouter();
+  const router = useRouter();
 
   const clean = (key: string) => {
     const v = searchParams.get(key) ?? "";
     return v === "undefined" ? "" : v;
   };
 
-  const entranceName    = clean("entrance");
+  const entranceName = clean("entrance");
   const destinationName = clean("destination");
+  const accessible = clean("accessible") === "true";
 
   // Route state
-  const [legs,         setLegs]         = useState<RouteLeg[]>([]);
-  const [loading,      setLoading]      = useState(true);
-  const [error,        setError]        = useState<string | null>(null);
+  const [legs, setLegs] = useState<RouteLeg[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Slideshow state
-  const [activeLeg,    setActiveLeg]    = useState(0);
-  const [activeSlide,  setActiveSlide]  = useState(0);
-  const [slideDir,     setSlideDir]     = useState<"next" | "prev">("next");
-  const [animating,    setAnimating]    = useState(false);
+  const [activeLeg, setActiveLeg] = useState(0);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [slideDir, setSlideDir] = useState<"next" | "prev">("next");
+  const [animating, setAnimating] = useState(false);
 
   // ── Fetch route from /api/bfs, then fetch media per leg ───────────────────
   useEffect(() => {
@@ -67,7 +68,11 @@ function DirectionsInner() {
       return;
     }
 
-    const params = new URLSearchParams({ entrance: entranceName, destination: destinationName });
+    const params = new URLSearchParams({
+      entrance: entranceName,
+      destination: destinationName,
+      accessible: String(accessible),
+    });
 
     fetch(`/api/bfs?${params}`)
       .then(async (res) => {
@@ -88,13 +93,13 @@ function DirectionsInner() {
         // Fetch media sequence for every leg in parallel
         const legData: RouteLeg[] = await Promise.all(
           bfsLegs.map(async (leg) => {
-            const seqRes  = await fetch(`/api/paths/${leg.pathId}/sequence`);
+            const seqRes = await fetch(`/api/paths/${leg.pathId}/sequence`);
             const seqData = await seqRes.json();
             return {
-              pathId:    leg.pathId,
+              pathId: leg.pathId,
               startName: leg.startName ?? `#${leg.start}`,
-              endName:   leg.endName   ?? `#${leg.end}`,
-              media:     (seqData.mediaSequence ?? []) as MediaItem[],
+              endName: leg.endName ?? `#${leg.end}`,
+              media: (seqData.mediaSequence ?? []) as MediaItem[],
             };
           })
         );
@@ -106,11 +111,11 @@ function DirectionsInner() {
         setError(err.message ?? "Failed to load route data. Please try again.");
       })
       .finally(() => setLoading(false));
-  }, [entranceName, destinationName]);
+  }, [entranceName, destinationName, accessible]);
 
   // ── Slide navigation ──────────────────────────────────────────────────────
   const currentMedia = legs[activeLeg]?.media ?? [];
-  const totalSlides  = currentMedia.length;
+  const totalSlides = currentMedia.length;
 
   const goSlide = useCallback(
     (dir: "next" | "prev") => {
@@ -138,7 +143,7 @@ function DirectionsInner() {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") goSlide("next");
-      if (e.key === "ArrowLeft")  goSlide("prev");
+      if (e.key === "ArrowLeft") goSlide("prev");
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
@@ -199,11 +204,11 @@ function DirectionsInner() {
 
   // ── Main UI ───────────────────────────────────────────────────────────────
   const currentSlide = currentMedia[activeSlide];
-  const progressPct  = totalSlides > 1 ? (activeSlide / (totalSlides - 1)) * 100 : 100;
+  const progressPct =
+    totalSlides > 1 ? (activeSlide / (totalSlides - 1)) * 100 : 100;
 
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-black text-white">
-
       {/* ── Top bar ── */}
       <header className="flex items-center justify-between px-4 py-3 shrink-0 bg-[#003087] gap-3">
         <button
@@ -257,10 +262,14 @@ function DirectionsInner() {
                   : "border-transparent text-white/50 hover:text-white/80",
               ].join(" ")}
             >
-              <span className={[
-                "w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0",
-                activeLeg === idx ? "bg-white text-[#003087]" : "bg-white/20 text-white",
-              ].join(" ")}>
+              <span
+                className={[
+                  "w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0",
+                  activeLeg === idx
+                    ? "bg-white text-[#003087]"
+                    : "bg-white/20 text-white",
+                ].join(" ")}
+              >
                 {idx + 1}
               </span>
               {leg.startName} → {leg.endName}
@@ -271,10 +280,11 @@ function DirectionsInner() {
 
       {/* ── Slide viewport ── */}
       <div className="relative flex-1 overflow-hidden bg-black">
-
         {totalSlides === 0 && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <p className="text-white/40 text-base">No media for this path segment.</p>
+            <p className="text-white/40 text-base">
+              No media for this path segment.
+            </p>
           </div>
         )}
 
@@ -283,8 +293,8 @@ function DirectionsInner() {
             key={`${item.pSequenceId}-${i}`}
             className="absolute inset-0 flex items-center justify-center"
             style={{
-              opacity:       i === activeSlide ? 1 : 0,
-              transition:    "opacity 0.3s ease",
+              opacity: i === activeSlide ? 1 : 0,
+              transition: "opacity 0.3s ease",
               pointerEvents: i === activeSlide ? "all" : "none",
             }}
           >

@@ -21,11 +21,11 @@ export default function HomePage() {
     if (!entrance || !destination) return;
 
     router.push(
-      `/directions?entrance=${encodeURIComponent(
-        entrance.DestinationName   // ← was entrance.name
+  `   /directions?entrance=${encodeURIComponent(
+        entrance.DestinationName
       )}&destination=${encodeURIComponent(
-        destination.DestinationName // ← was destination.name
-      )}`
+        destination.DestinationName
+      )}&accessible=${accessible}`
     );
   };
 

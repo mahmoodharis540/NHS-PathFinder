@@ -16,14 +16,19 @@ type Building = {
 };
 
 type NodeSummary = {
-  DestinationID: number;
+  DestinationID:   number;
   DestinationName: string;
-  BuildingID: number;
-  isEntrance: number;
-  Accessibility: number | null;
-  NodeImage: string | null;
+  BuildingID:      number;
+  isEntrance:      number;
+  Accessibility:   number | null;
+  MediaID:         number;
+  Media: {
+    MediaID:   number;
+    Media:     string;
+    MediaDesc: string;
+  } | null;
   connectionCount: number;
-  connectedNodes: string[];
+  connectedNodes:  string[];
 };
 
 type ExistingConnection = {
@@ -49,6 +54,19 @@ type PathApiRow = {
     DestinationID?: number;
     DestinationName?: string;
   };
+};
+type AdminNode = {
+  DestinationID: number;
+  DestinationName: string;
+  BuildingID: number;
+  isEntrance: boolean;
+  Accessibility: boolean;
+  MediaID: number | null;
+  Media?: {
+    MediaID: number;
+    Media: string;
+    MediaDesc: string | null;
+  } | null;
 };
 
 function getErrorMessage(error: unknown, fallback: string) {
@@ -85,7 +103,7 @@ export default function StaffPortalPage() {
   const [toNodeId, setToNodeId] = useState("");
   const [connectionWeight, setConnectionWeight] = useState("");
   const [connectionAccessible, setConnectionAccessible] = useState(false);
-  const [connectionFiles, setConnectionFiles] = useState<File[]>([]);
+
 
   const [message, setMessage] = useState("");
 
@@ -321,7 +339,7 @@ export default function StaffPortalPage() {
       formData.append("weight",     connectionWeight);
       formData.append("accessible", connectionAccessible ? "1" : "0");
       formData.append("buildingId", buildingId);
-      connectionFiles.forEach((f) => formData.append("files", f));
+  
 
       const res = await fetch("/api/admin/connections", {
         method: "POST",
@@ -339,7 +357,6 @@ export default function StaffPortalPage() {
       setToNodeId("");
       setConnectionWeight("");
       setConnectionAccessible(false);
-      setConnectionFiles([]);
 
       // Refresh node connection counts + existing connections list
       setNodesRefreshKey((k) => k + 1);
@@ -549,24 +566,6 @@ export default function StaffPortalPage() {
                 </label>
               </div>
 
-              <div className="mt-4">
-                <label className="block text-sm font-medium mb-2">
-                  Media files <span className="text-gray-400 font-normal">(images / videos — optional)</span>
-                </label>
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*,video/*"
-                  onChange={(e) => setConnectionFiles(Array.from(e.target.files ?? []))}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm bg-white"
-                />
-                {connectionFiles.length > 0 && (
-                  <p className="mt-1 text-xs text-gray-500">
-                    {connectionFiles.length} file{connectionFiles.length !== 1 ? "s" : ""} selected:{" "}
-                    {connectionFiles.map((f) => f.name).join(", ")}
-                  </p>
-                )}
-              </div>
 
               <p className="mt-4 text-xs text-gray-500">{t("connectionPreviewNote")}</p>
 
@@ -601,9 +600,9 @@ export default function StaffPortalPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {buildingNodes.map((node) => (
                     <div key={node.DestinationID} className="rounded-lg border border-gray-200 bg-white px-4 py-3">
-                      {node.NodeImage && (
+                      {node.Media?.Media && node.Media.Media !== "/placeholder" && (
                         <Image
-                          src={node.NodeImage}
+                          src={node.Media.Media}
                           alt={node.DestinationName}
                           width={600}
                           height={240}

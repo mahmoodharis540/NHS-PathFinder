@@ -3,19 +3,16 @@ import { prisma } from "@/lib/prisma";
 export const runtime = "nodejs";
 
 // GET /api/paths
-// Optional query params: ?entrance=<name>&destination=<name>
-// Without params → returns all paths (used by admin/staff portal)
-// With params    → resolves names to IDs first, then filters paths by Start/End
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const entrance    = searchParams.get("entrance");
+  const entrance = searchParams.get("entrance");
   const destination = searchParams.get("destination");
 
   try {
-    // If filtering by name, resolve each name to its DestinationID first
     let startId: number | undefined;
-    let endId:   number | undefined;
+    let endId: number | undefined;
 
+    // Resolve entrance name → ID
     if (entrance) {
       const start = await prisma.destination.findFirst({
         where: { DestinationName: entrance },
@@ -25,6 +22,7 @@ export async function GET(req: Request) {
       startId = start.DestinationID;
     }
 
+    // Resolve destination name → ID
     if (destination) {
       const end = await prisma.destination.findFirst({
         where: { DestinationName: destination },
@@ -37,16 +35,27 @@ export async function GET(req: Request) {
     const paths = await prisma.path.findMany({
       where: {
         ...(startId !== undefined && { Start: startId }),
-        ...(endId   !== undefined && { End:   endId   }),
+        ...(endId !== undefined && { End: endId }),
       },
       include: {
         Building: true,
-        Destination_Path_StartToDestination: true,
-        Destination_Path_EndToDestination: true,
         Status: true,
-        PSequence: {
-          include: {
-            Media_PSequence_MediaIDToMedia: true,
+
+        // START destination (now includes MediaID)
+        Destination_Path_StartToDestination: {
+          select: {
+            DestinationID: true,
+            DestinationName: true,
+            MediaID: true,
+          },
+        },
+
+        // END destination (now includes MediaID)
+        Destination_Path_EndToDestination: {
+          select: {
+            DestinationID: true,
+            DestinationName: true,
+            MediaID: true,
           },
         },
       },
@@ -61,7 +70,6 @@ export async function GET(req: Request) {
 }
 
 // POST /api/paths
-// Creates a new path — used by the staff/admin portal
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -69,7 +77,14 @@ export async function POST(req: Request) {
     if (!body?.PathName) {
       return Response.json({ error: "PathName is required" }, { status: 400 });
     }
-    if (!body?.BuildingID || !body?.Start || !body?.End || !body?.PSequenceID || !body?.StatusID) {
+
+    if (
+      !body?.BuildingID ||
+      !body?.Start ||
+      !body?.End ||
+      !body?.PSequenceID ||
+      !body?.StatusID
+    ) {
       return Response.json(
         { error: "BuildingID, Start, End, PSequenceID and StatusID are required" },
         { status: 400 }
@@ -78,14 +93,14 @@ export async function POST(req: Request) {
 
     const created = await prisma.path.create({
       data: {
-        PathName:     body.PathName,
+        PathName: body.PathName,
         AccessToggle: body.AccessToggle ?? 0,
-        Date:         body.Date         ?? new Date().toISOString().slice(0, 10),
-        Start:        body.Start,
-        End:          body.End,
-        PSequenceID:  body.PSequenceID,
-        StatusID:     body.StatusID,
-        BuildingID:   body.BuildingID,
+        Date: body.Date ?? new Date().toISOString().slice(0, 10),
+        Start: body.Start,
+        End: body.End,
+        PSequenceID: body.PSequenceID,
+        StatusID: body.StatusID,
+        BuildingID: body.BuildingID,
       },
     });
 

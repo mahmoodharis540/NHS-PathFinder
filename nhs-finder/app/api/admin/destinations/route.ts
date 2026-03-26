@@ -17,6 +17,7 @@ export async function POST(req: Request) {
     const buildingIdRaw = body?.buildingId;
     const isEntrance = Number(body?.isEntrance);
     const Accessibility = Number(body?.Accessibility);
+    const mediaID = body?.mediaID;
 
     if (!name) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -33,6 +34,7 @@ export async function POST(req: Request) {
         BuildingID: true,
         isEntrance: true,
         Accessibility: true,
+        MediaID:true,
       },
     });
 
@@ -68,6 +70,8 @@ export async function POST(req: Request) {
         BuildingID: buildingId,
         isEntrance: isEntrance,
         Accessibility: Accessibility,
+        MediaID: mediaID,
+        
       },
       select: {
         DestinationID: true,
@@ -75,6 +79,7 @@ export async function POST(req: Request) {
         BuildingID: true,
         isEntrance: true,
         Accessibility: true,
+        MediaID: true,
       },
     });
 

@@ -24,7 +24,8 @@ function dijkstra(
   startId: number,
   endId: number,
   paths: PathNode[],
-  weightMap: Map<string, number>
+  weightMap: Map<string, number>,
+  accessibleOnly: boolean
 ): PathNode[] | null {
   if (startId === endId) return [];
 
@@ -51,6 +52,7 @@ function dijkstra(
     if (cost > (dist.get(node) ?? Infinity)) continue;
 
     for (const path of adj.get(node) ?? []) {
+      if (accessibleOnly && path.AccessToggle !== 1) continue;
       const edgeKey = `${path.Start},${path.End}`;
       const weight  = weightMap.get(edgeKey) ?? 1; // default weight = 1
       const newCost = cost + weight;
@@ -83,6 +85,7 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const entrance    = (searchParams.get("entrance")    ?? "").trim();
   const destination = (searchParams.get("destination") ?? "").trim();
+  const accessibleOnly = searchParams.get("accessible") === "true";
 
   if (!entrance || !destination) {
     return NextResponse.json(
@@ -167,7 +170,8 @@ export async function GET(req: Request) {
       startDest.DestinationID,
       endDest.DestinationID,
       nodes,
-      weightMap
+      weightMap,
+      accessibleOnly
     );
 
     if (route === null) {

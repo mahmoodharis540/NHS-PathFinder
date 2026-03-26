@@ -25,8 +25,8 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
 
-    const q = (searchParams.get("q") ?? "").trim();
-    const take = Math.min(Number(searchParams.get("take") ?? 200) || 200, 500);
+    const q          = (searchParams.get("q") ?? "").trim();
+    const take       = Math.min(Number(searchParams.get("take") ?? 200) || 200, 500);
     const buildingId = parsePositiveInt(searchParams.get("buildingId"));
 
     const isEntranceParam = searchParams.get("isEntrance");
@@ -42,11 +42,20 @@ export async function GET(req: Request) {
       orderBy: { DestinationName: "asc" },
       take,
       select: {
-        DestinationID: true,
+        DestinationID:   true,
         DestinationName: true,
-        BuildingID: true,
-        isEntrance: true,
-        Accessibility: true,
+        BuildingID:      true,
+        isEntrance:      true,
+        Accessibility:   true,
+        MediaID:         true,
+        // Include the Media row so the admin page can display the node image
+        Media: {
+          select: {
+            MediaID:   true,
+            Media:     true,
+            MediaDesc: true,
+          },
+        },
       },
     });
 
@@ -56,10 +65,7 @@ export async function GET(req: Request) {
 
     const nodeIds = nodes.map((node) => node.DestinationID);
     const connectedNamesById = new Map<number, Set<string>>();
-
-    for (const nodeId of nodeIds) {
-      connectedNamesById.set(nodeId, new Set());
-    }
+    for (const nodeId of nodeIds) connectedNamesById.set(nodeId, new Set());
 
     const paths = await prisma.path.findMany({
       where: {
@@ -68,47 +74,28 @@ export async function GET(req: Request) {
       },
       select: {
         Start: true,
-        End: true,
-        Destination_Path_StartToDestination: {
-          select: { DestinationName: true },
-        },
-        Destination_Path_EndToDestination: {
-          select: { DestinationName: true },
-        },
+        End:   true,
+        Destination_Path_StartToDestination: { select: { DestinationName: true } },
+        Destination_Path_EndToDestination:   { select: { DestinationName: true } },
       },
     });
 
     for (const route of paths) {
       const startConnections = connectedNamesById.get(route.Start);
-      const endConnections = connectedNamesById.get(route.End);
+      const endConnections   = connectedNamesById.get(route.End);
 
-      if (
-        startConnections &&
-        route.Destination_Path_EndToDestination.DestinationName &&
-        route.Start !== route.End
-      ) {
+      if (startConnections && route.Destination_Path_EndToDestination.DestinationName && route.Start !== route.End)
         startConnections.add(route.Destination_Path_EndToDestination.DestinationName);
-      }
 
-      if (
-        endConnections &&
-        route.Destination_Path_StartToDestination.DestinationName &&
-        route.Start !== route.End
-      ) {
+      if (endConnections && route.Destination_Path_StartToDestination.DestinationName && route.Start !== route.End)
         endConnections.add(route.Destination_Path_StartToDestination.DestinationName);
-      }
     }
 
     const payload = nodes.map((node) => {
-      const connectedNodes = Array.from(connectedNamesById.get(node.DestinationID) ?? []).sort(
-        (a, b) => a.localeCompare(b)
+      const connectedNodes = Array.from(connectedNamesById.get(node.DestinationID) ?? []).sort((a, b) =>
+        a.localeCompare(b)
       );
-
-      return {
-        ...node,
-        connectionCount: connectedNodes.length,
-        connectedNodes,
-      };
+      return { ...node, connectionCount: connectedNodes.length, connectedNodes };
     });
 
     return NextResponse.json(payload);
@@ -124,67 +111,91 @@ export async function POST(req: Request) {
   try {
     const form = await req.formData();
 
-    const name = String(form.get("name") ?? "").trim();
-    const buildingId = Number(form.get("buildingId"));
-    const isEntrance = Number(form.get("isEntrance") ?? "0");
+    const name          = String(form.get("name")          ?? "").trim();
+    const buildingId    = Number(form.get("buildingId"));
+    const isEntrance    = Number(form.get("isEntrance")    ?? "0");
     const accessibility = form.get("accessibility") === "1" ? 1 : 0;
-    const weightRaw = String(form.get("weight") ?? "").trim();
-    const weight = weightRaw === "" ? null : Number(weightRaw);
-    const image = form.get("image");
+    const image         = form.get("image");
 
     if (!name) {
       return NextResponse.json({ error: "Node name is required" }, { status: 400 });
     }
-
     if (!buildingId || !Number.isFinite(buildingId) || buildingId <= 0) {
       return NextResponse.json({ error: "Building is required" }, { status: 400 });
     }
-
     if (!(isEntrance === 0 || isEntrance === 1)) {
       return NextResponse.json({ error: "isEntrance must be 0 or 1" }, { status: 400 });
     }
 
-    if (weight !== null && (!Number.isFinite(weight) || weight < 0)) {
-      return NextResponse.json({ error: "Weight must be a non-negative number" }, { status: 400 });
-    }
-
     const existing = await prisma.destination.findUnique({
-      where: { DestinationName: name },
+      where:  { DestinationName: name },
       select: { DestinationID: true },
     });
-
     if (existing) {
       return NextResponse.json({ error: "A node with that name already exists" }, { status: 409 });
     }
 
-    let imagePath: string | null = null;
+    // ── Create/find the Media row that this node will reference ──────────
+    // Destination.MediaID is a required non-nullable FK, so we always need
+    // a Media row — either the uploaded image or a reused placeholder.
+    let mediaId: number;
+
     if (image instanceof File && image.size > 0) {
+      // Save the uploaded image to disk
       const uploadsDir = path.join(process.cwd(), "public", "uploads");
       await mkdir(uploadsDir, { recursive: true });
 
-      const arrayBuffer = await image.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-      const stamp = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      const buffer   = Buffer.from(await image.arrayBuffer());
+      const stamp    = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
       const filename = `${stamp}-${safeFileName(image.name)}`;
-      const diskPath = path.join(uploadsDir, filename);
+      await writeFile(path.join(uploadsDir, filename), buffer);
 
-      await writeFile(diskPath, buffer);
-      imagePath = `/uploads/${filename}`;
+      const media = await prisma.media.create({
+        data: {
+          Media:     `/uploads/${filename}`,
+          MediaDesc: name,
+        },
+        select: { MediaID: true },
+      });
+      mediaId = media.MediaID;
+    } else {
+      // No image uploaded — reuse the shared "/placeholder" sentinel so we
+      // don't create a new orphan Media row for every imageless node.
+      const placeholder = await prisma.media.findFirst({
+        where:  { Media: "/placeholder" },
+        select: { MediaID: true },
+      });
+
+      if (placeholder) {
+        mediaId = placeholder.MediaID;
+      } else {
+        const created = await prisma.media.create({
+          data: { Media: "/placeholder", MediaDesc: "No image" },
+          select: { MediaID: true },
+        });
+        mediaId = created.MediaID;
+      }
     }
 
+    // ── Create the Destination row ────────────────────────────────────────
     const created = await prisma.destination.create({
       data: {
         DestinationName: name,
-        BuildingID: buildingId,
+        BuildingID:      buildingId,
         isEntrance,
-        Accessibility: accessibility,
+        Accessibility:   accessibility,
+        MediaID:         mediaId,
       },
       select: {
-        DestinationID: true,
+        DestinationID:   true,
         DestinationName: true,
-        BuildingID: true,
-        isEntrance: true,
-        Accessibility: true,
+        BuildingID:      true,
+        isEntrance:      true,
+        Accessibility:   true,
+        MediaID:         true,
+        Media: {
+          select: { MediaID: true, Media: true, MediaDesc: true },
+        },
       },
     });
 

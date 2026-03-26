@@ -4,13 +4,13 @@ export const runtime = "nodejs";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const entrance    = searchParams.get("entrance");
+  const entrance = searchParams.get("entrance");
   const destination = searchParams.get("destination");
 
   try {
     // If filtering by name, resolve each name to its DestinationID first
     let startId: number | undefined;
-    let endId:   number | undefined;
+    let endId: number | undefined;
 
     if (entrance) {
       const start = await prisma.destination.findFirst({
@@ -33,16 +33,23 @@ export async function GET(req: Request) {
     const paths = await prisma.path.findMany({
       where: {
         ...(startId !== undefined && { Start: startId }),
-        ...(endId   !== undefined && { End:   endId   }),
+        ...(endId !== undefined && { End: endId }),
       },
       include: {
         Building: true,
-        Destination_Path_StartToDestination: true,
-        Destination_Path_EndToDestination: true,
         Status: true,
-        PSequence: {
-          include: {
-            Media_PSequence_MediaIDToMedia: true,
+        Destination_Path_StartToDestination: {
+          select: {
+            DestinationID: true,
+            DestinationName: true,
+            MediaID: true,
+          },
+        },
+        Destination_Path_EndToDestination: {
+          select: {
+            DestinationID: true,
+            DestinationName: true,
+            MediaID: true,
           },
         },
       },
@@ -73,14 +80,14 @@ export async function POST(req: Request) {
 
     const created = await prisma.path.create({
       data: {
-        PathName:     body.PathName,
+        PathName: body.PathName,
         AccessToggle: body.AccessToggle ?? 0,
-        Date:         body.Date         ?? new Date().toISOString().slice(0, 10),
-        Start:        body.Start,
-        End:          body.End,
-        PSequenceID:  body.PSequenceID,
-        StatusID:     body.StatusID,
-        BuildingID:   body.BuildingID,
+        Date: body.Date ?? new Date().toISOString().slice(0, 10),
+        Start: body.Start,
+        End: body.End,
+        PSequenceID: body.PSequenceID,
+        StatusID: body.StatusID,
+        BuildingID: body.BuildingID,
       },
     });
 

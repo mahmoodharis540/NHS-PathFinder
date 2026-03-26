@@ -20,6 +20,8 @@ model Destination {
   BuildingID                                      Int
   isEntrance                                      Int
   Accessibility                                   Int
+  MediaID                                         Int
+  Media                                           Media            @relation(fields: [MediaID], references: [MediaID], onDelete: Cascade)
   Building                                        Building         @relation(fields: [BuildingID], references: [BuildingID], onDelete: Cascade)
   DistanceWeight_DistanceWeight_ToToDestination   DistanceWeight[] @relation("DistanceWeight_ToToDestination")
   DistanceWeight_DistanceWeight_FromToDestination DistanceWeight[] @relation("DistanceWeight_FromToDestination")
@@ -35,23 +37,21 @@ model Login {
 }
 
 model Media {
-  MediaID                            Int         @id @unique(map: "sqlite_autoindex_Media_1") @default(autoincrement())
-  Media                              String
-  MediaDesc                          String
-  PSequence_PSequence_PrevToMedia    PSequence[] @relation("PSequence_PrevToMedia")
-  PSequence_PSequence_NextToMedia    PSequence[] @relation("PSequence_NextToMedia")
-  PSequence_PSequence_MediaIDToMedia PSequence[] @relation("PSequence_MediaIDToMedia")
+  MediaID                         Int           @id @unique(map: "sqlite_autoindex_Media_1") @default(autoincrement())
+  Media                           String
+  MediaDesc                       String
+  Destination                     Destination[]
+  PSequence_PSequence_PrevToMedia PSequence[]   @relation("PSequence_PrevToMedia")
+  PSequence_PSequence_NextToMedia PSequence[]   @relation("PSequence_NextToMedia")
 }
 
 model PSequence {
-  PSequenceID                    Int    @id @unique(map: "sqlite_autoindex_PSequence_1") @default(autoincrement())
-  MediaID                        Int
-  Next                           Int
-  Prev                           Int
-  Media_PSequence_PrevToMedia    Media  @relation("PSequence_PrevToMedia", fields: [Prev], references: [MediaID], onDelete: Cascade)
-  Media_PSequence_NextToMedia    Media  @relation("PSequence_NextToMedia", fields: [Next], references: [MediaID], onDelete: Cascade)
-  Media_PSequence_MediaIDToMedia Media  @relation("PSequence_MediaIDToMedia", fields: [MediaID], references: [MediaID], onDelete: Cascade)
-  Path                           Path[]
+  PSequenceID                 Int    @id @unique(map: "sqlite_autoindex_PSequence_1") @default(autoincrement())
+  Next                        Int
+  Prev                        Int
+  Media_PSequence_PrevToMedia Media  @relation("PSequence_PrevToMedia", fields: [Prev], references: [MediaID], onDelete: Cascade)
+  Media_PSequence_NextToMedia Media  @relation("PSequence_NextToMedia", fields: [Next], references: [MediaID], onDelete: Cascade)
+  Path                        Path[]
 }
 
 model Path {
