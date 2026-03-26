@@ -97,7 +97,9 @@ export default function StaffPortalPage() {
   const [connectionAccessible, setConnectionAccessible] = useState(false);
   const [qrEntranceId, setQrEntranceId] = useState("");
   const [qrDestinationId, setQrDestinationId] = useState("");
+  const [patientName, setPatientName] = useState("");
   const [patientEmail, setPatientEmail] = useState("");
+  const [appointmentTime, setAppointmentTime] = useState("");
   const [publicBaseUrl, setPublicBaseUrl] = useState("");
 
   const [message, setMessage] = useState("");
@@ -130,6 +132,9 @@ export default function StaffPortalPage() {
     setDraftConnections([]);
     setQrEntranceId("");
     setQrDestinationId("");
+    setPatientName("");
+    setPatientEmail("");
+    setAppointmentTime("");
   }, [buildingId]);
 
   useEffect(() => {
@@ -288,8 +293,10 @@ export default function StaffPortalPage() {
   const generatedEmailBody =
     selectedQrEntrance && selectedQrDestination
       ? t("routeEmailBody", {
+          patientName: patientName.trim() || t("patientFallbackName"),
           entrance: selectedQrEntrance.DestinationName,
           destination: selectedQrDestination.DestinationName,
+          appointmentTime: appointmentTime.trim() || t("appointmentTimeFallback"),
           link: generatedRouteUrl,
         })
       : "";
@@ -297,6 +304,11 @@ export default function StaffPortalPage() {
   const mailtoLink =
     patientEmail && generatedRouteUrl
       ? `mailto:${encodeURIComponent(patientEmail)}?subject=${encodeURIComponent(generatedEmailSubject)}&body=${encodeURIComponent(generatedEmailBody)}`
+      : "";
+
+  const clipboardEmailDraft =
+    generatedEmailSubject && generatedEmailBody
+      ? `${generatedEmailSubject}\n\n${generatedEmailBody}`
       : "";
 
   const submitNode = async () => {
@@ -396,6 +408,17 @@ export default function StaffPortalPage() {
     setConnectionWeight("");
     setConnectionAccessible(false);
     setMessage(t("connectionPreviewAdded"));
+  };
+
+  const copyEmailDraft = async () => {
+    if (!clipboardEmailDraft) return;
+
+    try {
+      await navigator.clipboard.writeText(clipboardEmailDraft);
+      setMessage(t("emailDraftCopied"));
+    } catch {
+      setMessage(t("emailDraftCopyFailed"));
+    }
   };
 
   return (
@@ -592,8 +615,6 @@ export default function StaffPortalPage() {
                 </label>
               </div>
 
-              <p className="mt-4 text-xs text-gray-500">{t("connectionPreviewNote")}</p>
-
               <div className="mt-4">
                 <button
                   type="button"
@@ -757,6 +778,16 @@ export default function StaffPortalPage() {
                     </div>
 
                     <div className="md:col-span-2">
+                      <label className="block text-sm font-medium mb-2">{t("patientNameLabel")}</label>
+                      <input
+                        value={patientName}
+                        onChange={(e) => setPatientName(e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
+                        placeholder={t("patientNamePlaceholder")}
+                      />
+                    </div>
+
+                    <div>
                       <label className="block text-sm font-medium mb-2">{t("patientEmailLabel")}</label>
                       <input
                         value={patientEmail}
@@ -764,6 +795,16 @@ export default function StaffPortalPage() {
                         type="email"
                         className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
                         placeholder={t("patientEmailPlaceholder")}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">{t("appointmentTimeLabel")}</label>
+                      <input
+                        value={appointmentTime}
+                        onChange={(e) => setAppointmentTime(e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
+                        placeholder={t("appointmentTimePlaceholder")}
                       />
                     </div>
 
@@ -777,8 +818,6 @@ export default function StaffPortalPage() {
                       />
                     </div>
                   </div>
-
-                  <p className="mt-4 text-xs text-gray-500">{t("qrEmailNote")}</p>
 
                   {generatedQrUrl && (
                     <div className="mt-4 flex flex-col items-start gap-4 md:flex-row md:items-center">
@@ -826,6 +865,19 @@ export default function StaffPortalPage() {
                         >
                           {t("emailPatientButton")}
                         </a>
+
+                        <button
+                          type="button"
+                          onClick={copyEmailDraft}
+                          disabled={!clipboardEmailDraft}
+                          className={`rounded-lg px-4 py-2 text-sm font-medium text-center ${
+                            clipboardEmailDraft
+                              ? "bg-white border border-gray-300 text-gray-900 hover:bg-gray-100"
+                              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          }`}
+                        >
+                          {t("copyEmailDraftButton")}
+                        </button>
                       </div>
                     </div>
                   )}
