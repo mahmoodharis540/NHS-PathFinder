@@ -3,8 +3,14 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import FontProvider from "@/components/Font";
 import HighContrast from "@/components/HighContrastProvider";
+import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
+import ThemeProvider from "@/components/ThemeProvider";
+import ThemeToggleButton from "@/components/ThemeToggleButton";
+import SettingsButton from "@/components/SettingsButton";
+import AccessibilityToolbar from "@/components/AccessibilityToolbar";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
+import { TranslationProvider } from "@/components/TranslationProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,11 +48,25 @@ export default async function RootLayout({
         ].join(" ")}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <FontProvider>
-            <HighContrast>
-          {children}
-            </HighContrast>
-          </FontProvider>
+          <TranslationProvider>
+            <ServiceWorkerRegistration />
+            <ThemeProvider>
+              <FontProvider>
+                <HighContrast>
+                  {children}
+                  <div className="pointer-events-none fixed right-2 top-2 z-[70] flex items-center gap-2 sm:right-4 sm:top-4 sm:gap-3">
+                    <div className="pointer-events-auto">
+                      <ThemeToggleButton />
+                    </div>
+                    <div className="pointer-events-auto">
+                      <SettingsButton />
+                    </div>
+                  </div>
+                  <AccessibilityToolbar />
+                </HighContrast>
+              </FontProvider>
+            </ThemeProvider>
+          </TranslationProvider>
         </NextIntlClientProvider>
       </body>
     </html>

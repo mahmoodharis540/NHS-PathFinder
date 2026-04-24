@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 
 function getIdFromUrl(req: Request) {
   const { pathname } = new URL(req.url);
-  // e.g. /api/manage/4 -> "4"
   return pathname.split("/").filter(Boolean).pop() ?? "";
 }
 
@@ -28,10 +27,23 @@ export async function GET(req: Request) {
   });
 
   if (!row) {
-    return NextResponse.json({ ok: false, error: "Not found" }, { status: 404 });
+    return NextResponse.json(
+      { ok: false, error: "Not found" },
+      { status: 404 }
+    );
   }
 
   return NextResponse.json({ ok: true, id });
+}
+
+export async function PATCH() {
+  return NextResponse.json(
+    {
+      ok: false,
+      error: "Path editing is not implemented for the current schema on this branch.",
+    },
+    { status: 501 }
+  );
 }
 
 export async function DELETE(req: Request) {

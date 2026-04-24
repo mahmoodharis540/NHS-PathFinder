@@ -1,5 +1,35 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Production Database Setup
+
+This project now expects a hosted PostgreSQL database for Vercel and shared development.
+
+1. Create a hosted Postgres database.
+2. Copy `.env.example` to `.env`.
+3. Set `DATABASE_URL` to the hosted Postgres connection string.
+4. Keep `SQLITE_DATABASE_PATH` pointing at the existing local SQLite file if you want to import current data.
+5. Generate Prisma client:
+
+```bash
+npm run db:generate
+```
+
+6. Push the current Prisma schema to Postgres:
+
+```bash
+npm run db:push
+```
+
+7. Import the current SQLite data into Postgres:
+
+```bash
+npm run db:import:sqlite
+```
+
+8. Add the same `DATABASE_URL` to the Vercel project environment variables and redeploy.
+
+After that, localhost and Vercel will read the same database.
+
 ## Getting Started
 
 First, run the development server:
