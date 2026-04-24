@@ -182,7 +182,8 @@
     "emailDraftCopied": "Szkic e-maila skopiowano do schowka.",
     "emailDraftCopyFailed": "Nie udało się skopiować szkicu e-maila.",
     "failedLoadNodes": "Nie udało się załadować węzłów.",
-    "failedLoadConnections": "Nie udało się załadować połączeń."
+    "failedLoadConnections": "Nie udało się załadować połączeń.",
+    "connectionPreviewNote": "To połączenie zostanie zapisane i wykorzystane przez system wyznaczania trasy."
   },
   "managePaths": {
     "searchPlaceholder": "Szukaj tras...",

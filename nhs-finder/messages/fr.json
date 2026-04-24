@@ -182,7 +182,8 @@
     "emailDraftCopied": "Brouillon d’e-mail copié dans le presse-papiers.",
     "emailDraftCopyFailed": "Échec de la copie du brouillon d’e-mail.",
     "failedLoadNodes": "Échec du chargement des nœuds.",
-    "failedLoadConnections": "Échec du chargement des connexions."
+    "failedLoadConnections": "Échec du chargement des connexions.",
+    "connectionPreviewNote": "Cette connexion sera enregistrée et utilisée par le système d’itinéraire."
   },
   "managePaths": {
     "searchPlaceholder": "Rechercher des itinéraires...",

@@ -4,7 +4,16 @@ import { useEffect, useRef, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Volume2, VolumeX } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import type { PathSummary, MediaItem } from "@/types/paths";
+import type { MediaItem } from "@/types/paths";
+
+interface BfsLeg {
+  pathId: number;
+  pathName: string;
+  start: number;
+  end: number;
+  startName: string | null;
+  endName: string | null;
+}
 import { useTranslationMode } from "@/components/TranslationProvider";
 import {
   getEffectiveLanguage,
@@ -29,10 +38,11 @@ export default function DirectionsPage() {
     return v === "undefined" ? "" : v;
   };
 
-  const entrance = clean("entrance");
+  const entrance    = clean("entrance");
   const destination = clean("destination");
+  const accessible  = searchParams.get("accessible") === "true";
 
-  const [path, setPath] = useState<PathSummary | null>(null);
+  const [legs, setLegs] = useState<BfsLeg[]>([]);
   const [sequence, setSequence] = useState<MediaItem[]>([]);
   const [slideIndex, setSlideIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -105,12 +115,12 @@ export default function DirectionsPage() {
     if (!("caches" in window)) return;
     if (!entrance || !destination) return;
 
-    const pathSearchUrl = `/api/paths?entrance=${encodeURIComponent(entrance)}&destination=${encodeURIComponent(destination)}`;
+    const bfsUrl = `/api/bfs?entrance=${encodeURIComponent(entrance)}&destination=${encodeURIComponent(destination)}&accessible=${accessible}`;
 
     caches.open("nhs-pathfinder-api-v1").then((cache) => {
-      cache.add(pathSearchUrl).catch(() => undefined);
+      cache.add(bfsUrl).catch(() => undefined);
     });
-  }, [entrance, destination]);
+  }, [entrance, destination, accessible]);
 
   useEffect(() => {
     if (!entrance || !destination) {
@@ -122,9 +132,7 @@ export default function DirectionsPage() {
     setLoading(true);
     setError(null);
 
-    const url = `/api/paths?entrance=${encodeURIComponent(
-      entrance
-    )}&destination=${encodeURIComponent(destination)}`;
+    const url = `/api/bfs?entrance=${encodeURIComponent(entrance)}&destination=${encodeURIComponent(destination)}&accessible=${accessible}`;
 
     fetch(url)
       .then(async (r) => {
@@ -135,12 +143,12 @@ export default function DirectionsPage() {
         }
         return data;
       })
-      .then(({ paths }) => {
-        if (!paths?.length) {
+      .then(({ legs }: { legs: BfsLeg[] }) => {
+        if (!legs?.length) {
           setError(t("noPathFound"));
           return;
         }
-        setPath(paths[0]);
+        setLegs(legs);
       })
       .catch((err) => {
         console.error("Failed to load path:", err);
@@ -150,38 +158,43 @@ export default function DirectionsPage() {
   }, [entrance, destination, t]);
 
   useEffect(() => {
-    if (!path) return;
+    if (!legs.length) return;
 
     setSlideIndex(0);
 
-    const pathId = path.PathID ?? path.pathID ?? path.id;
-
-    if (!pathId) {
-      setError(t("couldNotResolvePathId"));
-      return;
-    }
-
-    const seqUrl = `/api/paths/${pathId}/sequence`;
-
-    fetch(seqUrl)
-      .then(async (r) => {
-        const data = await r.json();
-        if (!r.ok) throw new Error(data?.error ?? "Sequence API error");
-        return data;
-      })
-      .then(({ mediaSequence }) => {
-        setSequence(mediaSequence ?? []);
+    // Fetch the media sequence for every leg in order, then concatenate.
+    // This is what makes multi-hop routes work: each leg contributes its
+    // own from-node image (Prev) and to-node image (Next) to the slideshow.
+    Promise.all(
+      legs.map((leg) =>
+        fetch(`/api/paths/${leg.pathId}/sequence`)
+          .then(async (r) => {
+            const data = await r.json();
+            if (!r.ok) throw new Error(data?.error ?? "Sequence API error");
+            return (data.mediaSequence ?? []) as MediaItem[];
+          })
+      )
+    )
+      .then((allSequences) => {
+        // Deduplicate consecutive identical media items that appear at leg
+        // boundaries (the "to" image of leg N == the "from" image of leg N+1).
+        const combined: MediaItem[] = [];
+        for (const seq of allSequences) {
+          for (const item of seq) {
+            const last = combined[combined.length - 1];
+            if (!last || last.mediaId !== item.mediaId) {
+              combined.push(item);
+            }
+          }
+        }
+        setSequence(combined);
 
         if (!("caches" in window)) return;
 
-        const mediaUrls = (mediaSequence ?? [])
+        const mediaUrls = combined
           .map((item: MediaItem) => String(item.media ?? item.Media ?? item.url ?? ""))
           .filter(Boolean)
           .map((src: string) => new URL(src, window.location.origin).toString());
-
-        caches.open("nhs-pathfinder-api-v1").then((cache) => {
-          cache.add(seqUrl).catch(() => undefined);
-        });
 
         caches.open("nhs-pathfinder-media-v1").then((cache) => {
           mediaUrls.forEach((src: string) => {
@@ -193,7 +206,7 @@ export default function DirectionsPage() {
         console.error("Failed to load sequence:", err);
         setError(navigator.onLine ? t("failedToLoadMedia") : t("offlineNotCached"));
       });
-  }, [path, t]);
+  }, [legs, t]);
 
   const prev = () =>
     setSlideIndex((i) => (i - 1 + sequence.length) % sequence.length);
@@ -323,7 +336,7 @@ export default function DirectionsPage() {
 
         {sequence.map((item, i) => (
           <div
-            key={String(item.pSequenceId ?? i)}
+            key={`${item.mediaId}-${i}`}
             className="absolute inset-0 flex items-center justify-center transition-opacity duration-500 ease-in-out"
             style={{
               opacity: i === slideIndex ? 1 : 0,
@@ -332,7 +345,7 @@ export default function DirectionsPage() {
           >
             {isVideo(String(item.media ?? "")) ? (
               <video
-                key={`${item.pSequenceId}-${i === slideIndex}`}
+                key={`${item.mediaId}-active-${i === slideIndex}`}
                 src={String(item.media ?? "")}
                 autoPlay={i === slideIndex}
                 loop

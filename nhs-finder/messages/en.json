@@ -34,7 +34,8 @@
     "previousSlide": "Previous slide",
     "nextSlide": "Next slide",
     "readStep": "Read step",
-    "stopReading": "Stop reading"
+    "stopReading": "Stop reading",
+    "journeyProgress": "1"
   },
   "login": {
     "welcome": "Login Page",
@@ -201,7 +202,8 @@
     "emailDraftCopied": "Email draft copied to clipboard.",
     "emailDraftCopyFailed": "Failed to copy the email draft.",
     "failedLoadNodes": "Failed to load nodes.",
-    "failedLoadConnections": "Failed to load connections."
+    "failedLoadConnections": "Failed to load connections.",
+    "connectionPreviewNote": "This connection will be saved and used by the routing system."
   },
   "managePaths": {
     "searchPlaceholder": "Search paths...",
