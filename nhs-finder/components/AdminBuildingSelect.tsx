@@ -50,8 +50,6 @@ export default function AdminBuildingSelect({
       if (!res.ok) throw new Error(text);
 
       const created: Building = JSON.parse(text);
-
-      // add to list + select it
       onBuildingCreated(created);
       onChange(String(created.BuildingID));
       setNewName("");

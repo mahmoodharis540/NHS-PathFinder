@@ -101,7 +101,6 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900">
-      {/* Header */}
       <div
         className="text-white px-6 md:px-8 py-6 flex items-center justify-between"
         style={{ backgroundColor: NHS_BLUE }}
@@ -124,7 +123,6 @@ export default function SettingsPage() {
       </div>
 
       <div className="px-6 md:px-8 py-8 max-w-3xl mx-auto space-y-6">
-        {/* Language */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
           <h2 className="text-lg font-semibold">{t("languageTitle")}</h2>
           <p className="text-sm text-gray-600 mt-1">{t("languageDesc")}</p>
@@ -139,7 +137,6 @@ export default function SettingsPage() {
           </div>
         </section>
 
-        {/* Default building */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
           <h2 className="text-lg font-semibold">{t("defaultBuildingTitle")}</h2>
           <p className="text-sm text-gray-600 mt-1">{t("defaultBuildingDesc")}</p>
@@ -177,7 +174,6 @@ export default function SettingsPage() {
           </div>
         </section>
 
-        {/* Accessibility */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
           <h2 className="text-lg font-semibold">{t("accessibilityTitle")}</h2>
           <p className="text-sm text-gray-600 mt-1">{t("accessibilityDesc")}</p>
@@ -230,7 +226,6 @@ export default function SettingsPage() {
               }
             />
 
-            {/* Font size slider */}
             <div className="flex flex-col gap-2 p-4 rounded-xl border border-gray-200">
               <div className="flex items-center justify-between">
                 <p className="font-medium">{t("fontSize")}</p>

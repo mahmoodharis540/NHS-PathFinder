@@ -14,8 +14,6 @@ export async function GET(
   }
 
   try {
-    // Fetch the path and its PSequence.
-    // PSequence now only has Prev and Next (both MediaIDs) — no MediaID of its own.
     const pathRow = await prisma.path.findUnique({
       where:   { PathID: pathId },
       include: {
@@ -41,7 +39,6 @@ export async function GET(
       mediaDesc:   string;
     }> = [];
 
-    // Add the "from" node image (Prev) if it's a real file
     if (seq.Media_PSequence_PrevToMedia.Media !== "/placeholder") {
       orderedMedia.push({
         pSequenceId: seq.PSequenceID,
@@ -51,8 +48,6 @@ export async function GET(
       });
     }
 
-    // Add the "to" node image (Next) if it's a real file and different from Prev
-    // (skip when Prev === Next, which happens when both nodes share the placeholder)
     if (
       seq.Next !== seq.Prev &&
       seq.Media_PSequence_NextToMedia.Media !== "/placeholder"
@@ -65,9 +60,6 @@ export async function GET(
       });
     }
 
-    // orderedMedia is empty when both nodes have no real image yet.
-    // The directions page already handles this gracefully with
-    // "No media for this path segment."
     return Response.json({ mediaSequence: orderedMedia });
 
   } catch (error) {

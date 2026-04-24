@@ -8,19 +8,6 @@ function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : String(error);
 }
 
-// ─── POST /api/admin/connections ─────────────────────────────────────────────
-//
-// Body (JSON):
-//   fromId      number  — DestinationID of the start node
-//   toId        number  — DestinationID of the end node
-//   weight      number  — edge weight (positive integer, default 1)
-//   accessible  boolean — sets AccessToggle on the Path row
-//   buildingId  number  — BuildingID for the Path row
-//
-// Images are now stored per-node (Destination.MediaID → Media).
-// PSequence.Prev = fromDest.MediaID, PSequence.Next = toDest.MediaID
-// so the directions slideshow shows the from-node image then the to-node image.
-
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -46,7 +33,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Fetch both destinations including their MediaID
     const [fromDest, toDest] = await Promise.all([
       prisma.destination.findUnique({
         where:  { DestinationID: fromId },
@@ -69,16 +55,12 @@ export async function POST(req: Request) {
     const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
     const result = await prisma.$transaction(async (tx) => {
-
-      // 1) Status
       const status = await tx.status.upsert({
         where:  { StatusType: "Active" },
         update: {},
         create: { StatusType: "Active" },
       });
 
-      // 2) PSequence: Prev = from-node MediaID, Next = to-node MediaID
-      //    No MediaID field on PSequence in the new schema.
       const sequence = await tx.pSequence.create({
         data: {
           Prev: fromDest.MediaID,
@@ -86,7 +68,6 @@ export async function POST(req: Request) {
         },
       });
 
-      // 3) Path
       const createdPath = await tx.path.create({
         data: {
           PathName:     `${fromDest.DestinationName} -> ${toDest.DestinationName}`,
@@ -100,7 +81,6 @@ export async function POST(req: Request) {
         },
       });
 
-      // 4) DistanceWeight
       const existingWeight = await tx.distanceWeight.findFirst({
         where: { From: fromId, To: toId },
       });

@@ -215,9 +215,6 @@ html.dark .hover\:bg-gray-50:hover {
   background-color: #1e293b !important;
 }
 
-/* -----------------------------
-   Accessibility helpers
-   ----------------------------- */
 html.high-contrast,
 html.high-contrast body {
   background-color: #000000 !important;

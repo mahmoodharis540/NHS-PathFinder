@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
-// GET /api/paths
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const entrance = searchParams.get("entrance");
@@ -12,7 +11,6 @@ export async function GET(req: Request) {
     let startId: number | undefined;
     let endId: number | undefined;
 
-    // Resolve entrance name → ID
     if (entrance) {
       const start = await prisma.destination.findFirst({
         where: { DestinationName: entrance },
@@ -22,7 +20,6 @@ export async function GET(req: Request) {
       startId = start.DestinationID;
     }
 
-    // Resolve destination name → ID
     if (destination) {
       const end = await prisma.destination.findFirst({
         where: { DestinationName: destination },
@@ -40,8 +37,6 @@ export async function GET(req: Request) {
       include: {
         Building: true,
         Status: true,
-
-        // START destination (now includes MediaID)
         Destination_Path_StartToDestination: {
           select: {
             DestinationID: true,
@@ -49,8 +44,6 @@ export async function GET(req: Request) {
             MediaID: true,
           },
         },
-
-        // END destination (now includes MediaID)
         Destination_Path_EndToDestination: {
           select: {
             DestinationID: true,
@@ -68,8 +61,6 @@ export async function GET(req: Request) {
     return Response.json({ error: "Failed to fetch paths" }, { status: 500 });
   }
 }
-
-// POST /api/paths
 export async function POST(req: Request) {
   try {
     const body = await req.json();

@@ -442,7 +442,9 @@ export default function StaffPortalPage() {
       const text = await res.text();
       if (!res.ok) {
         let detail = text;
-        try { detail = JSON.parse(text)?.details ?? JSON.parse(text)?.error ?? text; } catch { /* raw text fallback */ }
+        try {
+          detail = JSON.parse(text)?.details ?? JSON.parse(text)?.error ?? text;
+        } catch {}
         throw new Error(detail);
       }
 
@@ -451,7 +453,6 @@ export default function StaffPortalPage() {
       setConnectionWeight("");
       setConnectionAccessible(false);
 
-      // Refresh node connection counts + existing connections list
       setNodesRefreshKey((k) => k + 1);
       setMessage(t("connectionPreviewAdded"));
 

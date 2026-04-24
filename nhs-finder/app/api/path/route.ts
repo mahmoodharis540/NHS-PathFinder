@@ -8,7 +8,6 @@ export async function GET(req: Request) {
   const destination = searchParams.get("destination");
 
   try {
-    // If filtering by name, resolve each name to its DestinationID first
     let startId: number | undefined;
     let endId: number | undefined;
 
@@ -62,8 +61,6 @@ export async function GET(req: Request) {
     return Response.json({ error: "Failed to fetch paths" }, { status: 500 });
   }
 }
-
-// Creates a new path — used by the staff/admin portal
 export async function POST(req: Request) {
   try {
     const body = await req.json();

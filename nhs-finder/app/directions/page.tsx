@@ -161,10 +161,6 @@ export default function DirectionsPage() {
     if (!legs.length) return;
 
     setSlideIndex(0);
-
-    // Fetch the media sequence for every leg in order, then concatenate.
-    // This is what makes multi-hop routes work: each leg contributes its
-    // own from-node image (Prev) and to-node image (Next) to the slideshow.
     Promise.all(
       legs.map((leg) =>
         fetch(`/api/paths/${leg.pathId}/sequence`)
@@ -176,8 +172,6 @@ export default function DirectionsPage() {
       )
     )
       .then((allSequences) => {
-        // Deduplicate consecutive identical media items that appear at leg
-        // boundaries (the "to" image of leg N == the "from" image of leg N+1).
         const combined: MediaItem[] = [];
         for (const seq of allSequences) {
           for (const item of seq) {

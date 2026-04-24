@@ -52,14 +52,12 @@ export async function POST(req: Request) {
     }
 
     const result = await prisma.$transaction(async (tx) => {
-
       const status = await tx.status.upsert({
         where:  { StatusType: statusType },
         update: {},
         create: { StatusType: statusType },
       });
 
-      // Start destination — MediaID required, use placeholder for new nodes
       let startDest = await tx.destination.findUnique({ where: { DestinationName: startName } });
       if (!startDest) {
         const pid = await getOrCreatePlaceholderMedia(tx);
@@ -74,7 +72,6 @@ export async function POST(req: Request) {
         });
       }
 
-      // End destination
       let endDest = await tx.destination.findUnique({ where: { DestinationName: endName } });
       if (!endDest) {
         const pid = await getOrCreatePlaceholderMedia(tx);
@@ -89,7 +86,6 @@ export async function POST(req: Request) {
         });
       }
 
-      // PSequence: Prev = start MediaID, Next = end MediaID (no MediaID field on PSequence)
       const sequence = await tx.pSequence.create({
         data: {
           Prev: startDest.MediaID,

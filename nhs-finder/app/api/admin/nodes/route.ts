@@ -48,7 +48,6 @@ export async function GET(req: Request) {
         isEntrance:      true,
         Accessibility:   true,
         MediaID:         true,
-        // Include the Media row so the admin page can display the node image
         Media: {
           select: {
             MediaID:   true,
@@ -135,13 +134,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "A node with that name already exists" }, { status: 409 });
     }
 
-    // ── Create/find the Media row that this node will reference ──────────
-    // Destination.MediaID is a required non-nullable FK, so we always need
-    // a Media row — either the uploaded image or a reused placeholder.
     let mediaId: number;
 
     if (image instanceof File && image.size > 0) {
-      // Save the uploaded image to disk
       const uploadsDir = path.join(process.cwd(), "public", "uploads");
       await mkdir(uploadsDir, { recursive: true });
 
@@ -159,8 +154,6 @@ export async function POST(req: Request) {
       });
       mediaId = media.MediaID;
     } else {
-      // No image uploaded — reuse the shared "/placeholder" sentinel so we
-      // don't create a new orphan Media row for every imageless node.
       const placeholder = await prisma.media.findFirst({
         where:  { Media: "/placeholder" },
         select: { MediaID: true },
@@ -177,7 +170,6 @@ export async function POST(req: Request) {
       }
     }
 
-    // ── Create the Destination row ────────────────────────────────────────
     const created = await prisma.destination.create({
       data: {
         DestinationName: name,

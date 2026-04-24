@@ -34,17 +34,6 @@ export async function GET(req: Request) {
     );
   }
 
-  // ── Resolve the PSequence slideshow ──────────────────────────────────────
-  //
-  // Schema change: PSequence no longer has its own MediaID field.
-  // It now only has Prev and Next, both of which are MediaIDs pointing to
-  // the from-node and to-node images stored on their Destination rows.
-  //
-  // Prev → image of the start node (shown first in the slideshow)
-  // Next → image of the end node   (shown second)
-  //
-  // Both relations are included and placeholder rows are filtered out.
-
   const seq = await prisma.pSequence.findUnique({
     where:   { PSequenceID: path.PSequenceID },
     include: {
@@ -63,8 +52,6 @@ export async function GET(req: Request) {
       steps.push({ mediaId: prev.MediaID, url: prev.Media, desc: prev.MediaDesc });
     }
 
-    // Only add the "to" image if it is different from the "from" image
-    // (they are the same when both nodes share the placeholder)
     if (next.MediaID !== prev.MediaID && next.Media !== "/placeholder") {
       steps.push({ mediaId: next.MediaID, url: next.Media, desc: next.MediaDesc });
     }

@@ -16,8 +16,6 @@ export default function FontProvider({ children }: { children: React.ReactNode }
     }
 
     applyFont();
-
-    // Re-apply whenever settings are saved
     window.addEventListener("nhs-settings-updated", applyFont);
     return () => window.removeEventListener("nhs-settings-updated", applyFont);
   }, []);
