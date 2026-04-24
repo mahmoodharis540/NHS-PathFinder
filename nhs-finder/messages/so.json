@@ -225,7 +225,9 @@
   },
   "topBar": {
     "staffPortal": "Bogga shaqaalaha",
-    "settings": "Dejinta"
+    "settings": "Dejinta",
+    "contact": "Xiriir",
+    "map": "Khariidadda"
   },
   "directions": {
     "back": "← Back",

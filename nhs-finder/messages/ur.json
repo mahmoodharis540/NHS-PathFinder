@@ -225,7 +225,9 @@
   },
   "topBar": {
     "staffPortal": "اسٹاف پورٹل",
-    "settings": "ترتیبات"
+    "settings": "ترتیبات",
+    "contact": "رابطہ",
+    "map": "نقشہ"
   },
   "directions": {
     "back": "← Back",

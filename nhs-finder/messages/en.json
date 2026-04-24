@@ -244,6 +244,8 @@
   },
   "topBar": {
     "staffPortal": "Staff Portal",
-    "settings": "Settings"
+    "settings": "Settings",
+    "contact": "Contact",
+    "map": "Map"
   }
 }

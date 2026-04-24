@@ -225,7 +225,9 @@
   },
   "topBar": {
     "staffPortal": "የሰራተኞች ፖርታል",
-    "settings": "ቅንብሮች"
+    "settings": "ቅንብሮች",
+    "contact": "ያግኙ",
+    "map": "ካርታ"
   },
   "directions": {
     "back": "← Back",

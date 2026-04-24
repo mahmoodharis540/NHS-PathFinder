@@ -225,7 +225,9 @@
   },
   "topBar": {
     "staffPortal": "اسٹاف پورٹل",
-    "settings": "سیٹنگز"
+    "settings": "سیٹنگز",
+    "contact": "رابطہ",
+    "map": "نقشہ"
   },
   "directions": {
     "back": "← Back",

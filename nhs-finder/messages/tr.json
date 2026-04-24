@@ -225,7 +225,9 @@
   },
   "topBar": {
     "staffPortal": "Personel Portalı",
-    "settings": "Ayarlar"
+    "settings": "Ayarlar",
+    "contact": "İletişim",
+    "map": "Harita"
   },
   "directions": {
     "back": "← Back",

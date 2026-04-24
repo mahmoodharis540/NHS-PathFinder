@@ -225,7 +225,9 @@
   },
   "topBar": {
     "staffPortal": "Poortaala hojjettootaa",
-    "settings": "Qindaa'ina"
+    "settings": "Qindaa'ina",
+    "contact": "Qunnamtii",
+    "map": "Kaartaa"
   },
   "directions": {
     "back": "← Back",

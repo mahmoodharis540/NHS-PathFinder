@@ -225,7 +225,9 @@
   },
   "topBar": {
     "staffPortal": "Portál zamestnancov",
-    "settings": "Nastavenia"
+    "settings": "Nastavenia",
+    "contact": "Kontakt",
+    "map": "Mapa"
   },
   "directions": {
     "back": "← Back",

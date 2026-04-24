@@ -225,7 +225,9 @@
   },
   "topBar": {
     "staffPortal": "بوابة المستخدمين",
-    "settings": "الإعدادات"
+    "settings": "الإعدادات",
+    "contact": "تواصل",
+    "map": "الخريطة"
   },
   "directions": {
     "back": "← Back",

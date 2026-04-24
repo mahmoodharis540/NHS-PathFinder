@@ -225,7 +225,9 @@
   },
   "topBar": {
     "staffPortal": "Portala karmendan",
-    "settings": "Mîheng"
+    "settings": "Mîheng",
+    "contact": "Têkilî",
+    "map": "Nexşe"
   },
   "directions": {
     "back": "← Back",
