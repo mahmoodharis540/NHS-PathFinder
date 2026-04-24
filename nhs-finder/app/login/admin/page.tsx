@@ -2,9 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
-import { Settings } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import ManagePathsSection from "@/components/ManagePathsSection";
@@ -16,14 +14,19 @@ type Building = {
 };
 
 type NodeSummary = {
-  DestinationID: number;
+  DestinationID:   number;
   DestinationName: string;
-  BuildingID: number;
-  isEntrance: number;
-  Accessibility: number | null;
-  NodeImage: string | null;
+  BuildingID:      number;
+  isEntrance:      number;
+  Accessibility:   number | null;
+  MediaID:         number;
+  Media: {
+    MediaID:   number;
+    Media:     string;
+    MediaDesc: string;
+  } | null;
   connectionCount: number;
-  connectedNodes: string[];
+  connectedNodes:  string[];
 };
 
 type ExistingConnection = {
@@ -34,18 +37,6 @@ type ExistingConnection = {
   toName: string;
   accessible: boolean;
   weight: number | null;
-  source: "existing";
-};
-
-type DraftConnection = {
-  id: string;
-  fromId: number;
-  toId: number;
-  fromName: string;
-  toName: string;
-  accessible: boolean;
-  weight: number;
-  source: "draft";
 };
 
 type PathApiRow = {
@@ -62,9 +53,43 @@ type PathApiRow = {
     DestinationName?: string;
   };
 };
+type AdminNode = {
+  DestinationID: number;
+  DestinationName: string;
+  BuildingID: number;
+  isEntrance: boolean;
+  Accessibility: boolean;
+  MediaID: number | null;
+  Media?: {
+    MediaID: number;
+    Media: string;
+    MediaDesc: string | null;
+  } | null;
+};
 
 function getErrorMessage(error: unknown, fallback: string) {
   return error instanceof Error ? error.message : fallback;
+}
+
+function fallbackCopyText(text: string) {
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "true");
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  textarea.style.top = "0";
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+
+  let success = false;
+  try {
+    success = document.execCommand("copy");
+  } finally {
+    document.body.removeChild(textarea);
+  }
+
+  return success;
 }
 
 export default function StaffPortalPage() {
@@ -83,7 +108,6 @@ export default function StaffPortalPage() {
   const [nodesRefreshKey, setNodesRefreshKey] = useState(0);
 
   const [existingConnections, setExistingConnections] = useState<ExistingConnection[]>([]);
-  const [draftConnections, setDraftConnections] = useState<DraftConnection[]>([]);
   const [loadingConnections, setLoadingConnections] = useState(false);
   const [connectionsError, setConnectionsError] = useState("");
 
@@ -92,13 +116,26 @@ export default function StaffPortalPage() {
   const [nodeIsEntrance, setNodeIsEntrance] = useState(false);
   const [nodeImage, setNodeImage] = useState<File | null>(null);
   const [isSavingNode, setIsSavingNode] = useState(false);
+  const [isSavingConnection, setIsSavingConnection] = useState(false);
 
   const [fromNodeId, setFromNodeId] = useState("");
   const [toNodeId, setToNodeId] = useState("");
   const [connectionWeight, setConnectionWeight] = useState("");
   const [connectionAccessible, setConnectionAccessible] = useState(false);
+  const [qrEntranceId, setQrEntranceId] = useState("");
+  const [qrDestinationId, setQrDestinationId] = useState("");
+  const [patientName, setPatientName] = useState("");
+  const [patientEmail, setPatientEmail] = useState("");
+  const [appointmentTime, setAppointmentTime] = useState("");
+  const [publicBaseUrl, setPublicBaseUrl] = useState("");
+
 
   const [message, setMessage] = useState("");
+
+  const handleEditPath = (_pathData: unknown) => {
+    setMessage("");
+    setTab("upload");
+  };
 
   useEffect(() => {
     const loadBuildings = async () => {
@@ -125,8 +162,17 @@ export default function StaffPortalPage() {
   useEffect(() => {
     setFromNodeId("");
     setToNodeId("");
-    setDraftConnections([]);
+    setQrEntranceId("");
+    setQrDestinationId("");
+    setPatientName("");
+    setPatientEmail("");
+    setAppointmentTime("");
   }, [buildingId]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setPublicBaseUrl(process.env.NEXT_PUBLIC_APP_URL || window.location.origin);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -218,7 +264,6 @@ export default function StaffPortalPage() {
               toName: endName,
               accessible: Number(item.AccessToggle) === 1,
               weight: typeof item.Weight === "number" ? item.Weight : null,
-              source: "existing" as const,
             };
           })
           .filter((item): item is ExistingConnection => item !== null);
@@ -243,9 +288,61 @@ export default function StaffPortalPage() {
     };
   }, [buildingId, nodesRefreshKey, t]);
 
-  const allConnections = useMemo(() => {
-    return [...draftConnections, ...existingConnections];
-  }, [draftConnections, existingConnections]);
+  const allConnections = existingConnections;
+
+  const entranceNodes = useMemo(
+    () => buildingNodes.filter((node) => node.isEntrance === 1),
+    [buildingNodes]
+  );
+
+  const locationNodes = useMemo(
+    () => buildingNodes.filter((node) => node.isEntrance !== 1),
+    [buildingNodes]
+  );
+
+  const selectedQrEntrance =
+    entranceNodes.find((node) => String(node.DestinationID) === qrEntranceId) ?? null;
+  const selectedQrDestination =
+    locationNodes.find((node) => String(node.DestinationID) === qrDestinationId) ?? null;
+
+  const generatedRouteUrl =
+    publicBaseUrl && selectedQrEntrance && selectedQrDestination
+      ? `${publicBaseUrl}/?entranceId=${selectedQrEntrance.DestinationID}&destinationId=${selectedQrDestination.DestinationID}`
+      : "";
+
+  const generatedQrUrl = generatedRouteUrl
+    ? `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(generatedRouteUrl)}`
+    : "";
+
+  const generatedEmailSubject = selectedQrDestination
+    ? `Your route to ${selectedQrDestination.DestinationName}`
+    : "";
+
+  const generatedEmailBody =
+    selectedQrEntrance && selectedQrDestination
+      ? [
+          `Dear ${patientName.trim() || "Patient"},`,
+          "",
+          `Your appointment is at ${appointmentTime.trim() || "the scheduled time"} in ${selectedQrDestination.DestinationName}.`,
+          `Your recommended starting entrance is ${selectedQrEntrance.DestinationName}.`,
+          "",
+          "Open the route here:",
+          generatedRouteUrl,
+          "",
+          "Kind regards,",
+          "NHS Pathfinder",
+        ].join("\n")
+      : "";
+
+  const mailtoLink =
+    patientEmail && generatedRouteUrl
+      ? `mailto:${encodeURIComponent(patientEmail)}?subject=${encodeURIComponent(generatedEmailSubject)}&body=${encodeURIComponent(generatedEmailBody)}`
+      : "";
+
+  const clipboardEmailDraft =
+    generatedEmailSubject && generatedEmailBody
+      ? `${generatedEmailSubject}\n\n${generatedEmailBody}`
+      : "";
 
   const submitNode = async () => {
     setMessage("");
@@ -295,7 +392,7 @@ export default function StaffPortalPage() {
     }
   };
 
-  const addConnectionPreview = () => {
+  const saveConnection = async () => {
     setMessage("");
     setConnectionsError("");
 
@@ -320,30 +417,64 @@ export default function StaffPortalPage() {
     }
 
     const fromNode = buildingNodes.find((node) => String(node.DestinationID) === fromNodeId);
-    const toNode = buildingNodes.find((node) => String(node.DestinationID) === toNodeId);
+    const toNode   = buildingNodes.find((node) => String(node.DestinationID) === toNodeId);
 
     if (!fromNode || !toNode) {
       setConnectionsError(t("connectionNodesRequired"));
       return;
     }
 
-    const draft: DraftConnection = {
-      id: `draft-${Date.now()}`,
-      fromId: fromNode.DestinationID,
-      toId: toNode.DestinationID,
-      fromName: fromNode.DestinationName,
-      toName: toNode.DestinationName,
-      accessible: connectionAccessible,
-      weight: Number(connectionWeight),
-      source: "draft",
-    };
+    setIsSavingConnection(true);
 
-    setDraftConnections((current) => [draft, ...current]);
-    setFromNodeId("");
-    setToNodeId("");
-    setConnectionWeight("");
-    setConnectionAccessible(false);
-    setMessage(t("connectionPreviewAdded"));
+    try {
+      const res = await fetch("/api/admin/connections", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({
+          fromId:     fromNode.DestinationID,
+          toId:       toNode.DestinationID,
+          weight:     Number(connectionWeight),
+          accessible: connectionAccessible,
+          buildingId: Number(buildingId),
+        }),
+      });
+
+      const text = await res.text();
+      if (!res.ok) {
+        let detail = text;
+        try { detail = JSON.parse(text)?.details ?? JSON.parse(text)?.error ?? text; } catch { /* raw text fallback */ }
+        throw new Error(detail);
+      }
+
+      setFromNodeId("");
+      setToNodeId("");
+      setConnectionWeight("");
+      setConnectionAccessible(false);
+
+      // Refresh node connection counts + existing connections list
+      setNodesRefreshKey((k) => k + 1);
+      setMessage(t("connectionPreviewAdded"));
+
+    } catch (error: unknown) {
+      setConnectionsError(getErrorMessage(error, "Failed to save connection"));
+    } finally {
+      setIsSavingConnection(false);
+    }
+  };
+
+  const copyEmailDraft = async () => {
+    if (!clipboardEmailDraft) return;
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(clipboardEmailDraft);
+        setMessage(t("emailDraftCopied"));
+        return;
+      }
+    } catch {}
+
+    const copied = fallbackCopyText(clipboardEmailDraft);
+    setMessage(copied ? t("emailDraftCopied") : t("emailDraftCopyFailed"));
   };
 
   return (
@@ -365,9 +496,6 @@ export default function StaffPortalPage() {
           </div>
         </div>
 
-        <Link href="/settings" className="bg-white text-[#003087] p-2 rounded-full hover:bg-gray-100 transition">
-          <Settings className="h-5 w-5" />
-        </Link>
       </div>
 
       <div className="px-8 mt-6">
@@ -543,15 +671,17 @@ export default function StaffPortalPage() {
                 </label>
               </div>
 
+
               <p className="mt-4 text-xs text-gray-500">{t("connectionPreviewNote")}</p>
 
               <div className="mt-4">
                 <button
                   type="button"
-                  onClick={addConnectionPreview}
-                  className="rounded-lg bg-[#003087] px-4 py-2 text-sm font-medium text-white hover:bg-[#00256a]"
+                  onClick={saveConnection}
+                  disabled={isSavingConnection}
+                  className="rounded-lg bg-[#003087] px-4 py-2 text-sm font-medium text-white hover:bg-[#00256a] disabled:opacity-60"
                 >
-                  {t("addConnectionButton")}
+                  {isSavingConnection ? t("savingNode") : t("addConnectionButton")}
                 </button>
               </div>
             </div>
@@ -575,9 +705,9 @@ export default function StaffPortalPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {buildingNodes.map((node) => (
                     <div key={node.DestinationID} className="rounded-lg border border-gray-200 bg-white px-4 py-3">
-                      {node.NodeImage && (
+                      {node.Media?.Media && node.Media.Media !== "/placeholder" && (
                         <Image
-                          src={node.NodeImage}
+                          src={node.Media.Media}
                           alt={node.DestinationName}
                           width={600}
                           height={240}
@@ -645,7 +775,7 @@ export default function StaffPortalPage() {
                             {connection.fromName} <span className="text-gray-400">→</span> {connection.toName}
                           </p>
                           <p className="text-xs text-gray-500 mt-1">
-                            {connection.source === "draft" ? t("connectionDraftTag") : t("connectionExistingTag")}
+                            {t("connectionExistingTag")}
                           </p>
                         </div>
 
@@ -663,11 +793,162 @@ export default function StaffPortalPage() {
                 </div>
               )}
             </div>
+
+            <div className="mt-6 rounded-xl border border-gray-200 bg-gray-50 p-4">
+              <div className="flex flex-col gap-1 mb-4">
+                <h3 className="text-sm font-semibold text-gray-900">{t("qrEmailTitle")}</h3>
+                <p className="text-sm text-gray-600">{t("qrEmailDescription")}</p>
+              </div>
+
+              {!buildingId && <p className="text-sm text-gray-500">{t("qrEmailSelectBuilding")}</p>}
+
+              {buildingId && (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">{t("qrEntranceLabel")}</label>
+                      <select
+                        value={qrEntranceId}
+                        onChange={(e) => setQrEntranceId(e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm bg-white"
+                      >
+                        <option value="">{t("selectNodePlaceholder")}</option>
+                        {entranceNodes.map((node) => (
+                          <option key={`qr-entrance-${node.DestinationID}`} value={String(node.DestinationID)}>
+                            {node.DestinationName}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">{t("qrDestinationLabel")}</label>
+                      <select
+                        value={qrDestinationId}
+                        onChange={(e) => setQrDestinationId(e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm bg-white"
+                      >
+                        <option value="">{t("selectNodePlaceholder")}</option>
+                        {locationNodes.map((node) => (
+                          <option key={`qr-destination-${node.DestinationID}`} value={String(node.DestinationID)}>
+                            {node.DestinationName}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium mb-2">{t("patientNameLabel")}</label>
+                      <input
+                        value={patientName}
+                        onChange={(e) => setPatientName(e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
+                        placeholder={t("patientNamePlaceholder")}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">{t("patientEmailLabel")}</label>
+                      <input
+                        value={patientEmail}
+                        onChange={(e) => setPatientEmail(e.target.value)}
+                        type="email"
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
+                        placeholder={t("patientEmailPlaceholder")}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">{t("appointmentTimeLabel")}</label>
+                      <input
+                        value={appointmentTime}
+                        onChange={(e) => setAppointmentTime(e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm"
+                        placeholder={t("appointmentTimePlaceholder")}
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium mb-2">{t("generatedRouteUrlLabel")}</label>
+                      <input
+                        readOnly
+                        value={generatedRouteUrl}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm bg-gray-100 text-gray-700"
+                        placeholder={t("generatedRouteUrlPlaceholder")}
+                      />
+                    </div>
+                  </div>
+
+                  {generatedQrUrl && (
+                    <div className="mt-4 flex flex-col items-start gap-4 md:flex-row md:items-center">
+                      <div className="rounded-xl border border-gray-200 bg-white p-3">
+                        <Image
+                          src={generatedQrUrl}
+                          alt={t("qrPreviewAlt")}
+                          width={240}
+                          height={240}
+                          unoptimized
+                          className="h-40 w-40 rounded-lg"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-3">
+                        <a
+                          href={generatedQrUrl}
+                          download="patient-route-qr.png"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="rounded-lg bg-[#003087] px-4 py-2 text-sm font-medium text-white hover:bg-[#00256a] text-center"
+                        >
+                          {t("downloadQrButton")}
+                        </a>
+
+                        <a
+                          href={generatedRouteUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 text-center"
+                        >
+                          {t("openRouteButton")}
+                        </a>
+
+                        <a
+                          href={mailtoLink || "#"}
+                          onClick={(event) => {
+                            if (!mailtoLink) event.preventDefault();
+                          }}
+                          className={`rounded-lg px-4 py-2 text-sm font-medium text-center ${
+                            mailtoLink
+                              ? "bg-black text-white hover:bg-gray-800"
+                              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          }`}
+                        >
+                          {t("emailPatientButton")}
+                        </a>
+
+                        <button
+                          type="button"
+                          onClick={copyEmailDraft}
+                          disabled={!clipboardEmailDraft}
+                          className={`rounded-lg px-4 py-2 text-sm font-medium text-center ${
+                            clipboardEmailDraft
+                              ? "bg-white border border-gray-300 text-gray-900 hover:bg-gray-100"
+                              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          }`}
+                        >
+                          {t("copyEmailDraftButton")}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </div>
       )}
 
-      {tab === "manage" && <ManagePathsSection />}
+      {tab === "manage" && <ManagePathsSection onEditPath={handleEditPath} />}
     </div>
   );
 }
