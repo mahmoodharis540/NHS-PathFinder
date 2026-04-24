@@ -232,7 +232,9 @@
   },
   "topBar": {
     "staffPortal": "بوابة الموظفين",
-    "settings": "الإعدادات"
+    "settings": "الإعدادات",
+    "contact": "تواصل",
+    "map": "الخريطة"
   },
   "directions": {
     "back": "← Back",

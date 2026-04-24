@@ -226,7 +226,9 @@
   },
   "topBar": {
     "staffPortal": "স্টাফ পোর্টাল",
-    "settings": "সেটিংস"
+    "settings": "সেটিংস",
+    "contact": "যোগাযোগ",
+    "map": "মানচিত্র"
   },
   "directions": {
     "back": "← Back",

@@ -226,7 +226,9 @@
   },
   "topBar": {
     "staffPortal": "Portal personelu",
-    "settings": "Ustawienia"
+    "settings": "Ustawienia",
+    "contact": "Kontakt",
+    "map": "Mapa"
   },
   "directions": {
     "back": "← Wstecz",

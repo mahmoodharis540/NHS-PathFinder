@@ -226,7 +226,9 @@
   },
   "topBar": {
     "staffPortal": "Portal personal",
-    "settings": "Setări"
+    "settings": "Setări",
+    "contact": "Contact",
+    "map": "Hartă"
   },
   "directions": {
     "back": "← Back",

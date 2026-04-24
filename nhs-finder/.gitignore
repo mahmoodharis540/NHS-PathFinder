@@ -42,5 +42,8 @@ next-env.d.ts
 
 /lib/generated/prisma
 
+# test database
+/prisma/test.db
+
 /generated/prisma
 

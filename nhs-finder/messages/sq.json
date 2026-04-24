@@ -226,7 +226,9 @@
   },
   "topBar": {
     "staffPortal": "Portali i stafit",
-    "settings": "Cilësimet"
+    "settings": "Cilësimet",
+    "contact": "Kontakt",
+    "map": "Hartë"
   },
   "directions": {
     "back": "← Back",
