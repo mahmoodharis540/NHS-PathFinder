@@ -226,7 +226,9 @@
   },
   "topBar": {
     "staffPortal": "Cổng nhân viên",
-    "settings": "Cài đặt"
+    "settings": "Cài đặt",
+    "contact": "Liên hệ",
+    "map": "Bản đồ"
   },
   "directions": {
     "back": "← Back",

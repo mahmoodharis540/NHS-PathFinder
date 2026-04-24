@@ -226,7 +226,9 @@
   },
   "topBar": {
     "staffPortal": "پرتال کارکنان",
-    "settings": "تنظیمات"
+    "settings": "تنظیمات",
+    "contact": "تماس",
+    "map": "نقشه"
   },
   "directions": {
     "back": "← Back",

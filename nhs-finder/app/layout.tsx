@@ -7,6 +7,8 @@ import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import ThemeProvider from "@/components/ThemeProvider";
 import ThemeToggleButton from "@/components/ThemeToggleButton";
 import SettingsButton from "@/components/SettingsButton";
+import ContactButton from "@/components/ContactButton";
+import MapButton from "@/components/MapButton";
 import AccessibilityToolbar from "@/components/AccessibilityToolbar";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
@@ -55,6 +57,12 @@ export default async function RootLayout({
                 <HighContrast>
                   {children}
                   <div className="pointer-events-none fixed right-2 top-2 z-[70] flex items-center gap-2 sm:right-4 sm:top-4 sm:gap-3">
+                    <div className="pointer-events-auto">
+                      <MapButton />
+                    </div>
+                    <div className="pointer-events-auto">
+                      <ContactButton />
+                    </div>
                     <div className="pointer-events-auto">
                       <ThemeToggleButton />
                     </div>

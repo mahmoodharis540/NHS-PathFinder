@@ -226,7 +226,9 @@
   },
   "topBar": {
     "staffPortal": "ፖርታል ሰራሕተኛታት",
-    "settings": "ቅንብራት"
+    "settings": "ቅንብራት",
+    "contact": "ርክብ",
+    "map": "ካርታ"
   },
   "directions": {
     "back": "← Back",

@@ -226,7 +226,9 @@
   },
   "topBar": {
     "staffPortal": "پۆرتاڵی ستاف",
-    "settings": "ڕێکخستنەکان"
+    "settings": "ڕێکخستنەکان",
+    "contact": "پەیوەندی",
+    "map": "نەخشە"
   },
   "directions": {
     "back": "← Back",
